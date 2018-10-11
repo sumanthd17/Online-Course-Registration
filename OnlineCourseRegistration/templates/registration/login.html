@@ -4,10 +4,34 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
-</form>
+<head>
+	<title>Login</title>
+</head>
+<!-- ACTIONS -->
+  <section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+
+      </div>
+    </div>
+  </section>
+<!-- LOGIN -->
+  <section id="login">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header">
+              <h4>Account Login</h4>
+            </div>
+            <form method="post">
+			  {% csrf_token %}
+			  {{ form.as_p }}
+			  <button type="submit" class="btn btn-primary btn-block">Login</button>
+			</form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
