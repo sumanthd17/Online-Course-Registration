@@ -1,5 +1,5 @@
 <!-- templates/home.html -->
-{# % extends 'base.html' % #}	
+{# % extends 'base.html' % #} 
 
 {# % block title %}Home{% endblock % #}
 
@@ -120,14 +120,13 @@
                 </tr>
               </thead>
               <tbody>
-                {#% from users.models import Courses%#}
-                {% for c in courses %}
+                {% for course in courses %}
                   <tr>
-                    {% for course in c %}
+                    <td>{{course.id}}</td>
                     <td>{{course.prof}}</td>
                     <td>{{course.name}}</td>
-                    <td>{{course.max_studenst}}</td>
-                    {% endfor %}
+                    <td>{{course.max_students}}</td>
+                    <td><a href="{% url 'users:details' course.id%}">details</a></td>
                   </tr>
                 {% endfor %}
               </tbody>

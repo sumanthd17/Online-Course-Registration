@@ -1,0 +1,6 @@
+<h1>{{ course.name }}</h1>
+
+{% for details in course.detail_set.all %}
+	<h2>{{ details.min_GPA }}</h2>
+	<h2>{{ details.description }}</h2>
+{% endfor %}
