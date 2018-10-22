@@ -15,11 +15,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
 from django.views.generic.base import TemplateView
 
+from OnlineCourseRegistration.views import CourseListView
+
+
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
-	path('users/', include('users.urls')),
-	path('users/', include('django.contrib.auth.urls'))
+    url(r'^admin/', admin.site.urls),   
+    url(r'^$',TemplateView.as_view(template_name='home.html'), name='home'), 
+    url(r'index.html/$', TemplateView.as_view(template_name='home.html'), name='home'),
+    url(r'Students.html/$', TemplateView.as_view(template_name='Students.html'),name='Students'),
+    url(r'course.html/$', TemplateView.as_view(template_name='course.html'),name='Subjects'),    
+    url(r'courselist.html/', CourseListView.as_view(),name='MyCourseList'), 
+     url(r'courselist.html/the_url', CourseListView.as_view(),name='details'),     
+    url('users/', include('users.urls')),
+	url('users/', include('django.contrib.auth.urls')), 
 ]

@@ -25,7 +25,10 @@ SECRET_KEY = 'a_(kd!db6d)bn(*t7i%g6l_-i4!7t88(=4y4w+w)c39#*m^9+b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
+
+ROOT_URLCONF = 'OnlineCourseRegistration.urls'
+WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
 # templates
 LOGIN_REDIRECT_URL = 'home'
@@ -41,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'OnlineCourseRegistration',
     'users',
 ]
 
@@ -82,8 +87,12 @@ WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'IIITS',
+        'USER': 'rusheel',
+        'PASSWORD': 'rushi123',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -125,3 +134,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/admin/")
