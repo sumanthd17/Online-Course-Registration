@@ -82,20 +82,20 @@
     <div class="container">
       <div class="row">
         <div class="col-md-3">
-          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addPostModal">
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addStudentModal">
             <i class="fas fa-plus"></i> Add Student
           </a>
         </div>
         <div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCategoryModal">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">
             <i class="fas fa-plus"></i> Add Subject
           </a>
         </div>
-        <!--div class="col-md-3">
+        <!-- <div class="col-md-3">
           <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addUserModal">
-            <i class="fas fa-plus"></i> Add User
+            <i class="fas fa-plus"></i> Add Course Details
           </a>
-        </div-->
+        </div> -->
       </div>
     </div>
   </section>
@@ -127,6 +127,41 @@
                     <td>{{course.name}}</td>
                     <td>{{course.max_students}}</td>
                     <td><a href="{% url 'users:details' course.id%}">details</a></td>
+                    <td><a href="#" data-toggle="modal" data-target="#addCourseDetailsModal">edit</a>
+                    <div class="modal fade" id="addCourseDetailsModal">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header bg-warning text-white">
+                            <h5 class="modal-title">Add Course Details</h5>
+                            <button class="close" data-dismiss="modal">
+                              <span>&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">         
+                            <form action="{% url 'users:add_course_details' course.id %}" method="POST" accept-charset="UTF-8">
+                              {% csrf_token %}
+                              <div class="form-group">
+                                <label>Min GPA</label>
+                                <input type="text" class="form-control" name="min_GPA">
+                                <label>Description</label>
+                                <input type="text" class="form-control" name="description">
+                              </div>
+                              <!-- <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control">
+                              </div>
+                              <div class="form-group">
+                                <label for="password2">Confirm Password</label>
+                                <input type="password" class="form-control">
+                              </div> -->
+                              <input type="submit" name="users"/>
+                              <!-- <div class="modal-footer">
+                                <button class="btn btn-warning" data-dismiss="modal">Save Changes</button>
+                              </div> -->
+                            </form>
+                          </div>
+                        </div>
+                      </div>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -170,8 +205,8 @@
 
   <!-- MODALS -->
 
-  <!-- ADD POST MODAL -->
-  <div class="modal fade" id="addPostModal">
+  <!-- ADD Student MODAL -->
+  <div class="modal fade" id="addStudentModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
@@ -216,8 +251,8 @@
     </div>
   </div>
 
-  <!-- ADD CATEGORY MODAL -->
-  <div class="modal fade" id="addCategoryModal">
+  <!-- ADD Course MODAL -->
+  <div class="modal fade" id="addCourseModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-success text-white">
@@ -243,43 +278,6 @@
         <div class="modal-footer">
           <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
           <!-- <input type="submit" name="users"/> -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD USER MODAL -->
-  <div class="modal fade" id="addUserModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-warning text-white">
-          <h5 class="modal-title">Add User</h5>
-          <button class="close" data-dismiss="modal">
-            <span>&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <label for="name">Name</label>
-              <input type="text" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="password2">Confirm Password</label>
-              <input type="password" class="form-control">
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-warning" data-dismiss="modal">Save Changes</button>
         </div>
       </div>
     </div>
