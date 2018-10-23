@@ -1,7 +1,8 @@
 <!-- templates/home.html -->
-<!--{% extends 'base.html' %}-->
+{# % extends 'base.html' % #}	
 
-{% block title %}Home{% endblock %}
+{# % block title %}Home{% endblock % #}
+
 {% block content %}
 {% if user.is_authenticated %}
 <!DOCTYPE html>
@@ -14,13 +15,13 @@
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
     crossorigin="anonymous">
-  <link rel="stylesheet" href="css/style.css"> 
-  <title>A09 Frontend</title>
+  <link rel="stylesheet" href="css/style.css">
+  <title>Dashboard</title>
 </head>
 <body>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
+      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA09</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -119,6 +120,18 @@
                 </tr>
               </thead>
               <tbody>
+                {#% from users.models import Courses%#}
+                {% for c in courses %}
+                  <tr>
+                    {% for course in c %}
+                    <td>{{course.prof}}</td>
+                    <td>{{course.name}}</td>
+                    <td>{{course.max_studenst}}</td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+              <!--tbody>
                 <tr>
                   <td>1</td>
                   <td>Divyabrahmam</td>
@@ -163,7 +176,7 @@
                     </a>
                   </td>
                 </tr>
-                <!--tr>
+                <tr>
                   <td>5</td>
                   <td>Post Five</td>
                   <td>Web Development</td>
@@ -184,8 +197,8 @@
                       <i class="fas fa-angle-double-right"></i> Details
                     </a>
                   </td>
-                </tr-->
-              </tbody>
+                </tr>
+              </tbody-->
             </table>
           </div>
         </div>
