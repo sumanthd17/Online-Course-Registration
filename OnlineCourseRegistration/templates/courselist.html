@@ -11,24 +11,39 @@
     crossorigin="anonymous">
   <link rel="stylesheet" href="css/style.css">      
   <title>A07 Frontend</title>
+   <script type="text/javascript">
+function next(){
+window.history.forward();
+}
+function back(){
+window.history.back();
+}
+</script>
+  
 </head>
 
 
 <body>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
+      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav">
           <li class="nav-item px-2">
-            <a href="index.html" class="nav-link">Dashboard</a>
+            <a href="/index.html" class="nav-link">Dashboard</a>
           </li>
           <li class="nav-item px-2">
-            <a href="register.html" class="nav-link active">Register</a>
-          </li>         
+            <a href="/register.html" class="nav-link active">Register</a>
+          </li>  
+          <li>
+          <a href = "javascript:history.back();" class="nav-link">Back</a>      
+          </li>
+          <li>
+          <a href = "javascript:history.forward();" class="nav-link">Next</a>      
+          </li>
         </ul>
 
         <ul class="navbar-nav ml-auto">
@@ -37,16 +52,16 @@
               <i class="fas fa-user"></i> Welcome Brad
             </a>
             <div class="dropdown-menu">
-              <a href="profile.html" class="dropdown-item">
+              <a href="/profile.html" class="dropdown-item">
                 <i class="fas fa-user-circle"></i> Profile
               </a>
-              <a href="settings.html" class="dropdown-item">
+              <a href="/settings.html" class="dropdown-item">
                 <i class="fas fa-cog"></i> Settings
               </a>
             </div>
           </li>
           <li class="nav-item">
-            <a href="login.html" class="nav-link">
+            <a href="/login.html" class="nav-link">
               <i class="fas fa-user-times"></i> Logout
             </a>
           </li>
@@ -90,24 +105,25 @@
       <div class="row">
 <!--- left pane ---->
         <div class="col-md-2 center mt-4">
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2" form="form1" value="Audit Course">Audit Course</button> <br>
-        <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2" form="form1" value="Check Course">Check Availability</button> <br>
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2" form="form1" value="Add Course">Add Course</button> <br>
-          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2" form="form1" value="Drop Course">Drop Course</button>
+         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Audit Course">Audit Course</button> <br>
+        <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Check Course">Check Availability</button> <br>
+         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Add Course">Add Course</button> <br>
+          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Drop Course">Drop Course</button>
        </div>
         
-        
+ 
+
       
 <!----Middle pane ------>      
         <div class="col-md-6">
-          <div class="card">
+          <div class="card" id="target">                 
             <div class="card-header">
               <h4>Select Courses</h4>
             </div>
-            <form method='GET' action="">
+            <form method="POST" enctype="multipart/form-data" id="cform">
    			 {% csrf_token %}
-    		{{form.as_p}}
-            <table class="table table-striped">
+    		{{form.data}}
+            <table id="ctable" class="table table-striped">
               <thead class="thead-dark">
                 <tr>
                   <th></th>
@@ -117,20 +133,19 @@
                 </tr>
               </thead>
               <tbody>
-              {% for course in clist %}
+              {% for set in querysets %}              
                 <tr>
-                  <td><input type="checkbox" />    &nbsp;   </td>
-                   <td> {{ course.academic_course_id}} </td>
-                  <td>{{ course.academic_course_name }} </td>
+                  <td ><input type="checkbox" />    &nbsp;   </td>
+                   <td id="cid"> {{ set.academic_course_id }} </td>
+                  <td id="cname">   {{ set.academic_course_name }} </td>
                    <td> 
-                   {% url 'courselist' arg1=course.academic_course_id as the_url %}
-                     <a href="the_url" class="btn btn-secondary" method='POST'><i class="fas fa-angle-double-right"></i> Details
-                    </a>
-                   </td>
+                    <button type="button" id="Details">Details</button>             
+   				   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
+                     
             </form>
             <!-- PAGINATION -->
             <nav class="ml-4">
@@ -151,7 +166,8 @@
                   <a href="#" class="page-link">Next</a>
                 </li>
               </ul>
-            </nav>           
+            </nav>  
+         
        </div>      
      </div>
     
@@ -177,7 +193,7 @@
                   <td>IT Electives</td>
                   <td>3</td>
                   <td>
-                   <a href="details.html" class="btn btn-secondary">
+                   <a href="/details.html" class="btn btn-secondary">
                       <i class="fas fa-angle-double-right"></i> Details
                     </a>
                   </td>
@@ -193,8 +209,8 @@
   </div>
   <div class="col-md-6">
   <div class="btn-toolbar float-right">
-         <button type="submit" class="btn btn-primary btn-md mr-2" form="form1" value="Save Courselist">Save Courselist</button>  
-        <button type="submit" class="btn btn-primary btn-md mr-1" form="form1" value="Submit list">Submit</button>
+         <button type="submit" class="btn btn-primary btn-md mr-2"  value="Save Courselist">Save Courselist</button>  
+        <button type="submit" class="btn btn-primary btn-md mr-1" value="Submit list">Submit</button>
    </div>  
   </div>
   
@@ -229,6 +245,10 @@
     // Get the current year for the copyright
     $('#year').text(new Date().getFullYear());
   </script>
+  
+  
+  
+  
 </body>
 
 </html>
