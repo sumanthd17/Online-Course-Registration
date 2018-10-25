@@ -39,3 +39,7 @@ class Grade(models.Model):
 
 	def __str__(self):
 		return u'%s %s %s' % (self.student_id, self.course, self.grade_point)
+
+class AuditCourse(models.Model):
+	roll = models.CharField(max_length=20)
+	name = models.CharField(max_length=20)
