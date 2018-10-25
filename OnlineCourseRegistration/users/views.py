@@ -4,7 +4,7 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-from .models import Course, Detail, Grade, Student
+from .models import Course, Detail, Grade, Student, AuditCourse
 
 # Create your views here.
 class SignUp(generic.CreateView):
@@ -84,4 +84,13 @@ def add_course_details(request, course_id):
 	else:
 		return HttpResponseRedirect('/users')
 
-		
+
+def audit_course(request):
+	if request.method == 'POST':
+		auditcourse = AuditCourse()
+		auditcourse.name = request.POST.get('name')
+		auditcourse.roll = request.POST.get('roll')
+		auditcourse.save()
+		return HttpResponseRedirect('/users')
+	else:
+		return render(request, 'users/audit.html')
