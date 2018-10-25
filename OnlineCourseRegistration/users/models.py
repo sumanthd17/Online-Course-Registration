@@ -22,3 +22,11 @@ class Detail(models.Model):
 
 	def __str__(self):
 		return self.description
+
+class Grade(models.Model):
+	student_id = models.CharField(max_length=20, null=True)
+	course = models.CharField(max_length=20, null=True)
+	grade_point = models.CharField(max_length=20, null=True)
+
+	def __str__(self):
+		return u'%s %s %s' % (self.student_id, self.course, self.grade_point)
