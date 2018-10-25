@@ -4,7 +4,7 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-from .models import Course, Detail
+from .models import Course, Detail, Grade
 
 # Create your views here.
 class SignUp(generic.CreateView):
@@ -40,6 +40,17 @@ def add_course(request):
 	else:
 		return HttpResponseRedirect('/users')
 
+def add_grade(request):
+	if request.method == 'POST':
+		grade = Grade()
+		grade.student_id = request.POST.get('user_id')
+		grade.course = request.POST.get('course')
+		grade.grade_point = request.POST.get('grade_point')
+		grade.save()
+		return HttpResponseRedirect('/users')
+	else :
+		return HttpResponseRedirect('/users')
+
 def add_course_details(request, course_id):
 	print('req recieved')
 	#details = get_object_or_404(Detail, pk=course_id)
@@ -55,3 +66,5 @@ def add_course_details(request, course_id):
 		return HttpResponseRedirect('/users')
 	else:
 		return HttpResponseRedirect('/users')
+
+		
