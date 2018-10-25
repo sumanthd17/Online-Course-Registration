@@ -15,6 +15,15 @@ class Course(models.Model):
 	def __str__(self):
 		return u'%s %s' % (self.name, self.prof)
 
+class Student(models.Model):
+	name = models.CharField(max_length=30)
+	roll = models.CharField(max_length=12)
+	year = models.CharField(max_length=4)
+	email = models.CharField(max_length=20)
+
+	def __str__(self):
+		return self.roll
+
 class Detail(models.Model):
 	course = models.ForeignKey(Course, on_delete = models.CASCADE)
 	min_GPA = models.IntegerField()
