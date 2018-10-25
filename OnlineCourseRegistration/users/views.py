@@ -84,7 +84,6 @@ def add_course_details(request, course_id):
 	else:
 		return HttpResponseRedirect('/users')
 
-
 def audit_course(request):
 	if request.method == 'POST':
 		auditcourse = AuditCourse()
@@ -94,3 +93,11 @@ def audit_course(request):
 		return HttpResponseRedirect('/users')
 	else:
 		return render(request, 'users/audit.html')
+
+def publish_course_registration(request):
+	if request.method == 'POST':
+		print('req reieved')
+
+def faculty(request):
+	print('yes')
+	return render(request, 'users/faculty.html')

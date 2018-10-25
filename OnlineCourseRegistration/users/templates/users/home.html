@@ -1,4 +1,5 @@
 <!-- templates/home.html -->
+
 {# % extends 'base.html' % #} 
 
 {# % block title %}Home{% endblock % #}
@@ -26,7 +27,7 @@
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav">
           <li class="nav-item px-2">
-            <a href="index.html" class="nav-link active">Dashboard</a>
+            <a href="{%url 'users:index' %}" class="nav-link active">Dashboard</a>
           </li>
           <li class="nav-item px-2">
             <a href="posts.html" class="nav-link">Students</a>
@@ -35,8 +36,8 @@
             <a href="categories.html" class="nav-link">Subjects</a>
           </li>
           <li class="nav-item px-2">
-            <a href="users.html" class="nav-link">Faculty</a>
-          </li>
+              <a href="{% url 'faculty'%}" class="nav-link">Faculty</a>
+            </li>
         </ul>
 
         <ul class="navbar-nav ml-auto">
@@ -93,6 +94,11 @@
           <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
             <i class="fas fa-plus"></i> Add Grades
           </a>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#publishCourseRegistrationsModal">
+              <i class="fas fa-plus"></i> Publish Course Reg
+            </a>
         </div>
         <!-- <div class="col-md-3">
           <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addUserModal">
@@ -291,6 +297,34 @@
       </div>
     </div>
   </div>
+
+  <!-- PUBLISH COURSE REGISTRATIONS MODAL -->
+<div class="modal fade" id="publishCourseRegistrationsModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title"></h5>
+        <button class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form action="/users/publish_course_registration/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>Course name</label>
+              <input name="course" type="text" class="form-control">
+            </div>
+            <input type="submit" name="users"/>
+          </form>
+        </div>
+      <div class="modal-footer">
+        <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
+        <!-- <input type="submit" name="users"/> -->
+      </div>
+    </div>
+  </div>
+</div>
 
   <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
