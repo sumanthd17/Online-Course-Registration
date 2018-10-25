@@ -27,9 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost']
 
-ROOT_URLCONF = 'OnlineCourseRegistration.urls'
-WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
-
 # templates
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
@@ -44,8 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'OnlineCourseRegistration',
     'users',
 ]
 
@@ -79,6 +74,12 @@ TEMPLATES = [
     },
 ]
 
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
+)
+
 WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
 
@@ -87,12 +88,8 @@ WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'IIITS',
-        'USER': 'rusheel',
-        'PASSWORD': 'rushi123',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -134,4 +131,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static/admin/")

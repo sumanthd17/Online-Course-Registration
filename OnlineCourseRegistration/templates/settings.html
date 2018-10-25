@@ -66,7 +66,7 @@
       <div class="row">
         <div class="col-md-6">
           <h1>
-            <i class="fas fa-user"></i> Edit Profile</h1>
+            <i class="fas fa-cog"></i> Settings</h1>
         </div>
       </div>
     </div>
@@ -82,51 +82,55 @@
           </a>
         </div>
         <div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block">
-            <i class="fas fa-lock"></i> Change Password
-          </a>
-        </div>
-        <div class="col-md-3">
-          <a href="#" class="btn btn-danger btn-block">
-            <i class="fas fa-trash"></i> Delete Account
+          <a href="index.html" class="btn btn-success btn-block">
+            <i class="fas fa-check"></i> Save Changes
           </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PROFILE -->
-  <section id="profile">
+  <!-- SETTINGS -->
+  <section id="settings">
     <div class="container">
       <div class="row">
-        <div class="col-md-9">
+        <div class="col">
           <div class="card">
             <div class="card-header">
-              <h4>Edit Profile</h4>
+              <h4>Edit Settings</h4>
             </div>
             <div class="card-body">
               <form>
-                <div class="form-group">
-                  <label for="name">Name</label>
-                  <input type="text" class="form-control" value="Brad Traversy">
-                </div>
-                <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="email" class="form-control" value="test@test.com">
-                </div>
-                <div class="form-group">
-                  <label for="bio">Bio</label>
-                  <textarea class="form-control" name="editor1">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid unde at fugiat explicabo temporibus, tempora animi sunt iusto quod beatae optio veritatis velit natus odit error! Possimus esse quisquam quibusdam eveniet autem! Minus dolore quisquam nemo similique doloribus perspiciatis tempore.</textarea>
-                </div>
+                <fieldset class="form-group">
+                  <legend>Allow User Registration</legend>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" value="Yes" checked> Yes
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" value="No"> No
+                    </label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="form-group">
+                  <legend>Homepage Format</legend>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" value="posts" checked> Blog Page
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" value="page"> Homepage
+                    </label>
+                  </div>
+                </fieldset>
               </form>
             </div>
           </div>
-        </div>
-        <div class="col-md-3">
-          <h3>Your Avatar</h3>
-          <img src="img/avatar.png" alt="" class="d-block img-fluid mb-3">
-          <button class="btn btn-primary btn-block">Edit Image</button>
-          <button class="btn btn-danger btn-block">Delete Image</button>
         </div>
       </div>
     </div>
