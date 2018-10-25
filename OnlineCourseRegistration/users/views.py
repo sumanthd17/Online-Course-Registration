@@ -14,7 +14,9 @@ class SignUp(generic.CreateView):
 
 def index(request):
 	courses = Course.objects.all()
-	context = {'courses': courses}
+	total_courses = len(Course.objects.all())
+	print(total_courses)
+	context = {'courses': courses, 'total_courses': total_courses}
 	return render(request, 'users/home.html', context)
 
 def details(request, course_id):
@@ -51,10 +53,14 @@ def add_grade(request):
 
 def add_course_details(request, course_id):
 	print('req recieved')
-	details = get_object_or_404(Detail, pk=course_id)
+	#details = get_object_or_404(Detail, pk=course_id)
+	#details = Detail.objects.get(pk=course_id)
+	# details = Detail.objects.create(pk=course_id)
+	print(course_id)
 	if request.method == 'POST':
-		details.min_GPA = request.POST.get('min_GPA')
-		details.description = request.POST.get('description')
+		details = Detail.objects.create(course_id=course_id, min_GPA=request.POST.get('min_GPA'), description=request.POST.get('description'))
+		# details.min_GPA = request.POST.get('min_GPA')
+		# details.description = request.POST.get('description')
 		details.save()
 		print(details.min_GPA, details.description)
 		return HttpResponseRedirect('/users')
