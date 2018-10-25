@@ -15,7 +15,6 @@
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
     crossorigin="anonymous">
-  <link rel="stylesheet" href="css/style.css">
   <title>Dashboard</title>
 </head>
 <body>
@@ -91,6 +90,11 @@
             <i class="fas fa-plus"></i> Add Subject
           </a>
         </div>
+        <div class="col-md-3">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
+            <i class="fas fa-plus"></i> Add Grades
+          </a>
+        </div>
         <!-- <div class="col-md-3">
           <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addUserModal">
             <i class="fas fa-plus"></i> Add Course Details
@@ -147,7 +151,7 @@
             <div class="card-body">
               <h3>Manage</h3>
               <h4 class="display-4">
-                <i class="fas fa-pencil-alt"></i>
+                <i class="fas fa-chalkboard-teacher"></i>
               </h4>
               <a href="categories.html" class="btn btn-outline-light btn-sm">View</a>
             </div>
@@ -257,6 +261,37 @@
     </div>
   </div>
 
+  <!-- ADD Grade MODAL -->
+  <div class="modal fade" id="addGradeModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-white">
+          <h5 class="modal-title">Add Grade</h5>
+          <button class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="/users/add_grade/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>Student Id</label>
+              <input name="user_id" type="text" class="form-control">
+              <label>Course name</label>
+              <input name="course" type="text" class="form-control">
+              <label>Grade</label>
+              <input name="grade_point" type="text" class="form-control">
+            </div>
+            <input type="submit" name="users"/>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
+          <!-- <input type="submit" name="users"/> -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
@@ -277,6 +312,6 @@
 </html>
 {% else %}
   <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> |
+  <a href="{% url 'login' %}">login</a> 
 {% endif %}
 {% endblock %}
