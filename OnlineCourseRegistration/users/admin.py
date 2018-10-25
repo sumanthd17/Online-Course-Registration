@@ -17,8 +17,5 @@ class CustomUserAdmin(UserAdmin):
 	
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Course)
-<<<<<<< HEAD
 admin.site.register(Grade)
-=======
 admin.site.register(AuditCourse)
->>>>>>> 649b8068a6a841a7d569ed94e35e41f9478d173d

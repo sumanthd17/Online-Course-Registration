@@ -4,7 +4,6 @@
 {# % block title %}Home{% endblock % #}
 
 {% block content %}
-{% if user.is_authenticated %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -310,8 +309,4 @@
 </body>
 
 </html>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> 
-{% endif %}
 {% endblock %}
