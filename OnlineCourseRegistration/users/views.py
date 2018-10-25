@@ -4,7 +4,9 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-from .models import Course, Detail, Grade, Student, AuditCourse
+from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse
+from django.views import View
+
 
 # Create your views here.
 class SignUp(generic.CreateView):
@@ -101,3 +103,19 @@ def publish_course_registration(request):
 def faculty(request):
 	print('yes')
 	return render(request, 'users/faculty.html')
+		
+class CourseListView(View):
+	model=AcademicCourse
+	template_name="users/Students.html"
+	context_object_name = 'clist'
+		
+	def get(self, request, *args, **kwargs):
+		print(self.request.method)
+		print("Received request in CourseListView: "+self.request.method)
+		querysets = AcademicCourse.objects.filter().only("academic_course_id", "academic_course_name")			
+		return render(request, self.template_name,{'querysets': querysets})
+	
+	def post(self, request, *args, **kwargs):
+		print("Received post request")
+		idval = request.POST['cid']
+		print("In post id is "+str(idval))

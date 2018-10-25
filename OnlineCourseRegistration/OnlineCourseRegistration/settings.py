@@ -25,7 +25,7 @@ SECRET_KEY = 'a_(kd!db6d)bn(*t7i%g6l_-i4!7t88(=4y4w+w)c39#*m^9+b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 # templates
 LOGIN_REDIRECT_URL = 'home'
@@ -73,6 +73,12 @@ TEMPLATES = [
         },
     },
 ]
+
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
+)
 
 WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
