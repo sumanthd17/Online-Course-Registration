@@ -15,7 +15,6 @@ class Course(models.Model):
 	def __str__(self):
 		return u'%s %s' % (self.name, self.prof)
 
-<<<<<<< HEAD
 class Student(models.Model):
 	name = models.CharField(max_length=30)
 	roll = models.CharField(max_length=12)
@@ -25,8 +24,6 @@ class Student(models.Model):
 	def __str__(self):
 		return self.roll
 
-=======
->>>>>>> 0e32dce337edf39594fecbc12cbf0ed5ddca66fa
 class Detail(models.Model):
 	course = models.ForeignKey(Course, on_delete = models.CASCADE)
 	min_GPA = models.IntegerField()
@@ -34,7 +31,6 @@ class Detail(models.Model):
 
 	def __str__(self):
 		return self.description
-<<<<<<< HEAD
 
 class Grade(models.Model):
 	student_id = models.CharField(max_length=20, null=True)
@@ -47,7 +43,6 @@ class Grade(models.Model):
 class AuditCourse(models.Model):
 	roll = models.CharField(max_length=20)
 	name = models.CharField(max_length=20)
-=======
 		
 class AcademicCourse(models.Model):
     academic_course_id = models.IntegerField(db_column='Academic_Course_Id', primary_key=True,unique=True)  # Field name made lowercase.
@@ -60,4 +55,3 @@ class AcademicCourse(models.Model):
 
     def __str__(self):
     	return self.description
->>>>>>> 0e32dce337edf39594fecbc12cbf0ed5ddca66fa

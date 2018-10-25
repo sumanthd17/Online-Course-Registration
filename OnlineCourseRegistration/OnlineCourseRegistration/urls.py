@@ -20,11 +20,8 @@ from users import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
-<<<<<<< HEAD
     path('faculty/', views.faculty, name='faculty'),
 	path('users/', include('users.urls')),
-=======
     path('users/', include('users.urls')),
->>>>>>> 0e32dce337edf39594fecbc12cbf0ed5ddca66fa
 	path('users/', include('django.contrib.auth.urls'))
 ]
