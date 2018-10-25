@@ -146,7 +146,7 @@
             <div class="card-body">
               <h3>Courses</h3>
               <h4 class="display-4">
-                <i class="fas fa-pencil-alt"></i> {{ total_courses }}
+                <!-- <i class="fas fa-pencil-alt"></i> --> {{ total_courses }}
               </h4>
               <a href="posts.html" class="btn btn-outline-light btn-sm">View</a>
             </div>
@@ -154,7 +154,7 @@
 
           <div class="card text-center bg-success text-white mb-3">
             <div class="card-body">
-              <h3>Prof</h3>
+              <h3>Manage</h3>
               <h4 class="display-4">
                 <i class="fas fa-chalkboard-teacher"></i>
               </h4>
@@ -189,32 +189,42 @@
           </button>
         </div>
         <div class="modal-body">
-          <form>
+          <form action="/users/add_student/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
             <div class="form-group">
               <label for="title">Name</label>
-              <input type="text" class="form-control">
+              <input type="text" name="name" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Roll Number</label>
+              <input type="text" name="roll_number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Email</label>
+              <input type="text" name="mail" class="form-control">
             </div>
             <div class="form-group">
               <label for="category">Year</label>
-              <select class="form-control">
-                <option value="">UG 1</option>
-                <option value="">UG 2</option>
-                <option value="">UG 3</option>
-                <option value="">UG 4</option>
+              <select class="form-control" name="year">
+                <option value="UG 1">UG 1</option>
+                <option value="UG 2">UG 2</option>
+                <option value="UG 3">UG 3</option>
+                <option value="UG 4">UG 4</option>
               </select>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="image">Upload Image</label>
               <div class="custom-file">
                 <input type="file" class="custom-file-input" id="image">
                 <label for="image" class="custom-file-label">Choose File</label>
               </div>
               <small class="form-text text-muted">Max Size 3mb</small>
-            </div>
+            </div> -->
             <!---div class="form-group">
               <label for="body">Body</label>
               <textarea name="editor1" class="form-control"></textarea>
             </div-->
+            <input type="submit" name="users"/>
           </form>
         </div>
         <div class="modal-footer">
