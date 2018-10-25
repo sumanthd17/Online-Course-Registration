@@ -1,5 +1,13 @@
-from django.urls import path
+from django.urls import path,include
+from django.conf.urls import url
+from django.views.generic.base import TemplateView
+
 from . import views
+from  .views import CourseListView
+
+
+
+app_name = 'users'
 
 
 app_name = 'users'
@@ -14,4 +22,6 @@ urlpatterns = [
 	path('add_grade/',views.add_grade,name='add_grade'),
 	path('publish_course_registration/',views.publish_course_registration, name='publish_course_registration'),
 	path('faculty/', views.faculty, name='faculty'),
+	path('<int:course_id>/add_course_details/', views.add_course_details, name='add_course_details'),
+	path('Students.html/', CourseListView.as_view(),name='MyCourseList'),
 ]
