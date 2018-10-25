@@ -10,4 +10,5 @@ urlpatterns = [
 	path('add_course/', views.add_course, name='add_course'),
 	path('<int:course_id>/add_course_details/', views.add_course_details, name='add_course_details'),
 	path('add_grade/',views.add_grade,name='add_grade'),
+	path('publish_course_registrations',views.publish_course_details, name='publish_course_details')
 ]

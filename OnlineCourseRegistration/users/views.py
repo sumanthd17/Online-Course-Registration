@@ -66,5 +66,3 @@ def add_course_details(request, course_id):
 		return HttpResponseRedirect('/users')
 	else:
 		return HttpResponseRedirect('/users')
-
-		

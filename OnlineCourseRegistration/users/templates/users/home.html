@@ -5,7 +5,6 @@
 {# % block title %}Home{% endblock % #}
 
 {% block content %}
-{% if user.is_authenticated %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -299,6 +298,16 @@
               <span>&times;</span>
             </button>
           </div>
+          <div class="modal-body">
+              <form action="/users/publish_course_registrations/" method="POST" accept-charset="UTF-8">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label>Course name</label>
+                  <input name="course" type="text" class="form-control">
+                </div>
+                <input type="submit" name="users"/>
+              </form>
+            </div>
           <div class="modal-footer">
             <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
             <!-- <input type="submit" name="users"/> -->
@@ -324,8 +333,6 @@
 </body>
 
 </html>
-{% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a> 
-{% endif %}
 {% endblock %}
