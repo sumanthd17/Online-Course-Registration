@@ -5,14 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+ 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
    
   <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
-  <link rel="stylesheet" href="css/style.css">     
+  
    
   <title>A07 Frontend</title>
   <script type="text/javascript">
@@ -82,7 +82,7 @@ window.history.back();
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <h2 class="text-center">Select Course List</h2>
+          <h2 class="text-center">Course Details</h2>
         </div>
       </div>
     </div>
@@ -107,124 +107,44 @@ window.history.back();
   </section>
 
   <!-- POSTS -->
-  <section id="courses">
+  <section id="coursedetails">
      <div class="container">
       <div class="row">
-<!--- left pane ---->
-        <div class="col-md-2 center mt-4">
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Audit Course">Audit Course</button> <br>
-        <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Check Course">Check Availability</button> <br>
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Add Course">Add Course</button> <br>
-          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Drop Course">Drop Course</button>
-       </div>
-        
  
-
-      
-<!----Middle pane ------>      
-        <div class="col-md-6">
-          <div class="card" id="target">                 
+       <div class="col-md-9">
+          <div class="card">
             <div class="card-header">
-              <h4>Select Courses</h4>
-            </div>
-   <!-------- Earlier form entry ------->  
-           <form method="POST"  enctype="multipart/form-data" id="cform">
-   			 {% csrf_token %}
-    		{{ form.data }}
-            <table id="ctable" class="table table-striped">
-              <thead class="thead-dark">
-                <tr>
-                  <th></th>
-                  <th>Course Id</th>
-                  <th>Course Name</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-              {#% from users.models import AcademicCourses%#}
-              {% for set in querysets %}              
-                <tr>
-                  <td ><input type="checkbox" />    &nbsp;   </td>
-                   <td class="cid" name="cid"> {{ set.academic_course_id }} </td>
-                  <td class="cname" name="cname">   {{ set.academic_course_name }} </td>                   
-   <!------                  <button type="submit" class="ForDetails" name="Details">Details</button>  ------>
-                   <td><a href="{% url 'users:coursedetails' set.academic_course_id 0%}">details</a></td>                  
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>            
-             </form>             
-           
-                     
-         
-            <!-- PAGINATION -->
-            <nav class="ml-4">
-              <ul class="pagination">
-                <li class="page-item disabled">
-                  <a href="#" class="page-link">Previous</a>
-                </li>
-                <li class="page-item active">
-                  <a href="#" class="page-link">1</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">2</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">3</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">Next</a>
-                </li>
-              </ul>
-            </nav>  
-         
-       </div>      
-     </div>
-    
-    
-<!--- To do list --->
-        <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-              <h4>Courses To be Completed</h4>
+              <h4>Courses</h4>
             </div>
             <table class="table table-striped">
               <thead class="thead-dark">
                 <tr>
-                  <th>#</th>
-                  <th>Course Type</th>
-                  <th>Number of Courses</th>
-                  <th></th>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Rigour</th>
+                  <th>Course Level</th>
+                  <th>Course Prerequisites</th>
+                  <th>Course Delivery Mode</th>
+                  <th>Course Description</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td></td>
-                  <td>IT Electives</td>
-                  <td>3</td>
-                  <td>
-                   <a href="/details.html" class="btn btn-secondary">
-                      <i class="fas fa-angle-double-right"></i> Details
-                    </a>
-                  </td>
-                </tr>
-                 </tbody>
+                <td>2</td>
+                <td>Theory of Computation</td>
+                <td>1</td>
+                <td>2</td>
+                <td>Yes</td>
+                <td>TBD</td>
+                <td>UG3 course</td>
+              </tbody>
             </table>
+          </div>
         </div>
-    </div>
-   </div>     
-  </div>
-  <div class="row">
-  <div class="col-md-6">
-  </div>
-  <div class="col-md-6">
-  <div class="btn-toolbar float-right">
-         <button type="submit" class="btn btn-primary btn-md mr-2"  value="Save Courselist">Save Courselist</button>  
-        <button type="submit" class="btn btn-primary btn-md mr-1" value="Submit list">Submit</button>
-   </div>  
-  </div>
-  
-  </div>
+ 
+         
+       </div>      
+     </div>
+    
   
  </section>
  
