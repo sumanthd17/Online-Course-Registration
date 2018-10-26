@@ -14,8 +14,10 @@
 
   <link rel="stylesheet" href="css/style.css">     
    
-  <title>A07 Frontend</title>
-  <script type="text/javascript">
+  <title>A09 Frontend</title>
+  
+  
+  <script language="JavaScript" type="text/javascript">
    
    
    
@@ -25,6 +27,10 @@ window.history.forward();
 function back(){
 window.history.back();
 }
+function showMsg(msg) {
+    alert("Hello!")
+    alert(msg);
+}
 </script>
     
 </head>
@@ -33,7 +39,7 @@ window.history.back();
 <body>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
+      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA09</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -113,14 +119,11 @@ window.history.back();
 <!--- left pane ---->
         <div class="col-md-2 center mt-4">
          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Audit Course">Audit Course</button> <br>
-        <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Check Course">Check Availability</button> <br>
          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Add Course">Add Course</button> <br>
           <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Drop Course">Drop Course</button>
        </div>
         
- 
-
-      
+          
 <!----Middle pane ------>      
         <div class="col-md-6">
           <div class="card" id="target">                 
@@ -144,18 +147,20 @@ window.history.back();
               {#% from users.models import AcademicCourses%#}
               {% for set in querysets %}              
                 <tr>
-                  <td ><input type="checkbox" />    &nbsp;   </td>
-                   <td class="cid" name="cid"> {{ set.academic_course_id }} </td>
+                  <td ><input type="checkbox" class="cbox" name="saveCourse" value="{{ set.academic_course_id }}"/>    &nbsp;   </td>
+                  <td class="cid" name="cid"> {{ set.academic_course_id }} </td>
                   <td class="cname" name="cname">   {{ set.academic_course_name }} </td>                   
-   <!------                  <button type="submit" class="ForDetails" name="Details">Details</button>  ------>
-                   <td><a href="{% url 'users:coursedetails' set.academic_course_id 0%}">details</a></td>                  
+   <!------                  <button type="submit" class="ForDetails" name="Details">Details</button>  
+                       <td><a href="{% url 'users:coursedetails' set.academic_course_id 0%}" onclick="window.open('{% url 'users:coursedetails' set.academic_course_id 0%}','newwindow', 'width=400,height=450'); 
+              return false;">Details</td>    ------>
+   
+                   <td><a href="{% url 'users:coursedetails' set.academic_course_id 0%}">Details</a></td>                 
                 </tr>
-                {% endfor %}
+                 {% endfor %}         
               </tbody>
-            </table>            
-             </form>             
-           
-                     
+            </table>        
+             
+                      
          
             <!-- PAGINATION -->
             <nav class="ml-4">
@@ -177,6 +182,17 @@ window.history.back();
                 </li>
               </ul>
             </nav>  
+            
+              <div class="col-md-6">
+         
+            <div class="btn-toolbar float-right">
+         <button type="submit" class="btn btn-primary btn-md mr-2"  name="saveCourseBtn" value="Save Courselist">Save Courselist</button>  
+        <button type="submit" class="btn btn-primary btn-md mr-1" value="Submit list">Submit</button>
+       </div>  
+       </div>
+      
+             </form>     
+            
          
        </div>      
      </div>
@@ -218,15 +234,24 @@ window.history.back();
   <div class="col-md-6">
   </div>
   <div class="col-md-6">
-  <div class="btn-toolbar float-right">
-         <button type="submit" class="btn btn-primary btn-md mr-2"  value="Save Courselist">Save Courselist</button>  
-        <button type="submit" class="btn btn-primary btn-md mr-1" value="Submit list">Submit</button>
-   </div>  
+  
   </div>
   
   </div>
   
  </section>
+  
+    {% if messages %}
+    {% for message in messages %}  
+    
+    <script>
+    
+    showMsg({{ message }});
+     
+     </script>
+    {% endfor %}
+
+{% endif %}
  
      <!-- FOOTER -->
   <footer id="main-footer" class="bg-dark text-white mt-5 p-5">
@@ -236,7 +261,7 @@ window.history.back();
           <p class="lead text-center">
             Copyright &copy;
             <span id="year"></span>
-            ProjectA07
+            ProjectA09
           </p>
         </div>
       </div>
