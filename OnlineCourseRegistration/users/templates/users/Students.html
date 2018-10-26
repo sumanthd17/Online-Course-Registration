@@ -40,7 +40,7 @@ window.history.back();
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav">
           <li class="nav-item px-2">
-            <a href="{%url 'users:index' %}" class="nav-link">Dashboard</a>
+            <a href="/home.html" class="nav-link">Dashboard</a>
           </li>
           <li class="nav-item px-2">
             <a href="/register.html" class="nav-link active">Register</a>
@@ -146,32 +146,14 @@ window.history.back();
                 <tr>
                   <td ><input type="checkbox" />    &nbsp;   </td>
                    <td class="cid" name="cid"> {{ set.academic_course_id }} </td>
-                  <td class="cname" name="cname">   {{ set.academic_course_name }} </td>
-                   <td> 
-                     <button type="submit" class="ForDetails" name="Details">Details</button>  
-                   </td>
+                  <td class="cname" name="cname">   {{ set.academic_course_name }} </td>                   
+   <!------                  <button type="submit" class="ForDetails" name="Details">Details</button>  ------>
+                   <td><a href="{% url 'users:coursedetails' set.academic_course_id 0%}">details</a></td>                  
                 </tr>
                 {% endfor %}
               </tbody>
             </table>            
              </form>             
-            <script>             
-            
-    		$('document').ready(function()
-            {            
-            $('.ForDetails').click(function()
-            {
-              alert("Button clicked!!");              
-              var $courseid = $(this).closest("tr").find(".cid").text();   
-              alert("Course Id is "+$courseid);  
-               var $coursename = $(this).closest("tr").find(".cname").text();   
-              alert("Course Name is "+$coursename); 
-              alert(form.data);
-              
-            });
-            }); 
-            
-            </script> 
            
                      
          
