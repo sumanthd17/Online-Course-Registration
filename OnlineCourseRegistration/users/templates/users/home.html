@@ -90,6 +90,16 @@
           <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">
             <i class="fas fa-plus"></i> Add Subject
           </a>
+        </div>        
+        <div class="col-md-3">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
+            <i class="fas fa-plus"></i> Add Grades
+          </a>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#publishCourseRegistrationsModal">
+              <i class="fas fa-plus"></i> Publish Course Reg
+            </a>
         </div>
         <!-- <div class="col-md-3">
           <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addUserModal">
@@ -170,7 +180,7 @@
   <!-- MODALS -->
 
   <!-- ADD Student MODAL -->
-  <div class="modal fade" id="addStudentModal">
+ <div class="modal fade" id="addStudentModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
@@ -180,32 +190,31 @@
           </button>
         </div>
         <div class="modal-body">
-          <form>
+          <form action="/users/add_student/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
             <div class="form-group">
               <label for="title">Name</label>
-              <input type="text" class="form-control">
+              <input type="text" name="name" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Roll Number</label>
+              <input type="text" name="roll_number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Email</label>
+              <input type="text" name="mail" class="form-control">
             </div>
             <div class="form-group">
               <label for="category">Year</label>
-              <select class="form-control">
-                <option value="">UG 1</option>
-                <option value="">UG 2</option>
-                <option value="">UG 3</option>
-                <option value="">UG 4</option>
+              <select class="form-control" name="year">
+                <option value="UG 1">UG 1</option>
+                <option value="UG 2">UG 2</option>
+                <option value="UG 3">UG 3</option>
+                <option value="UG 4">UG 4</option>
               </select>
             </div>
-            <div class="form-group">
-              <label for="image">Upload Image</label>
-              <div class="custom-file">
-                <input type="file" class="custom-file-input" id="image">
-                <label for="image" class="custom-file-label">Choose File</label>
-              </div>
-              <small class="form-text text-muted">Max Size 3mb</small>
             </div>
-            <!---div class="form-group">
-              <label for="body">Body</label>
-              <textarea name="editor1" class="form-control"></textarea>
-            </div-->
+            <input type="submit" name="users"/>
           </form>
         </div>
         <div class="modal-footer">
@@ -247,6 +256,65 @@
     </div>
   </div>
 
+<!-- ADD Grade MODAL -->
+  <div class="modal fade" id="addGradeModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-white">
+          <h5 class="modal-title">Add Grade</h5>
+          <button class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="/users/add_grade/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>Student Id</label>
+              <input name="user_id" type="text" class="form-control">
+              <label>Course name</label>
+              <input name="course" type="text" class="form-control">
+              <label>Grade</label>
+              <input name="grade_point" type="text" class="form-control">
+            </div>
+            <input type="submit" name="users"/>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
+          <!-- <input type="submit" name="users"/> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUBLISH COURSE REGISTRATIONS MODAL -->
+<div class="modal fade" id="publishCourseRegistrationsModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title"></h5>
+        <button class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form action="/users/publish_course_registration/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>Course name</label>
+              <input name="course" type="text" class="form-control">
+            </div>
+            <input type="submit" name="users"/>
+          </form>
+        </div>
+      <div class="modal-footer">
+        <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
+        <!-- <input type="submit" name="users"/> -->
+      </div>
+    </div>
+  </div>
+</div>
 
   <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>

@@ -30,6 +30,23 @@ def details(request, course_id):
 	course = get_object_or_404(Course, pk=course_id)
 	return render(request, 'users/details.html', {'course':course})
 
+def add_student(request):
+	if request.method == 'POST':
+		student = Student()
+		student.name = request.POST.get('name')
+		student.roll = request.POST.get('roll_number')
+		student.email = request.POST.get('mail')
+		student.year = request.POST.get('year')
+		student.save()
+		#print(student.roll, student.year)
+
+	else:
+		print('error in request')
+
+	students = Student.objects.all()
+	context = {'students': students}
+	return render(request, 'users/students.html', context)
+
 def add_course(request):
 	if request.method == 'POST':
 		course = Course()
@@ -95,6 +112,17 @@ def publish_course_registration(request):
 def faculty(request):
 	print('yes')
 	return render(request, 'users/faculty.html')
+
+def add_grade(request):
+	if request.method == 'POST':
+		grade = Grade()
+		grade.student_id = request.POST.get('user_id')
+		grade.course = request.POST.get('course')
+		grade.grade_point = request.POST.get('grade_point')
+		grade.save()
+		return HttpResponseRedirect('/users')
+	else :
+		return HttpResponseRedirect('/users')
 		
 class CourseListView(View):
 	model=AcademicCourse
