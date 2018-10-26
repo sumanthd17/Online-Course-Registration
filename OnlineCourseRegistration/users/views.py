@@ -1,11 +1,16 @@
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.views import generic
 from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
+
 from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse
 from .models import *
+
 from django.views import View
+from django.contrib.auth import *
+
+from .models import Course, Detail,AcademicCourse
 
 
 # Create your views here.
@@ -25,23 +30,6 @@ def details(request, course_id):
 	course = get_object_or_404(Course, pk=course_id)
 	return render(request, 'users/details.html', {'course':course})
 
-def add_student(request):
-	if request.method == 'POST':
-		student = Student()
-		student.name = request.POST.get('name')
-		student.roll = request.POST.get('roll_number')
-		student.email = request.POST.get('mail')
-		student.year = request.POST.get('year')
-		student.save()
-		#print(student.roll, student.year)
-
-	else:
-		print('error in request')
-
-	students = Student.objects.all()
-	context = {'students': students}
-	return render(request, 'users/students.html', context)
-
 def add_course(request):
 	if request.method == 'POST':
 		course = Course()
@@ -57,17 +45,6 @@ def add_course(request):
 		course.save()
 		return HttpResponseRedirect('/users')
 	else:
-		return HttpResponseRedirect('/users')
-
-def add_grade(request):
-	if request.method == 'POST':
-		grade = Grade()
-		grade.student_id = request.POST.get('user_id')
-		grade.course = request.POST.get('course')
-		grade.grade_point = request.POST.get('grade_point')
-		grade.save()
-		return HttpResponseRedirect('/users')
-	else :
 		return HttpResponseRedirect('/users')
 
 def add_course_details(request, course_id):
@@ -123,10 +100,8 @@ class CourseListView(View):
 	model=AcademicCourse
 	template_name="users/Students.html"
 	context_object_name = 'clist'
-		
+			
 	def get(self, request, *args, **kwargs):
-		print(self.request.method)
-		print("Received request in CourseListView: "+self.request.method)
 		querysets = AcademicCourse.objects.filter().only("academic_course_id", "academic_course_name")			
 		return render(request, self.template_name,{'querysets': querysets})
 	
@@ -134,3 +109,11 @@ class CourseListView(View):
 		print("Received post request")
 		idval = request.POST['cid']
 		print("In post id is "+str(idval))
+		
+	def coursedetails(request, academic_course_id,val):
+		academiccourse = get_object_or_404(AcademicCourse, pk=academic_course_id)
+		print(academiccourse.academic_course_description," ",academiccourse.academic_course_name)
+		return redirect('/users/coursedetails.html',academiccourse=academiccourse)
+		#return render(request,'users/coursedetails.html',{'querysets': querysets})	
+		#return HttpResponseRedirect('/users/coursedetails.html')
+		#return render(request, "users/coursedetails.html", {'academiccourse':academiccourse})
