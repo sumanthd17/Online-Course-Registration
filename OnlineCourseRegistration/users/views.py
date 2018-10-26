@@ -4,8 +4,9 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse
+from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, Register
 from django.views import View
+import operator
 
 
 # Create your views here.
@@ -98,7 +99,64 @@ def audit_course(request):
 
 def publish_course_registration(request):
 	if request.method == 'POST':
-		print('req reieved')
+		subject = request.POST.get('course')
+		print('subject')
+		print(subject)
+		course = list(Course.objects.all())
+		c = []
+		#print('course')
+		#print(course)
+		for i in course:
+			c.append(str(i).split(' - '))
+		for i in c:
+			if subject in i:
+				max = i[-1]
+				break
+		#print('max')
+		#print(max)
+		student_list = []
+		student = list(Student.objects.all())
+		#print('student')
+		#print(student)
+		for i in student:
+			student_list.append(str(i).split(' - '))
+		student_list_sel = []
+		#print('student_list')
+		#print(student_list)
+		"""for i in student_list:
+			if subject in i:
+				student_list_sel.append(i)
+		"""
+		register = list(Register.objects.all())
+		reg = []
+		for i in register:
+			reg.append(str(i).split(' - '))
+		for i in reg:
+			if subject in i:
+				student_list_sel.append(i)
+		#print('student_list_sel')
+		#print(student_list_sel)
+		enroll_dict = {}
+		#print('reg')
+		#print(reg)
+		for i in student_list_sel:
+			for j in student_list:
+				if i[0] == j[1]:
+					enroll_dict[i[0]] = j[-1]
+		#print('enroll_dict')
+		#print(enroll_dict)
+		enroll_sorted = sorted(enroll_dict.items(), key=lambda kv:kv[1], reverse=True)
+		#print('enroll_sorted')
+		#print(enroll_sorted)
+		enroll_list = []
+		#print('len')
+		#print(len(enroll_list))
+		for i in range(len(enroll_sorted)):
+			enroll_list.append(enroll_sorted[i][0])
+		print(enroll_list)
+	return HttpResponseRedirect('/users')
+
+
 
 def faculty(request):
 	print('yes')

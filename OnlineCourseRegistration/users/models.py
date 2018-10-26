@@ -13,16 +13,17 @@ class Course(models.Model):
 	max_students = models.IntegerField()
 
 	def __str__(self):
-		return u'%s %s' % (self.name, self.prof)
+		return u'%s - %s - %s' % (self.name, self.prof, self.max_students)
 
 class Student(models.Model):
 	name = models.CharField(max_length=30)
 	roll = models.CharField(max_length=12)
 	year = models.CharField(max_length=4)
-	email = models.CharField(max_length=20)
+	email = models.CharField(max_length=40)
+	cgpa = models.FloatField(max_length=4,null=True)
 
 	def __str__(self):
-		return self.roll
+		return u'%s - %s - %s - %s - %s' % (self.name, self.roll, self.year, self.email, self.cgpa)
 
 class Detail(models.Model):
 	course = models.ForeignKey(Course, on_delete = models.CASCADE)
@@ -30,7 +31,7 @@ class Detail(models.Model):
 	description = models.CharField(max_length=200)
 
 	def __str__(self):
-		return self.description
+		return u'%s %s %s' % (self.course, self.min_GPA, self.description)
 
 class Grade(models.Model):
 	student_id = models.CharField(max_length=20, null=True)
@@ -38,7 +39,14 @@ class Grade(models.Model):
 	grade_point = models.CharField(max_length=20, null=True)
 
 	def __str__(self):
-		return u'%s %s %s' % (self.student_id, self.course, self.grade_point)
+		return u'%s - %s - %s' % (self.student_id, self.course, self.grade_point)
+
+class Register(models.Model):
+	student_id = models.CharField(max_length=20, null=True)
+	course = models.CharField(max_length=20, null=True)
+
+	def __str__(self):
+		return u'%s - %s' % (self.student_id, self.course) 
 
 class AuditCourse(models.Model):
 	roll = models.CharField(max_length=20)
@@ -55,3 +63,4 @@ class AcademicCourse(models.Model):
 
     def __str__(self):
     	return self.description
+

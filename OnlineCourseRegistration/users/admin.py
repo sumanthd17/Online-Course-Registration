@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
-from .models import Course,AcademicCourse
+from .models import Course,AcademicCourse, Register, Student
 
 
 from .models import Course, Grade, AuditCourse
@@ -22,3 +22,5 @@ admin.site.register(Course)
 admin.site.register(Grade)
 admin.site.register(AuditCourse)
 admin.site.register(AcademicCourse)
+admin.site.register(Register)
+admin.site.register(Student)
