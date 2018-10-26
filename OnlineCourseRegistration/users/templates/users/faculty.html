@@ -13,6 +13,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
     crossorigin="anonymous">
+  <link rel="stylesheet" href="./faculty.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+    crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
     crossorigin="anonymous">
   <title>Dashboard</title>
@@ -75,6 +77,81 @@
           </div>
         </div>
       </header>
+
+  <!-- ACTIONS -->
+  <section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addStudentModal">
+            <i class="fas fa-plus"></i> Class Roaster
+          </a>
+        </div>
+        <div class="col-md-6">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">
+            <i class="fas fa-plus"></i> View Course Registrations
+          </a>
+        </div>
+        <!--<div class="col-md-3">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
+            <i class="fas fa-plus"></i> Add Grades
+          </a>
+        </div>-->
+      </div>
+    </div>
+  </section>
+  <div >  
+  <div class=" col-md-8 text-md-center" >
+    <div class="card" style= "margin-left:350px"; >
+        <div class="card-header">
+          <h4>Courses Available</h4>
+        </div>
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th>#</th>
+              <th>Course Name</th>
+              <th>Number of Students</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td>DBMS</td>
+              <td>3</td>
+              <td>
+               <a href="/details.html" class="btn btn-secondary">
+                  <i class="fas fa-angle-double-right"></i> Details
+                </a>
+              </td>
+            </tr>
+             </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+                  
+      <script>             
+      
+  $('document').ready(function()
+      {            
+      $('.ForDetails').click(function()
+      {
+        alert("Button clicked!!");              
+        var $courseid = $(this).closest("tr").find(".cid").text();   
+        alert("Course Id is "+$courseid);  
+         var $coursename = $(this).closest("tr").find(".cname").text();   
+        alert("Course Name is "+$coursename); 
+        alert(form.data);
+        
+      });
+      }); 
+      
+      </script>  
+    </div>      
+  </div>
+
 	<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 	crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"

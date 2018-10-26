@@ -91,6 +91,16 @@
             <i class="fas fa-plus"></i> Add Subject
           </a>
         </div>
+        <div class="col-md-3">
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addPostModal">
+            <i class="fas fa-plus"></i> Add 
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCategoryModal">
+            <i class="fas fa-plus"></i> Add Subject
+          </a>
+        </div>
         <!--div class="col-md-3">
           <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addUserModal">
             <i class="fas fa-plus"></i> Add User
@@ -375,10 +385,6 @@
 </html>
 {% else %}
   <p>You are not logged in</p>
-<<<<<<< HEAD
-  <a href="{% url 'login' %}">login</a> |
-=======
   <a href="{% url 'login' %}">login</a>
->>>>>>> 0e32dce337edf39594fecbc12cbf0ed5ddca66fa
 {% endif %}
 {% endblock %}
