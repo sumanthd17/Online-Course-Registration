@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ 
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+   
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+  
+   
+  <title>A07 Frontend</title>
+  <script type="text/javascript">
+   
+   
+   
+function next(){
+window.history.forward();
+}
+function back(){
+window.history.back();
+}
+</script>
+    
+</head>
+
+
+<body>
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
+    <div class="container">
+      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav">
+          <li class="nav-item px-2">
+            <a href="/index.html" class="nav-link">Dashboard</a>
+          </li>
+          <li class="nav-item px-2">
+            <a href="/register.html" class="nav-link active">Register</a>
+          </li>  
+          <li>
+          <a href = "javascript:history.back();" class="nav-link">Back</a>      
+          </li>
+          <li>
+          <a href = "javascript:history.forward();" class="nav-link">Next</a>      
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown mr-3">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-user"></i> {{user.username}}
+            </a>
+            <div class="dropdown-menu">
+              <a href="/profile.html" class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+              </a>
+              <a href="/settings.html" class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link">
+              <i class="fas fa-user-times"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h2 class="text-center">Course Details</h2>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEARCH -->
+  <section id="search" class="py-4 mb-6 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          Name : Rusheel Koushik
+          <BR>
+          Roll Number : 201601074
+          <BR>
+          Year : 3
+          <BR>
+          Semester : 1 
+          <BR>         
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSTS -->
+  <section id="coursedetails">
+     <div class="container">
+      <div class="row">
+ 
+       <div class="col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h4>Courses</h4>
+            </div>
+            <table class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Rigour</th>
+                  <th>Course Level</th>
+                  <th>Course Prerequisites</th>
+                  <th>Course Delivery Mode</th>
+                  <th>Course Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>2</td>
+                <td>Theory of Computation</td>
+                <td>1</td>
+                <td>2</td>
+                <td>Yes</td>
+                <td>TBD</td>
+                <td>UG3 course</td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+         
+       </div>      
+     </div>
+    
+  
+ </section>
+ 
+     <!-- FOOTER -->
+  <footer id="main-footer" class="bg-dark text-white mt-5 p-5">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="lead text-center">
+            Copyright &copy;
+            <span id="year"></span>
+            ProjectA07
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+ 
+
+  <script>
+    // Get the current year for the copyright
+    $('#year').text(new Date().getFullYear());
+  </script>
+  
+  
+  
+  
+</body>
+
+</html>
