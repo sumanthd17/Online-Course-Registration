@@ -24,4 +24,5 @@ urlpatterns = [
 	path('faculty/', views.faculty, name='faculty'),
 	path('<int:course_id>/add_course_details/', views.add_course_details, name='add_course_details'),
 	path('Students.html/', CourseListView.as_view(),name='MyCourseList'),
+	path('<int:course_id>/special_req/', views.special_req, name='special_req'),
 ]
