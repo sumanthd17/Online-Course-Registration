@@ -3,8 +3,8 @@ from django.views import generic
 from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-
 from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse
+from .models import *
 from django.views import View
 
 
@@ -71,20 +71,35 @@ def add_grade(request):
 		return HttpResponseRedirect('/users')
 
 def add_course_details(request, course_id):
-	print('req recieved')
 	#details = get_object_or_404(Detail, pk=course_id)
-	#details = Detail.objects.get(pk=course_id)
+	# details = Detail.objects.get(pk=course_id)
 	# details = Detail.objects.create(pk=course_id)
-	print(course_id)
+	# print(details.min_GPA)
 	if request.method == 'POST':
 		details = Detail.objects.create(course_id=course_id, min_GPA=request.POST.get('min_GPA'), description=request.POST.get('description'))
-		# details.min_GPA = request.POST.get('min_GPA')
-		# details.description = request.POST.get('description')
+		# details = Detail.objects.get(pk=course_id)
+		details.min_GPA = request.POST.get('min_GPA')
+		details.description = request.POST.get('description')
 		details.save()
-		print(details.min_GPA, details.description)
+	# print(details.min_GPA, details.description)
 		return HttpResponseRedirect('/users')
 	else:
 		return HttpResponseRedirect('/users')
+
+def special_req(request, course_id):
+	print('req recieved', course_id)
+	if request.method == 'POST':
+		special_req = SpecialPermissions.objects.create(course_id=course_id, req=request.POST.get('req'))
+		special_req.save()
+		print(special_req.id, special_req.req)
+	else:
+		print('req failed')
+
+	special_reqs = SpecialPermissions.objects.all()
+	context = {'special_reqs':special_reqs}
+
+	return HttpResponseRedirect('/users')
+
 
 def audit_course(request):
 	if request.method == 'POST':
