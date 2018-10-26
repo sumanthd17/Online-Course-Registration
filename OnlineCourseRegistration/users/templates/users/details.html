@@ -63,6 +63,87 @@
 				</div>
 			</div>
 		</div>
+
+
+		<section id="actions" class="py-4 mb-4 bg-light">
+		<div class="container">
+		  <div class="row">
+		    <div class="col-md-3">
+		      <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addSpecialRequestModal">
+		        <i class="fas fa-plus"></i> Independent Study / Additional Project
+		      </a>
+		    </div>
+		  </div>
+		</div>
+		</section>
+
+		<div class="modal fade" id="addSpecialRequestModal">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+				  <div class="modal-header bg-warning text-white">
+				    <h5 class="modal-title">Independent Study / Additional Project</h5>
+				    <button class="close" data-dismiss="modal">
+				      <span>&times;</span>
+				    </button>
+				  </div>
+				  <div class="modal-body">         
+				    <form action="{% url 'users:special_req' course.id %}" method="POST" accept-charset="UTF-8">
+				      {% csrf_token %}
+				      <div class="form-group">
+				          <label for="category">Request</label>
+			              <select class="form-control" name="req">
+			                <option value="Independent Study">Independent Study</option>
+			                <option value="Additional Project">Additional Project</option>
+			              </select>
+				      </div>
+				      <input type="submit" name="users"/>
+				    </form>
+				  </div>
+				</div>
+			</div>
+		</div>
+
+		<section id="posts">
+		    <div class="container">
+		      <div class="row">
+		        <div class="col-md-9">
+		          <div class="card">
+		            <div class="card-header">
+		              <h4>Special Requests</h4>
+		            </div>
+		            <table class="table table-striped">
+		              <thead class="thead-dark">
+		                <tr>
+		                  <th>#</th>
+		                  <th>Course Name</th>
+		                  <th>Request</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                {% for request in course.specialpermissions_set.all %}
+		                  <tr>
+		                    <td>{{request.id}}</td>
+		                    <td>{{request.course}}</td>
+		                    <td>{{request.req}}</td>
+		                {% endfor %}
+		              </tbody>
+		            </table>
+		          </div>
+		        </div>
+		          <!--div class="card text-center bg-warning text-white mb-3">
+		            <div class="card-body">
+		              <h3>Users</h3>
+		              <h4 class="display-4">
+		                <i class="fas fa-users"></i> 4
+		              </h4>
+		              <a href="users.html" class="btn btn-outline-light btn-sm">View</a>
+		            </div-->
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+		  </section>
+
 	<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
