@@ -22,6 +22,15 @@ class SpecialPermissions(models.Model):
 	def __str__(self):
 		return self.req
 
+class BufferSpecialPermissionsTable(models.Model):
+	course = models.ForeignKey(Course, on_delete=models.CASCADE)
+	req = models.CharField(max_length=20)
+	status = models.CharField(max_length=4, default='pending')
+	email = models.CharField(max_length=30)
+
+	def __str__(self):
+		return self.req
+
 class Student(models.Model):
 	name = models.CharField(max_length=30)
 	roll = models.CharField(max_length=12)

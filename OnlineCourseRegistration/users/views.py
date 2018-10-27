@@ -4,12 +4,12 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse
+from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, BufferSpecialPermissionsTable
 from .models import *
-
+from django.contrib.auth import login, logout
 from django.views import View
 from django.contrib.auth import *
-
+import requests, json
 from .models import Course, Detail,AcademicCourse
 
 
@@ -25,6 +25,48 @@ def index(request):
 	print(total_courses)
 	context = {'courses': courses, 'total_courses': total_courses}
 	return render(request, 'users/home.html', context)
+
+# def get_user(email, password):
+# 	try:
+# 		user = CustomUser.objects.get(email=email)
+# 	except Exception as e:
+# 		user = CustomUser()
+# 		user.username = email
+# 		user.email = email
+# 	user.set_password(password)
+# 	user.save()
+
+# 	user = authenticate(username=email, password=password)
+# 	return user
+
+def callback(request, token):
+	print(token)
+	print('req recieved')
+	email, password = auth_api(token)
+	# user = get_user(email,password)
+	# login(request, user)
+	# print('successful', email, password)
+
+	user = authenticate(username=email, password=password)
+	login(request, user)
+	return HttpResponseRedirect('/users')
+
+def auth_api(token):
+	try:
+		res = requests.post(url=' https://serene-wildwood-35121.herokuapp.com/oauth/getDetails', data={
+            'token': token,
+            'secret': '1332df120a84c36c569571a7153d38d74f642304a985cc988c965fa225f33af51ee7ffb475897e91dfa7c53e4673487c48894584f5b314a6fffbb9d89f18bad5'
+        })
+		res = json.loads(res.content)
+		email = res['student'][0]['Student_Email']
+		password = 'iamstudent'
+
+		print (email, password)
+		return email, password
+
+	except Exception as e:
+		print(e)
+		return None, None
 
 def details(request, course_id):
 	course = get_object_or_404(Course, pk=course_id)
@@ -83,7 +125,9 @@ def add_course_details(request, course_id):
 def special_req(request, course_id):
 	print('req recieved', course_id)
 	if request.method == 'POST':
-		special_req = SpecialPermissions.objects.create(course_id=course_id, req=request.POST.get('req'))
+		special_req = BufferSpecialPermissionsTable.objects.create(course_id=course_id, req=request.POST.get('req'))
+
+		# special_req = SpecialPermissions.objects.create(course_id=course_id, req=request.POST.get('req'))
 		special_req.save()
 		print(special_req.id, special_req.req)
 	else:
@@ -94,6 +138,26 @@ def special_req(request, course_id):
 
 	return HttpResponseRedirect('/users')
 
+def approve_req(request):
+	special_reqs = BufferSpecialPermissionsTable.objects.all()
+	context = {'special_reqs': special_reqs}
+	return render(request, 'users/approve_req.html', context)
+
+def special_req_res_acc(request, request_id):
+	special_req = get_object_or_404(BufferSpecialPermissionsTable, pk=request_id)
+	special_req.status = 'Accepted'
+	special_req.save()
+	special_reqs = BufferSpecialPermissionsTable.objects.all()
+	context = {'special_reqs': special_reqs}
+	return render(request, 'users/approve_req.html', context)
+
+def special_req_res_dec(request, request_id):
+	special_req = get_object_or_404(BufferSpecialPermissionsTable, pk=request_id)
+	special_req.status = 'Declined'
+	special_req.save()
+	special_reqs = BufferSpecialPermissionsTable.objects.all()
+	context = {'special_reqs': special_reqs}
+	return render(request, 'users/approve_req.html', context)
 
 def audit_course(request):
 	if request.method == 'POST':

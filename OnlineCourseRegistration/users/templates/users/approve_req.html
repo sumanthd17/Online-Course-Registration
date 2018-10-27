@@ -1,0 +1,58 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<section id="posts">
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-header">
+          <h4>Special Requests</h4>
+        </div>
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th>#</th>
+              <th>Course Name</th>
+              <th>Student</th>
+              <th>Request</th>
+              <th>Status</th>
+              <th>edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in special_reqs %}
+              <tr>
+                <td>{{request.id}}</td>
+                <td>{{request.course}}</td>
+                <td>{{user.username}}</td>
+                <td>{{request.req}}</td>
+                <td>{{request.status}}</td>
+                <td><a href="{% url 'users:special_req_res_acc' request.id %}" class="btn btn-success btn-block" data-toggle="modal" data-target="#approveSpecialRequest">Accept</a></td>
+                <td><a href="{% url 'users:special_req_res_dec' request.id %}" class="btn btn-success btn-block" data-toggle="modal" data-target="#approveSpecialRequest">Decline</a></td>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+      <!--div class="card text-center bg-warning text-white mb-3">
+        <div class="card-body">
+          <h3>Users</h3>
+          <h4 class="display-4">
+            <i class="fas fa-users"></i> 4
+          </h4>
+          <a href="users.html" class="btn btn-outline-light btn-sm">View</a>
+        </div-->
+      </div>
+    </div>
+  </div>
+</div>
+</section>

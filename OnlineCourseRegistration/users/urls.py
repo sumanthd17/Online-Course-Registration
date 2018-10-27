@@ -11,7 +11,8 @@ app_name = 'users'
 
 urlpatterns = [
 	path('signup/', views.SignUp.as_view(), name='signup'),
-	path('', views.index, name='index'),	
+	path('', views.index, name='index'),
+	url('^callback/(?P<token>.+)$', views.callback, name='callback'),	
 	path('<int:course_id>/', views.details, name='details'),
 	path('add_course/', views.add_course, name='add_course'),
 	path('add_student/', views.add_student, name='add_student'),
@@ -25,4 +26,7 @@ urlpatterns = [
 	path('<int:course_id>/add_course_details/', views.add_course_details, name='add_course_details'),
 	path('(P<academic_course_id>\d+)/(P<val>\d+)/', views.CourseListView.coursedetails, name='coursedetails'),
 	path('coursedetails.html/',TemplateView.as_view(template_name='users/coursedetails.html'),name="coursevals"),
+	path('approve_req/', views.approve_req, name='approve_req'),
+	path('approve_req/<int:request_id>/special_req_res_acc/', views.special_req_res_acc, name='special_req_res_acc'),
+	path('approve_req/<int:request_id>/special_req_res_dec/', views.special_req_res_dec, name='special_req_res_dec'),
 ]

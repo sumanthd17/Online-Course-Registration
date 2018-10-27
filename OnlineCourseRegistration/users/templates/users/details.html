@@ -90,7 +90,7 @@
 				    <form action="{% url 'users:special_req' course.id %}" method="POST" accept-charset="UTF-8">
 				      {% csrf_token %}
 				      <div class="form-group">
-				          <label for="category">Request</label>
+					      <label for="category">Request</label>
 			              <select class="form-control" name="req">
 			                <option value="Independent Study">Independent Study</option>
 			                <option value="Additional Project">Additional Project</option>
@@ -116,15 +116,19 @@
 		                <tr>
 		                  <th>#</th>
 		                  <th>Course Name</th>
+		                  <th>Student</th>
 		                  <th>Request</th>
+		                  <th>Status</th>
 		                </tr>
 		              </thead>
 		              <tbody>
-		                {% for request in course.specialpermissions_set.all %}
+		                {% for request in course.bufferspecialpermissionstable_set.all %}
 		                  <tr>
 		                    <td>{{request.id}}</td>
 		                    <td>{{request.course}}</td>
+		                    <td>{{user.username}}</td>
 		                    <td>{{request.req}}</td>
+		                    <td>{{request.status}}</td>
 		                {% endfor %}
 		              </tbody>
 		            </table>
