@@ -111,12 +111,21 @@ window.history.back();
       <div class="row">
 </div>
 </div>
-{% for i in x %}
-{% for j in i %}
-    {{j}}
-{% endfor %}<br>
-{% endfor %}
-
+<table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Course</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+                {% for i in x %}
+            <tr>
+              <td>{{i}}</td>
+          
+          {% endfor %}
+ </tr>       </tbody>
+      </table>
  
 
   <script>

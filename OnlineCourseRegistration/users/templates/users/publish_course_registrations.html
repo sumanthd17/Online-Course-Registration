@@ -108,11 +108,26 @@
       </div>
     </div>
   </section>
-{{sub}}<br>
-  {% for i in x %}
-{{i}}<br>
-{% endfor %}
 
+<table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Student</th>
+            <th>Subject</th>
+          </tr>
+        </thead>
+        <tbody>
+                {% for i in x %}
+            <tr>
+              <td>{{i}}</td>
+                   
+                <td>{{sub}}
+
+                </td>
+                {% endfor %}
+                </tr>       </tbody>
+      </table>
+ 
   <!-- MODALS -->
 
   <!-- ADD Student MODAL -->

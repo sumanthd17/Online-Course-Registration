@@ -174,11 +174,21 @@ def view_registration(request):
 	for i in list(final_Register.objects.filter(student_id='S20160020125')):
 		k=str(i).split(' - ')
 		li.append(k)
-	final={'x':li}
+	print(li)
+	lis=[]
+	for i in range(len(li)):
+		lis.append(li[i][1])
+	lis=unique(lis)
+	final={'x':lis}
 	print(final)
 	return render(request, 'users/view_registrations.html',final)
 
-
+def unique(list1): 
+	unique_list = [] 
+	for x in list1:
+		if x not in unique_list:
+			unique_list.append(x)
+	return unique_list
 def faculty(request):
 	print('yes')
 	return render(request, 'users/faculty.html')
