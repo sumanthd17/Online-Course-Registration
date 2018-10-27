@@ -168,6 +168,14 @@ def publish_course_registration(request):
 		print(final)
 	return render(request, 'users/publish_course_registrations.html',final)
 
+def ClassRoaster(request):
+	if request.method == 'POST':
+		register = list(Register.objects.all())
+		reg = []
+		for i in register:
+			reg.append(str(i).split(' - '))
+	return render(request,'users/faculty.html')
+
 def view_registration(request):
 	roll_no='S20160020125'
 	li=[]
@@ -189,6 +197,7 @@ def unique(list1):
 		if x not in unique_list:
 			unique_list.append(x)
 	return unique_list
+
 def faculty(request):
 	print('yes')
 	return render(request, 'users/faculty.html')
