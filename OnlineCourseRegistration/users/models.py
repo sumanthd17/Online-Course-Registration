@@ -48,6 +48,12 @@ class Register(models.Model):
 	def __str__(self):
 		return u'%s - %s' % (self.student_id, self.course) 
 
+class final_Register(models.Model):
+	student_id = models.CharField(max_length=20, null=True)
+	course = models.CharField(max_length=20, null=True)
+	def __str__(self):
+		return u'%s - %s' % (self.student_id, self.course) 
+	
 class AuditCourse(models.Model):
 	roll = models.CharField(max_length=20)
 	name = models.CharField(max_length=20)

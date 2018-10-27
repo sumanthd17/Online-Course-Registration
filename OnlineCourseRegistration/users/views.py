@@ -4,7 +4,7 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, Register
+from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, Register, final_Register
 from django.views import View
 import operator
 
@@ -154,8 +154,29 @@ def publish_course_registration(request):
 		for i in range(len(enroll_sorted)):
 			enroll_list.append(enroll_sorted[i][0])
 		print(enroll_list)
-	return HttpResponseRedirect('/users')
 
+		for i in range(len(enroll_list)):
+			final = final_Register()
+			final.student_id = enroll_list[i]
+			final.course=subject
+			final.save()
+		li=[]
+		for i in list(final_Register.objects.filter(course=subject)):
+			k=str(i).split(' - ')
+			li.append(k)
+		final={'x':enroll_list , 'sub':subject}
+		print(final)
+	return render(request, 'users/publish_course_registrations.html',final)
+
+def view_registration(request):
+	roll_no='S20160020125'
+	li=[]
+	for i in list(final_Register.objects.filter(student_id='S20160020125')):
+		k=str(i).split(' - ')
+		li.append(k)
+	final={'x':li}
+	print(final)
+	return render(request, 'users/view_registrations.html',final)
 
 
 def faculty(request):
