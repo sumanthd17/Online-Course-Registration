@@ -4,6 +4,7 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
+<<<<<<< HEAD
 from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, BufferSpecialPermissionsTable
 from .models import *
 from django.contrib.auth import login, logout
@@ -11,6 +12,11 @@ from django.views import View
 from django.contrib.auth import *
 import requests, json
 from .models import Course, Detail,AcademicCourse
+=======
+from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, Register, final_Register
+from django.views import View
+import operator
+>>>>>>> 1f01152c4d00dd2b1ec0f7b81797c2e01c0c65aa
 
 
 # Create your views here.
@@ -171,7 +177,104 @@ def audit_course(request):
 
 def publish_course_registration(request):
 	if request.method == 'POST':
-		print('req reieved')
+		subject = request.POST.get('course')
+		print('subject')
+		print(subject)
+		course = list(Course.objects.all())
+		c = []
+		#print('course')
+		#print(course)
+		for i in course:
+			c.append(str(i).split(' - '))
+		for i in c:
+			if subject in i:
+				max = i[-1]
+				break
+		#print('max')
+		#print(max)
+		student_list = []
+		student = list(Student.objects.all())
+		#print('student')
+		#print(student)
+		for i in student:
+			student_list.append(str(i).split(' - '))
+		student_list_sel = []
+		#print('student_list')
+		#print(student_list)
+		"""for i in student_list:
+			if subject in i:
+				student_list_sel.append(i)
+		"""
+		register = list(Register.objects.all())
+		reg = []
+		for i in register:
+			reg.append(str(i).split(' - '))
+		for i in reg:
+			if subject in i:
+				student_list_sel.append(i)
+		#print('student_list_sel')
+		#print(student_list_sel)
+		enroll_dict = {}
+		#print('reg')
+		#print(reg)
+		for i in student_list_sel:
+			for j in student_list:
+				if i[0] == j[1]:
+					enroll_dict[i[0]] = j[-1]
+		#print('enroll_dict')
+		#print(enroll_dict)
+		enroll_sorted = sorted(enroll_dict.items(), key=lambda kv:kv[1], reverse=True)
+		#print('enroll_sorted')
+		#print(enroll_sorted)
+		enroll_list = []
+		#print('len')
+		#print(len(enroll_list))
+		for i in range(len(enroll_sorted)):
+			enroll_list.append(enroll_sorted[i][0])
+		print(enroll_list)
+
+		for i in range(len(enroll_list)):
+			final = final_Register()
+			final.student_id = enroll_list[i]
+			final.course=subject
+			final.save()
+		li=[]
+		for i in list(final_Register.objects.filter(course=subject)):
+			k=str(i).split(' - ')
+			li.append(k)
+		final={'x':enroll_list , 'sub':subject}
+		print(final)
+	return render(request, 'users/publish_course_registrations.html',final)
+
+def ClassRoaster(request):
+	if request.method == 'POST':
+		register = list(Register.objects.all())
+		reg = []
+		for i in register:
+			reg.append(str(i).split(' - '))
+	return render(request,'users/faculty.html')
+
+def view_registration(request):
+	roll_no='S20160020125'
+	li=[]
+	for i in list(final_Register.objects.filter(student_id='S20160020125')):
+		k=str(i).split(' - ')
+		li.append(k)
+	print(li)
+	lis=[]
+	for i in range(len(li)):
+		lis.append(li[i][1])
+	lis=unique(lis)
+	final={'x':lis}
+	print(final)
+	return render(request, 'users/view_registrations.html',final)
+
+def unique(list1): 
+	unique_list = [] 
+	for x in list1:
+		if x not in unique_list:
+			unique_list.append(x)
+	return unique_list
 
 def faculty(request):
 	print('yes')

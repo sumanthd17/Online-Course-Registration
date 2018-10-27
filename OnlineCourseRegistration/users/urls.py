@@ -20,6 +20,7 @@ urlpatterns = [
 	path('<int:course_id>/add_course_details/', views.add_course_details, name='add_course_details'),
 	path('add_grade/',views.add_grade,name='add_grade'),
 	path('publish_course_registration/',views.publish_course_registration, name='publish_course_registration'),
+	path('view_registration/',views.view_registration, name='view_registration'),
 	path('faculty/', views.faculty, name='faculty'),
 	path('Students.html/', CourseListView.as_view(),name='MyCourseList'),
 	path('<int:course_id>/special_req/', views.special_req, name='special_req'),
