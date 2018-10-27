@@ -71,3 +71,14 @@ class AcademicCourse(models.Model):
 
     def __str__(self):
     	return self.description
+
+class AcademicProgBatchSemCourse(models.Model):
+    academic_prog_batch_sem_course_id = models.IntegerField(db_column='Academic_Prog_Batch_Sem_Course_Id', primary_key=True,unique=True)  # Field name made lowercase.
+    academic_prog_batch_sem_course_sem_num = models.IntegerField(db_column='Academic_Prog_Batch_Sem_Course_Sem_Num')  # Field name made lowercase.
+    academic_prog_batch_sem_course_credits = models.IntegerField(db_column='Academic_Prog_Batch_Sem_Course_Credits', blank=True, null=True)  # Field name made lowercase.
+    academic_prog_batch_sem_course_eval_code = models.CharField(db_column='Academic_Prog_Batch_Sem_Course_Eval_Code', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    academic_prog_batch_sem_course_status = models.CharField(db_column='Academic_Prog_Batch_Sem_Course_Status', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    academic_prog_batch_sem_coursecol = models.CharField(db_column='Academic_Prog_Batch_Sem_Coursecol', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    
+    def __str__(self):
+    	return self.description

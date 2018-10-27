@@ -199,13 +199,22 @@ class CourseListView(View):
 	
 	def post(self, request, *args, **kwargs):
 		print("Received post request")
-		idval = request.POST['cid']
-		print("In post id is "+str(idval))
+		tosave = request.POST.getlist('saveCourse')
+		print(tosave[0])
+		academiccourse = get_object_or_404(AcademicCourse, pk=tosave[0])
+		print(academiccourse.academic_course_description," ",academiccourse.academic_course_name)
+		tablesave = AcademicProgBatchSemCourse.objects.create(academic_prog_batch_sem_course_id=tosave[0],academic_prog_batch_sem_course_sem_num=5,academic_prog_batch_sem_course_credits=4,academic_prog_batch_sem_course_eval_code='1',academic_prog_batch_sem_course_status ='open',academic_prog_batch_sem_coursecol='')
+		querysets = AcademicCourse.objects.exclude(academic_course_id=tosave[0]).only("academic_course_id", "academic_course_name")
+		messages.success(request, 'Course record saved successfully!')
+		return render(request,self.template_name,{'querysets': querysets})
+		
+		
+		
 		
 	def coursedetails(request, academic_course_id,val):
 		academiccourse = get_object_or_404(AcademicCourse, pk=academic_course_id)
 		print(academiccourse.academic_course_description," ",academiccourse.academic_course_name)
-		return redirect('/users/coursedetails.html',academiccourse=academiccourse)
+		return HttpResponseRedirect('/users/coursedetails.html')
 		#return render(request,'users/coursedetails.html',{'querysets': querysets})	
 		#return HttpResponseRedirect('/users/coursedetails.html')
 		#return render(request, "users/coursedetails.html", {'academiccourse':academiccourse})
