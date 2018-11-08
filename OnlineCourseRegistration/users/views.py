@@ -4,7 +4,7 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 
-<<<<<<< HEAD
+
 from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, BufferSpecialPermissionsTable
 from .models import *
 from django.contrib.auth import login, logout
@@ -12,11 +12,9 @@ from django.views import View
 from django.contrib.auth import *
 import requests, json
 from .models import Course, Detail,AcademicCourse
-=======
 from .models import Course, Detail, Grade, Student, AuditCourse, AcademicCourse, Register, final_Register
 from django.views import View
 import operator
->>>>>>> 1f01152c4d00dd2b1ec0f7b81797c2e01c0c65aa
 
 
 # Create your views here.
