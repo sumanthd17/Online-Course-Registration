@@ -118,10 +118,13 @@ function showMsg(msg) {
       <div class="row">
 <!--- left pane ---->
         <div class="col-md-2 center mt-4">
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Audit Course">Audit Course</button> <br>
+          <a href="{% url 'users:audit_course' %}" class="nav-link"> <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Audit Course">Audit Course</button></a> <br>
+        <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Check Course">Check Availability</button> <br>
          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Add Course">Add Course</button> <br>
           <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Drop Course">Drop Course</button>
-       </div>
+          <a href="{% url 'users:view_registration' %}" class="nav-link"><button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Drop Course">View Registration</button></a>
+
+        </div>
         
           
 <!----Middle pane ------>      

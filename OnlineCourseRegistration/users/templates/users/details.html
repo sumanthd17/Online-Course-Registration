@@ -1,4 +1,6 @@
 <h1>{{ course.name }}</h1>
+<h3>{{ course.prof }}</h3>
+<h3>{{ course.description }}</h3>
 
 {% for details in course.detail_set.all %}
 	<h2>{{ details.min_GPA }}</h2>
@@ -41,23 +43,31 @@
 				    <form action="{% url 'users:add_course_details' course.id %}" method="POST" accept-charset="UTF-8">
 				      {% csrf_token %}
 				      <div class="form-group">
-				        <label>Min GPA</label>
-				        <input type="text" class="form-control" name="min_GPA">
-				        <label>Description</label>
-				        <input type="text" class="form-control" name="description">
-				      </div>
-				      <!-- <div class="form-group">
-				        <label for="password">Password</label>
-				        <input type="password" class="form-control">
-				      </div>
-				      <div class="form-group">
-				        <label for="password2">Confirm Password</label>
-				        <input type="password" class="form-control">
-				      </div> -->
-				      <input type="submit" name="users"/>
-				      <!-- <div class="modal-footer">
-				        <button class="btn btn-warning" data-dismiss="modal">Save Changes</button>
-				      </div> -->
+			              <label>Course Name</label>
+			              <input name="name" type="text" class="form-control">
+			              <label>Faculty</label>
+			              <input name="prof" type="text" class="form-control">
+			              <label>Max Students</label>
+			              <input name="max_students" type="text" class="form-control">
+			              <label>Rigour</label>
+			              <input type="text" name="rigour" class="form-control">
+			              <label>Level</label>
+			              <input type="text" name="level" class="form-control">
+			              <div class="form-group">
+			              <label for="category">Pre Requisite</label>
+			              <select class="form-control" name="pre_req">
+			                <option value="1">Yes</option>
+			                <option value="0">No</option>
+			              </select>
+			              </div>
+			              <label>Delivery Mode</label>
+			              <input type="text" name="delivery_mode" class="form-control">
+			              <label>Description</label>
+			              <input type="text" name="description" class="form-control">
+			            </div>
+			            <input type="submit" name="users"/>
+			          </form>
+			        </div>
 				    </form>
 				  </div>
 				</div>
@@ -68,7 +78,7 @@
 		<section id="actions" class="py-4 mb-4 bg-light">
 		<div class="container">
 		  <div class="row">
-		    <div class="col-md-3">
+		    <div class="col-md-5">
 		      <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#addSpecialRequestModal">
 		        <i class="fas fa-plus"></i> Independent Study / Additional Project
 		      </a>
@@ -90,7 +100,7 @@
 				    <form action="{% url 'users:special_req' course.id %}" method="POST" accept-charset="UTF-8">
 				      {% csrf_token %}
 				      <div class="form-group">
-				          <label for="category">Request</label>
+					      <label for="category">Request</label>
 			              <select class="form-control" name="req">
 			                <option value="Independent Study">Independent Study</option>
 			                <option value="Additional Project">Additional Project</option>
@@ -116,15 +126,19 @@
 		                <tr>
 		                  <th>#</th>
 		                  <th>Course Name</th>
+		                  <th>Student</th>
 		                  <th>Request</th>
+		                  <th>Status</th>
 		                </tr>
 		              </thead>
 		              <tbody>
-		                {% for request in course.specialpermissions_set.all %}
+		                {% for request in course.bufferspecialpermissionstable_set.all %}
 		                  <tr>
 		                    <td>{{request.id}}</td>
 		                    <td>{{request.course}}</td>
+		                    <td>{{user.username}}</td>
 		                    <td>{{request.req}}</td>
+		                    <td>{{request.status}}</td>
 		                {% endfor %}
 		              </tbody>
 		            </table>

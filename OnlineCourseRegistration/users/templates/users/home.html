@@ -4,7 +4,6 @@
 {# % block title %}Home{% endblock % #}
 
 {% block content %}
-{% if user.is_authenticated %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +30,7 @@
             <a href="/index.html" class="nav-link active">Dashboard</a>
           </li>
           <li class="nav-item px-2">
-            <a href="users/Students.html" class="nav-link">Students</a>
+            <a href="Students.html" class="nav-link">Students</a>
           </li>
           <li class="nav-item px-2">
             <a href="categories.html" class="nav-link">Subjects</a>
@@ -93,12 +92,17 @@
         </div>        
         <div class="col-md-3">
           <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
-            <i class="fas fa-plus"></i> Add Grades
+            <i class="fas fa-plus"></i> Add Grade
           </a>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#publishCourseRegistrationsModal">
               <i class="fas fa-plus"></i> Publish Course Reg
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'users:approve_req' %}" class="btn btn-success btn-block">
+              <i class="fas fa-plus"></i> Approve Requests
             </a>
         </div>
         <!-- <div class="col-md-3">
@@ -149,7 +153,7 @@
               <h4 class="display-4">
                 <i class="fas fa-pencil-alt"></i> {{ total_courses }}
               </h4>
-              <a href="posts.html" class="btn btn-outline-light btn-sm">View</a>
+              <!-- <a href="posts.html" class="btn btn-outline-light btn-sm">View</a> -->
             </div>
           </div>
 
@@ -157,9 +161,9 @@
             <div class="card-body">
               <h3>Prof</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> 4
+                <i class="fas fa-chalkboard-teacher"></i>
               </h4>
-              <a href="categories.html" class="btn btn-outline-light btn-sm">View</a>
+              <!-- <a href="categories.html" class="btn btn-outline-light btn-sm">View</a> -->
             </div>
           </div>
 
@@ -244,6 +248,21 @@
               <input name="prof" type="text" class="form-control">
               <label>Max Students</label>
               <input name="max_students" type="text" class="form-control">
+              <label>Rigour</label>
+              <input type="text" name="rigour" class="form-control">
+              <label>Level</label>
+              <input type="text" name="level" class="form-control">
+              <div class="form-group">
+              <label for="category">Pre Requisite</label>
+              <select class="form-control" name="pre_req">
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+              </select>
+              </div>
+              <label>Delivery Mode</label>
+              <input type="text" name="delivery_mode" class="form-control">
+              <label>Description</label>
+              <input type="text" name="description" class="form-control">
             </div>
             <input type="submit" name="users"/>
           </form>
@@ -333,8 +352,4 @@
 </body>
 
 </html>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> |
-{% endif %}
 {% endblock %}
