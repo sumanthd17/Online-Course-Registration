@@ -98,6 +98,11 @@ def add_course(request):
 		course = Course()
 		course.name = request.POST.get('name')
 		course.prof = request.POST.get('prof')
+		course.description = request.POST.get('description')
+		course.rigour = request.POST.get('rigour')
+		course.level = request.POST.get('level')
+		course.pre_req = request.POST.get('pre_req')
+		course.delivery_mode = request.POST.get('delivery_mode')
 		#students = request.POST.get('max_students')
 		try:
 			course.max_students = request.POST.get('max_students')
@@ -116,11 +121,27 @@ def add_course_details(request, course_id):
 	# details = Detail.objects.create(pk=course_id)
 	# print(details.min_GPA)
 	if request.method == 'POST':
-		details = Detail.objects.create(course_id=course_id, min_GPA=request.POST.get('min_GPA'), description=request.POST.get('description'))
-		# details = Detail.objects.get(pk=course_id)
-		details.min_GPA = request.POST.get('min_GPA')
-		details.description = request.POST.get('description')
-		details.save()
+		course = get_object_or_404(Course, pk=course_id)
+		course.name = request.POST.get('name')
+		course.prof = request.POST.get('prof')
+		course.description = request.POST.get('description')
+		course.rigour = request.POST.get('rigour')
+		course.level = request.POST.get('level')
+		course.pre_req = request.POST.get('pre_req')
+		course.delivery_mode = request.POST.get('delivery_mode')
+		#students = request.POST.get('max_students')
+		try:
+			course.max_students = request.POST.get('max_students')
+		#course.max_students = int(request.POST.get('max_students', ''))
+		except ValueError:
+			course.max_students = 0
+
+		course.save()
+		# details = Detail.objects.create(course_id=course_id, min_GPA=request.POST.get('min_GPA'), description=request.POST.get('description'))
+		# # details = Detail.objects.get(pk=course_id)
+		# details.min_GPA = request.POST.get('min_GPA')
+		# details.description = request.POST.get('description')
+		# details.save()
 	# print(details.min_GPA, details.description)
 		return HttpResponseRedirect('/users')
 	else:
@@ -129,6 +150,7 @@ def add_course_details(request, course_id):
 def special_req(request, course_id):
 	print('req recieved', course_id)
 	if request.method == 'POST':
+		print('qwe')
 		special_req = BufferSpecialPermissionsTable.objects.create(course_id=course_id, req=request.POST.get('req'))
 
 		# special_req = SpecialPermissions.objects.create(course_id=course_id, req=request.POST.get('req'))

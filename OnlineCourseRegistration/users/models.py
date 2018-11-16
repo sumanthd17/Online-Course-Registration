@@ -8,8 +8,13 @@ class CustomUser(AbstractUser):
 		return self.email
 
 class Course(models.Model):
-	name = models.CharField(max_length=20)
-	prof = models.CharField(max_length=20)
+	name = models.TextField(max_length=20)
+	prof = models.TextField(max_length=20)
+	rigour = models.TextField(max_length=2, default=0)
+	level = models.IntegerField(default=0)
+	pre_req = models.BooleanField(default=0)
+	delivery_mode = models.IntegerField(default=0)
+	description = models.TextField(max_length=250, default="description")
 	max_students = models.IntegerField()
 
 	def __str__(self):
@@ -24,8 +29,8 @@ class SpecialPermissions(models.Model):
 
 class BufferSpecialPermissionsTable(models.Model):
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
-	req = models.CharField(max_length=20)
-	status = models.CharField(max_length=4, default='pending')
+	req = models.TextField(max_length=200)
+	status = models.CharField(max_length=20, default='pending')
 	email = models.CharField(max_length=30)
 
 	def __str__(self):

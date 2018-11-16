@@ -4,7 +4,6 @@
 {# % block title %}Home{% endblock % #}
 
 {% block content %}
-{% if user.is_authenticated %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -249,6 +248,21 @@
               <input name="prof" type="text" class="form-control">
               <label>Max Students</label>
               <input name="max_students" type="text" class="form-control">
+              <label>Rigour</label>
+              <input type="text" name="rigour" class="form-control">
+              <label>Level</label>
+              <input type="text" name="level" class="form-control">
+              <div class="form-group">
+              <label for="category">Pre Requisite</label>
+              <select class="form-control" name="pre_req">
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+              </select>
+              </div>
+              <label>Delivery Mode</label>
+              <input type="text" name="delivery_mode" class="form-control">
+              <label>Description</label>
+              <input type="text" name="description" class="form-control">
             </div>
             <input type="submit" name="users"/>
           </form>
@@ -338,13 +352,4 @@
 </body>
 
 </html>
-{% else %}
-  <p>You are not logged in</p>
-  <li class="nav-item">
-    <a href="https://serene-wildwood-35121.herokuapp.com/login/5bd0b1740f4c3c00151cc92a/"
-       class="nav-link">
-        <i class="fas fa-user-alt"></i> Login
-    </a>
-</li>
-{% endif %}
 {% endblock %}
