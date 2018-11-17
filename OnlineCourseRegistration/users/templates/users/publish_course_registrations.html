@@ -36,7 +36,7 @@
             <a href="categories.html" class="nav-link">Subjects</a>
           </li>
           <li class="nav-item px-2">
-              <a href="{% url 'users:faculty'%}" class="nav-link">Faculty</a>
+              <a href="{% url 'users:faculty' %}" class="nav-link">Faculty</a>
             </li>
         </ul>
 
@@ -117,11 +117,11 @@
           </tr>
         </thead>
         <tbody>
-                {% for i in x %}
+                {% for i in student %}
             <tr>
               <td>{{i}}</td>
                    
-                <td>{{sub}}
+                <td>6
 
                 </td>
                 {% endfor %}

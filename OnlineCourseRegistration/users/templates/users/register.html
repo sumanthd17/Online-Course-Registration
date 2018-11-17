@@ -1,0 +1,325 @@
+
+{# % extends 'base.html' % #} 
+
+{# % block title %}Home{% endblock % #}
+
+
+{% block content %}
+
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">   
+   
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+   <link rel="stylesheet" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+   
+        
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.common.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+  
+     
+   <link rel="stylesheet" href="{% static "css/style.css" %}">
+   <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">   
+    
+      
+    
+   
+  <style>
+  .footer {
+  position: absolute;
+  bottom: 1px;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+  z-index:2;
+}  
+
+#mydiv {
+    border: 1px solid black; 
+    display: inline-block;
+    float: left;
+    padding:10px;
+    width:800px;
+    margin-left:60px;
+}
+
+#mydiv2 {
+     display: inline-block;
+    float: right;
+    clear: right;
+    width: 700px; 
+    margin-left:60px;  
+    margin-right:40px;
+}
+
+
+.buttons { 
+  width: 200px;
+  height: 80px;
+  color: #fff;
+   background-color: #007bff;
+   border-color: #007bff;
+   margin-top:25px;
+   margin-left:70px;
+   margin-right:90px;
+   margin-bottom:1px;
+}
+
+#mybtns{
+   position:relative;
+   z-index:1;
+   top:50px; 
+}
+
+  </style> 
+   
+  <title>Online Course Registeration</title>
+  
+  
+  
+ <script language="JavaScript" type="text/javascript">
+   
+ function showMsg(m)
+ {
+    sweetAlert(m);
+ }
+   
+   
+function next(){
+window.history.forward();
+}
+function back(){
+window.history.back();
+}
+
+</script>
+    
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
+    <div class="container">
+      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">Online Course Registration</a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav">
+          <li class="nav-item px-2">
+            <a href="/users/studenthome.html" class="nav-link">Dashboard</a>
+          </li>
+          <li>
+          <a href = "javascript:history.back();" class="nav-link">Back</a>      
+          </li>
+       </ul>
+
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown mr-3">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-user"></i> {{user.username}}
+            </a>
+            <div class="dropdown-menu">
+              <a href="/users/profile.html" class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+              </a>
+              <a href="/users/settings.html" class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link">
+              <i class="fas fa-user-times"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h2 class="text-center">Course Registration Details</h2>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  
+  <section id="student" class="py-4 mb-6 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          Name : {{name}}
+          <BR>
+          Roll Number : {{student_roll_no}}
+          <BR>
+          Year : {{student_cur_year}}
+          <BR>
+          Semester : {{student_cur_sem}}
+          <BR>         
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSTS -->
+  <section id="courses"> 
+      <div class="row"> 
+      <div class="col-lg-6">        
+       <div id="mydiv" class="table-responsive">
+        <h4 class="text-center">Select Course List</h4>
+           <!--------form entry ------->  
+           <form method="POST"  enctype="multipart/form-data" id="cform">
+   			 {% csrf_token %}
+    		{{ form.data }}
+            <table id="ctable" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                   <th></th>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Credits</th>
+                  <th>Faculty</th>                 
+                  <th>Details</th> 
+                  <th></th>                 
+
+                </tr>
+              </thead>
+              <tbody>   
+               {#% from users.models import Courses,Courseregistrations%#}  
+               {% for set in queryvals %}         
+                 <tr data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
+                   <td ><input type="radio" class="cbox" name="saveCourse" value="{{ set.courseregistrations_cid__course_id }}"/> &nbsp; </td>
+                  <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
+                  <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
+                  <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
+                    <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td> 
+
+           <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
+                  <i class="fas fa-angle-double-right"></i>Details</a></td> 
+                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" autocomplete="off" /></td>              
+
+                </tr>
+                {% endfor %}
+               </tbody>
+            </table>        
+          
+            <div class="btn-toolbar float-right mb-0">
+            <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>  
+
+            <div>
+            <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="{{ user.username }}">Submit</button>
+            </div>
+            </div>                         
+            
+           </form>                            
+        </div>  
+     </div>
+           
+<!--- To do list --->
+       <div class="col-lg-6">
+        <div id="mydiv2"  class="table-responsive">
+            <h4 class="text-center">Courses To be Completed</h4>
+             <table id="table2" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th></th>
+                  <th>Course Type</th>
+                  <th>Number of Courses</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td>IT Electives</td>
+                  <td>3</td>
+                  <td>
+                   <a href="/details.html" class="btn btn-secondary">
+                      <i class="fas fa-angle-double-right"></i> Details
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>Mathematics</td>
+                  <td>2</td>
+                  <td>
+                   <a href="/details.html" class="btn btn-secondary">
+                      <i class="fas fa-angle-double-right"></i> Details
+                    </a>
+                  </td>
+                </tr>
+                 </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+     <script>
+     var msg = '{{ message }}';
+     sweetAlert(msg);
+     </script>
+    {% endfor %}
+    {% endif %}    
+    
+</section>
+
+
+     <!-- FOOTER -->
+  <footer id="main-footer" class="footer bg-dark text-white p-0">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="lead text-center">
+            Copyright &copy;
+            <span id="year"></span>
+            ProjectA09
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous">
+    </script>
+    
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+    $('#ctable').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+
+        "lengthMenu": [ 4, 8, 10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 4
+    }
+    );
+} );
+    </script>
+     
+ </body>
+
+</html>
+{% endblock %}
