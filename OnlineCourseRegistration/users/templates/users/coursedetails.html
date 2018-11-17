@@ -142,6 +142,17 @@ window.history.back();
                <td>{{set.course_pre_req}}</td>
                <td>{{set.course_type}}</td>
                <td>{{set.course_credits}}</td>
+                  <th>Course Credits</th>
+                  <th>Faculty</th>                  
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in queryvals %}  
+               <tr>
+               <td>{{set.courseregistrations_cid__course_id}}</td>
+               <td>{{set.courseregistrations_cid__course_name}}</td>
+               <td>{{set.courseregistrations_cid__course_credits}}</td>
+               <td>{{set.courseregistrations_fid__faculty_name}}</td>
                </tr>
                {% endfor %}
               </tbody>

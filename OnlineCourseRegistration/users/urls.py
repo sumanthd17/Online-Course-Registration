@@ -32,5 +32,5 @@ urlpatterns = [
 	path('approve_req/<int:request_id>/special_req_res_acc/', views.special_req_res_acc, name='special_req_res_acc'),
 	path('approve_req/<int:request_id>/special_req_res_dec/', views.special_req_res_dec, name='special_req_res_dec'),
 	#path('studenthome.html/',TemplateView.as_view(template_name='users/studenthome.html'),name="studenthome"),
-	path('studenthome.html/',StudentCourseListView.as_view(),name='MyCourseList'),		
+	path('studenthome.html/',StudentCourseListView.as_view(),name='MyCourseList'),
 ]

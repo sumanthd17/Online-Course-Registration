@@ -3,6 +3,7 @@
 
 {# % block title %}Home{% endblock % #}
 
+
 {% block content %}
 
 {% load staticfiles %}
@@ -35,7 +36,7 @@
   <style>
   .footer {
   position: absolute;
-  bottom: 0;
+  bottom: 1px;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
@@ -162,13 +163,13 @@ window.history.back();
     <div class="container">
       <div class="row">
         <div class="col-md-4">
-          Name : Rusheel Koushik
+          Name : {{name}}
           <BR>
-          Roll Number : 201601074
+          Roll Number : {{student_roll_no}}
           <BR>
-          Year : 3
+          Year : {{student_cur_year}}
           <BR>
-          Semester : 1 
+          Semester : {{student_cur_sem}}
           <BR>         
         </div>
       </div>
@@ -192,9 +193,10 @@ window.history.back();
                   <th>Course Id</th>
                   <th>Course Name</th>
                   <th>Course Credits</th>
-                  <th>Faculty</th>
-                  <th></th>
-                  <th>Details</th>                  
+                  <th>Faculty</th>                 
+                  <th>Details</th> 
+                  <th></th>                 
+
                 </tr>
               </thead>
               <tbody>   
@@ -206,9 +208,11 @@ window.history.back();
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
                   <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
                     <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td> 
-                    <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}"/> </td>
-                  <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' "{{ set.courseregistrations_cid__course_id }}" 1>                  
-                  <i class="fas fa-angle-double-right"></i>Details</a></td>               
+
+           <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
+                  <i class="fas fa-angle-double-right"></i>Details</a></td> 
+                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" autocomplete="off" /></td>              
+
                 </tr>
                 {% endfor %}
                </tbody>
@@ -216,7 +220,10 @@ window.history.back();
           
             <div class="btn-toolbar float-right mb-0">
             <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>  
-            <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="Submit Courselist">Submit</button>
+
+            <div>
+            <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="{{ user.username }}">Submit</button>
+            </div>
             </div>                         
             
            </form>                            
@@ -302,10 +309,11 @@ window.history.back();
     {
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user
-        "lengthMenu": [ 5, 10, 15, 20, 50, 100 ], 
+
+        "lengthMenu": [ 4, 8, 10, 15, 20, 50, 100 ], 
         
         // Set the default no. of rows to display
-        "pageLength": 5
+        "pageLength": 4
     }
     );
 } );

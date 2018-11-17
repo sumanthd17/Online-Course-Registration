@@ -7,7 +7,6 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Count
 
-
 from .models import Course,Grades, Student,Courseregistrations
 from .models import *
 from django.contrib.auth import login, logout
@@ -329,8 +328,21 @@ class CourseListView(View):
 		#queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').prefetch_related('
 		queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 		#values_list('course.course_id','course.course_name','course.course_credits')
-		#print(queryvals)
-		return render(request, self.template_name,{'queryvals': queryvals})
+
+		#queryvals['test']=1
+		context={}
+		context['queryvals']=queryvals
+		myname=request.user
+		student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem').filter(student_email=myname)
+		for i in student:
+			fname = i['student_first_name']			
+			lname = i['student_last_name']
+			name = fname+" "+lname
+			context['name']=name
+			context['student_roll_no']=i['student_roll_no']
+			context['student_cur_year']=i['student_cur_year']
+			context['student_cur_sem']=i['student_curr_sem']
+		return render(request, self.template_name,context)
 			
 	def post(self, request, *args, **kwargs):
 		if 'saveCourseBtn' in request.POST:
@@ -352,6 +364,7 @@ class CourseListView(View):
 				print("Now insert record!!")		
 				tablesave = Studentregistrations.objects.create(studentregistrations_cid=course, studentregistrations_sid=student,studentregistrations_status='S')
 				print("Record saved")
+				tablesave = Studentregistrations.objects.create(studentregistrations_cid=course, studentregistrations_sid=student,studentregistrations_status='S')
 				queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 				messages.success(request, 'Course record saved successfully!')
 			except IntegrityError as e:
@@ -365,7 +378,12 @@ class CourseListView(View):
 		elif 'submitCourseBtn' in request.POST:
 			courseregistrations_cid = request.POST.getlist('saveCourse')
 			myname = request.POST.getlist('saveCourseBtn')
+			myname = request.POST.getlist('submitCourseBtn')
 			myfaculty = request.POST.getlist('fid')
+			print(courseregistrations_cid)
+			print(myname)
+			print(myfaculty)
+
 			try:				
 				student_id = CustomUser.objects.values('id').filter(username=myname[0])
 				#print(student_id)
@@ -375,6 +393,7 @@ class CourseListView(View):
 				student_no = Student.objects.values('student_roll_no').filter(student_Id=sid)
 				for s in student_no:
 					student_roll = s['student_roll_no']
+
 				#print(student_roll)	
 				course = get_object_or_404(Course, pk=courseregistrations_cid[0])	
 				student = get_object_or_404(Student, pk=student_roll)
@@ -384,6 +403,19 @@ class CourseListView(View):
 				if(x > 0):
 					queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 					messages.error(request,'Your Registration already completed!! Wait for Add/Drop Course')
+
+				print(student_roll)	
+				course = get_object_or_404(Course, pk=courseregistrations_cid[0])	
+				student = get_object_or_404(Student, pk=student_roll)
+				checkStatus = Studentregistrations.objects.filter(studentregistrations_sid__in=[student_roll],studentregistrations_status='R').values('studentregistrations_status').annotate(status_count=Count('studentregistrations_status'))
+				print(checkStatus)
+				if checkStatus:
+					for status in checkStatus:
+						x = status['status_count']
+					if(x > 0):
+						queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
+						messages.error(request,'Your Registration already completed!! Wait for Add/Drop Course')
+
 				else:
 					tablesave = Studentregistrations.objects.update_or_create(studentregistrations_cid=course, studentregistrations_sid=student,studentregistrations_status='R')
 					tablesave = Studentregistrations.objects.all().update(studentregistrations_status='R')
@@ -395,6 +427,7 @@ class CourseListView(View):
 			except IndexError as e:
 				queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 				messages.error(request,'Please select a course and submit!!')
+
 			return render(request,self.template_name,{'querysets': querysets})					
 		
 	def coursedetails(request,course_id,val):
@@ -404,6 +437,17 @@ class CourseListView(View):
 		querysets=Course.objects.filter(course_id=cid).only("course_id", "course_name","course_delivery_mode","course_pre_req","course_type","course_credits")
 		return render(request,"users/coursedetails.html",{'querysets': querysets})
 		#return HttpResponseRedirect('/users/coursedetails.html')
+
+			except Exception as e:
+				print(e)
+			return render(request,self.template_name,{'queryvals': queryvals})					
+		
+	def coursedetails(request,course_id,val):
+		print(course_id)
+		print(val)
+		queryvals =Courseregistrations.objects.filter(courseregistrations_cid=course_id,courseregistrations_fid=val).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
+		return render(request,"users/coursedetails.html",{'queryvals': queryvals})
+
 
 class StudentCourseListView(View):
 	model=Studentregistrations

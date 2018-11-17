@@ -17,7 +17,6 @@ class CustomUser(AbstractUser):
 	def __str__(self):
 		return self.email
 
-
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
     course_name = models.CharField(max_length=45)
