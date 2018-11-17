@@ -1,7 +1,4 @@
 
-{# % extends 'base.html' % #} 
-
-{# % block title %}Home{% endblock % #}
 
 {% block content %}
 
@@ -35,12 +32,11 @@
   <style>
   .footer {
   position: absolute;
-  bottom: 0;
+  bottom: 1px;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
   background-color: #f5f5f5;
-  z-index:2;
 }  
 
 #mydiv {
@@ -206,9 +202,9 @@ window.history.back();
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
                   <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
                     <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td> 
-                   <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' '{{ set.courseregistrations_cid__course_id }}' '{{set.courseregistrations_fid__faculty_id}}' %}">                 
+           <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
                   <i class="fas fa-angle-double-right"></i>Details</a></td> 
-                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}"/></td>              
+                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" autocomplete="off" /></td>              
                 </tr>
                 {% endfor %}
                </tbody>
@@ -216,7 +212,9 @@ window.history.back();
           
             <div class="btn-toolbar float-right mb-0">
             <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>  
-            <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="Submit Courselist">Submit</button>
+            <div>
+            <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="{{ user.username }}">Submit</button>
+            </div>
             </div>                         
             
            </form>                            
