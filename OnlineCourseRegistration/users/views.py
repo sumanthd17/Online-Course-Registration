@@ -436,11 +436,7 @@ class CourseListView(View):
 		print(course.course_description," ",course.course_name)
 		querysets=Course.objects.filter(course_id=cid).only("course_id", "course_name","course_delivery_mode","course_pre_req","course_type","course_credits")
 		return render(request,"users/coursedetails.html",{'querysets': querysets})
-		#return HttpResponseRedirect('/users/coursedetails.html')
-
-			except Exception as e:
-				print(e)
-			return render(request,self.template_name,{'queryvals': queryvals})					
+		#return HttpResponseRedirect('/users/coursedetails.html')				
 		
 	def coursedetails(request,course_id,val):
 		print(course_id)
