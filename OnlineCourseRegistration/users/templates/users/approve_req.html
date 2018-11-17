@@ -9,6 +9,65 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA09</a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav">
+          <li class="nav-item px-2">
+            <a href="{% url 'users:index' %}" class="nav-link active">Dashboard</a>
+          </li>
+          <li class="nav-item px-2">
+            <a href="{% url 'users:MyCourseList' %}" class="nav-link">Students</a>
+          </li>
+          <li class="nav-item px-2">
+            <a href="{% url 'users:display_students' %}" class="nav-link">Students</a>
+          </li>
+          <li class="nav-item px-2">
+            <a href="{% url 'users:faculty' %}" class="nav-link">Faculty</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown mr-3">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-user"></i> {{user.username}}
+            </a>
+            <div class="dropdown-menu">
+              <a href="profile.html" class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+              </a>
+              <a href="settings.html" class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link">
+              <i class="fas fa-user-times"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h1>
+            <i class="fas fa-cog"></i> Approve Requests</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<h1></h1>
+
 <section id="posts">
 <div class="container">
   <div class="row">
@@ -25,7 +84,8 @@
               <th>Student</th>
               <th>Request</th>
               <th>Status</th>
-              <th>edit</th>
+              <th>Permission</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>

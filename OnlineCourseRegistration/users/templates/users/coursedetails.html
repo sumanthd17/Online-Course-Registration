@@ -12,7 +12,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
-  
+   <style>
+  .footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}  
+  </style> 
    
   <title>A07 Frontend</title>
   <script type="text/javascript">
@@ -40,16 +49,13 @@ window.history.back();
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav">
           <li class="nav-item px-2">
-            <a href="/index.html" class="nav-link">Dashboard</a>
+            <a href="/studenthome.html" class="nav-link">Student Dashboard</a>
           </li>
           <li class="nav-item px-2">
             <a href="/register.html" class="nav-link active">Register</a>
           </li>  
           <li>
           <a href = "javascript:history.back();" class="nav-link">Back</a>      
-          </li>
-          <li>
-          <a href = "javascript:history.forward();" class="nav-link">Next</a>      
           </li>
         </ul>
 
@@ -121,21 +127,23 @@ window.history.back();
                 <tr>
                   <th>Course Id</th>
                   <th>Course Name</th>
-                  <th>Course Rigour</th>
-                  <th>Course Level</th>
-                  <th>Course Prerequisites</th>
                   <th>Course Delivery Mode</th>
-                  <th>Course Description</th>
+                  <th>Course Prerequisites</th>
+                  <th>Course Type</th>
+                  <th>Course Credits</th>
                 </tr>
               </thead>
               <tbody>
-                <td>2</td>
-                <td>Theory of Computation</td>
-                <td>1</td>
-                <td>2</td>
-                <td>Yes</td>
-                <td>TBD</td>
-                <td>UG3 course</td>
+               {% for set in querysets %}  
+               <tr>
+               <td>{{set.course_id}}</td>
+               <td>{{set.course_name}}</td>
+               <td>{{set.course_delivery_mode}}</td>
+               <td>{{set.course_pre_req}}</td>
+               <td>{{set.course_type}}</td>
+               <td>{{set.course_credits}}</td>
+               </tr>
+               {% endfor %}
               </tbody>
             </table>
           </div>
@@ -149,7 +157,7 @@ window.history.back();
  </section>
  
      <!-- FOOTER -->
-  <footer id="main-footer" class="bg-dark text-white mt-5 p-5">
+  <footer id="main-footer" class="footer bg-dark text-white">
     <div class="container">
       <div class="row">
         <div class="col">
