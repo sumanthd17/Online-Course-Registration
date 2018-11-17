@@ -100,7 +100,7 @@
       <div class="row">
         <div class="col-md-3">
             <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#publishCourseRegistrationsModal">
-              <i class="fas fa-plus"></i> Publish Course Reg
+              <i class="fas fa-plus"></i> Class Roster
             </a>
         </div>
         <div class="col-md-3">
@@ -333,7 +333,7 @@
           <form action="/users/publish_course_registration/" method="POST" accept-charset="UTF-8">
             {% csrf_token %}
             <div class="form-group">
-              <label>Course name</label>
+              <label>Course Id</label>
               <input name="course" type="text" class="form-control">
             </div>
             <input type="submit" name="users"/>

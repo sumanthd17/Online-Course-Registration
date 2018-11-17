@@ -116,6 +116,7 @@ class Student(models.Model):
     student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
     student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
     last_updated = models.DateTimeField(max_length=45,auto_now=True)
+    student_grade = models.CharField(db_column = 'Student_Grade',max_length=100,null=False)
     
     class Meta:
     	managed = True
