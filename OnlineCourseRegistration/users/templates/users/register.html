@@ -26,8 +26,6 @@
    <link rel="stylesheet" href="{% static "css/style.css" %}">
    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">   
     
-      
-    
    
   <style>
   .footer {
@@ -58,23 +56,6 @@
 }
 
 
-.buttons { 
-  width: 200px;
-  height: 80px;
-  color: #fff;
-   background-color: #007bff;
-   border-color: #007bff;
-   margin-top:25px;
-   margin-left:70px;
-   margin-right:90px;
-   margin-bottom:1px;
-}
-
-#mybtns{
-   position:relative;
-   z-index:1;
-   top:50px; 
-}
 
   </style> 
    
@@ -176,7 +157,7 @@ window.history.back();
       <div class="row"> 
       <div class="col-lg-6">        
        <div id="mydiv" class="table-responsive">
-        <h4 class="text-center">Select Course List</h4>
+        <h4 class="text-center">Registration Course List</h4>
            <!--------form entry ------->  
            <form method="POST"  enctype="multipart/form-data" id="cform">
    			 {% csrf_token %}
@@ -196,8 +177,8 @@ window.history.back();
               <tbody>   
                {#% from users.models import Courses,Courseregistrations%#}  
                {% for set in queryvals %}         
-                 <tr data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
-                   <td ><input type="radio" class="cbox" name="saveCourse" value="{{ set.courseregistrations_cid__course_id }}"/> &nbsp; </td>
+                 <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
+                   <td ><input type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_cid__course_id }}"/> &nbsp; </td>
                   <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
                   <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
@@ -210,7 +191,7 @@ window.history.back();
                </tbody>
             </table>        
           
-            <div class="btn-toolbar float-right mb-0">
+            <div class="btn-toolbar float-right mb-1">
             <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>  
             <div>
             <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="{{ user.username }}">Submit</button>
