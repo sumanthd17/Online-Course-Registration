@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.views.generic.base import TemplateView,RedirectView
 
 from . import views
-from  .views import CourseListView,StudentCourseListView
+from  .views import CourseListView,StudentCourseListView,RegCourseListView
 
 #
 
@@ -31,6 +31,8 @@ urlpatterns = [
 	path('approve_req/', views.approve_req, name='approve_req'),
 	path('approve_req/<int:request_id>/special_req_res_acc/', views.special_req_res_acc, name='special_req_res_acc'),
 	path('approve_req/<int:request_id>/special_req_res_dec/', views.special_req_res_dec, name='special_req_res_dec'),
-	#path('studenthome.html/',TemplateView.as_view(template_name='users/studenthome.html'),name="studenthome"),
+	#path('studenthome.html/',TemplateView.as_view(template_name='users/studentehome.html'),name="studenthome"),
 	path('studenthome.html/',StudentCourseListView.as_view(),name='MyCourseList'),
+	path('courselist.html/',RegCourseListView.as_view(),name='regcourselist'),
+
 ]

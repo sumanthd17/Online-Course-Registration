@@ -120,7 +120,6 @@ window.history.back();
        <div class="col-md-9">
           <div class="card">
             <div class="card-header">
-              <h4>Courses</h4>
             </div>
             <table class="table table-striped">
               <thead class="thead-dark">
@@ -143,19 +142,19 @@ window.history.back();
                <td>{{set.course_type}}</td>
                <td>{{set.course_credits}}</td>
                   <th>Course Credits</th>
-                  <th>Faculty</th>                  
                 </tr>
               </thead>
               <tbody>
+                 {#% from users.models import Courses,Courseregistrations%#} 
                {% for set in queryvals %}  
                <tr>
                <td>{{set.courseregistrations_cid__course_id}}</td>
                <td>{{set.courseregistrations_cid__course_name}}</td>
                <td>{{set.courseregistrations_cid__course_credits}}</td>
-               <td>{{set.courseregistrations_fid__faculty_name}}</td>
                </tr>
                {% endfor %}
-              </tbody>
+              </thead>
+             </tbody>
             </table>
           </div>
         </div>

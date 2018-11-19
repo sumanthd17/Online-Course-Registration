@@ -20,8 +20,8 @@ class CustomUser(AbstractUser):
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
     course_name = models.CharField(max_length=45)
-    course_prof = models.CharField(max_length=45, null=False)
-    course_max_students = models.IntegerField(null=False)
+    course_prof = models.CharField(max_length=45, null=True)
+    course_max_students = models.IntegerField(null=True)
     course_delivery_mode = models.CharField(max_length=45, blank=True, null=True)
     course_description = models.CharField(max_length=80, blank=True, null=True)
     course_type = models.CharField(max_length=45)
