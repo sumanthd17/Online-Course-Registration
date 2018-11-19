@@ -17,12 +17,11 @@ class CustomUser(AbstractUser):
 	def __str__(self):
 		return self.email
 
-		
-
-
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
     course_name = models.CharField(max_length=45)
+    course_prof = models.CharField(max_length=45, null=True)
+    course_max_students = models.IntegerField(null=True)
     course_delivery_mode = models.CharField(max_length=45, blank=True, null=True)
     course_description = models.CharField(max_length=80, blank=True, null=True)
     course_type = models.CharField(max_length=45)
@@ -35,8 +34,30 @@ class Course(models.Model):
         managed = True
         db_table = 'Course'
 
+class SpecialPermissions(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    req = models.CharField(max_length=20)
 
-    
+    def __str__(self):
+        return self.req
+
+class BufferSpecialPermissionsTable(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    req = models.TextField(max_length=200)
+    status = models.CharField(max_length=20, default='pending')
+    email = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.req
+
+class Grade(models.Model):
+    student_id = models.CharField(max_length=20, null=True)
+    course = models.CharField(max_length=20, null=True)
+    grade_point = models.CharField(max_length=20, null=True)
+
+    def __str__(self):
+        return u'%s - %s - %s' % (self.student_id, self.course, self.grade_point)
+  
 class Faculty(models.Model):
     faculty_id = models.IntegerField(db_column='Faculty_id', primary_key=True)  # Field name made lowercase.
     faculty_name = models.CharField(db_column='Faculty_name', max_length=80)  # Field name made lowercase.
