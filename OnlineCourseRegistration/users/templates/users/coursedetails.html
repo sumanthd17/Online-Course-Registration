@@ -126,6 +126,21 @@ window.history.back();
                 <tr>
                   <th>Course Id</th>
                   <th>Course Name</th>
+                  <th>Course Delivery Mode</th>
+                  <th>Course Prerequisites</th>
+                  <th>Course Type</th>
+                  <th>Course Credits</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in querysets %}  
+               <tr>
+               <td>{{set.course_id}}</td>
+               <td>{{set.course_name}}</td>
+               <td>{{set.course_delivery_mode}}</td>
+               <td>{{set.course_pre_req}}</td>
+               <td>{{set.course_type}}</td>
+               <td>{{set.course_credits}}</td>
                   <th>Course Credits</th>
                 </tr>
               </thead>

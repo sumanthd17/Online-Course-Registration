@@ -30,7 +30,6 @@
    <link rel="stylesheet" href="{% static "css/style.css" %}">
    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">   
     
-  
 
 
  
@@ -148,6 +147,7 @@ window.history.back();
                   <th>Faculty</th>                 
                   <th>Details</th> 
                   <th></th>                
+
                 </tr>
               </thead>
               <tbody>   
@@ -161,9 +161,8 @@ window.history.back();
                     <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td> 
 
            <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
-                  <i class="fas fa-angle-double-right"></i>Details</a></td> 
-                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" autocomplete="off" />
-                   </td>              
+                  <i class="fas fa-angle-double-right"></i>Details</a></td>              
+                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" autocomplete="off" /></td>              
                 </tr>
                 {% endfor %}
                </tbody>

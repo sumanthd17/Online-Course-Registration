@@ -327,6 +327,7 @@ class CourseListView(View):
 	def get(self, request, *args, **kwargs):
 		queryvals =Courseregistrations.objects.all().select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 		#values_list('course.course_id','course.course_name','course.course_credits')
+
 		#queryvals['test']=1
 		context={}
 		context['queryvals']=queryvals
@@ -345,7 +346,7 @@ class CourseListView(View):
 	def post(self, request, *args, **kwargs):
 		if 'saveCourseBtn' in request.POST:
 			try:
-				courseregistrations_cid = request.POST.getlist('saveCourse')
+			  courseregistrations_cid = request.POST.getlist('saveCourse')
 				myname = request.POST.getlist('saveCourseBtn')
 				myfaculty = request.POST.getlist('fid')
 				listlen = len(courseregistrations_cid)
