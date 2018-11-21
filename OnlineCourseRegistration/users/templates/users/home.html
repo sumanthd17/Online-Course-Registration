@@ -27,13 +27,13 @@
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav">
           <li class="nav-item px-2">
-            <a href="{% url 'users:index' %}" class="nav-link active">Dashboard</a>
+            <a href="/index.html" class="nav-link active">Dashboard</a>
           </li>
           <li class="nav-item px-2">
-            <a href="{% url 'users:MyCourseList' %}" class="nav-link">Students</a>
+            <a href="Students.html" class="nav-link">Students</a>
           </li>
           <li class="nav-item px-2">
-            <a href="{% url 'users:display_students' %}" class="nav-link">Students</a>
+            <a href="categories.html" class="nav-link">Subjects</a>
           </li>
           <li class="nav-item px-2">
             <a href="{% url 'users:faculty' %}" class="nav-link">Faculty</a>
@@ -91,25 +91,18 @@
           </a>
         </div>        
         <div class="col-md-3">
-          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addGradeModal">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
             <i class="fas fa-plus"></i> Add Grade
           </a>
         </div>
-      </div>
-      <h1></h1>
-      <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#publishCourseRegistrationsModal">
               <i class="fas fa-plus"></i> Publish Course Reg
             </a>
         </div>
-        <div class="col-md-3">
-            <a href="{% url 'users:approve_req' %}" class="btn btn-primary btn-block">
+        <div class="col-md-4">
+            <a href="{% url 'users:approve_req' %}" class="btn btn-success btn-block">
               <i class="fas fa-plus"></i> Approve Requests
-            </a>
-        </div>
-         <div class="col-md-3">
-            <a href="users/courselist.html" class="btn btn-success btn-block">Registration Courses & Rules
             </a>
         </div>
         <!-- <div class="col-md-3">
@@ -143,11 +136,11 @@
               <tbody>
                 {% for course in courses %}
                   <tr>
-                    <td>{{course.courseid}}</td>
-                    <td>{{course.course_prof}}</td>
-                    <td>{{course.course_name}}</td>
-                    <td>{{course.course_max_students}}</td>
-                    <td><a href="{% url 'users:details' course.course_id%}">details</a></td>
+                    <td>{{course.id}}</td>
+                    <td>{{course.prof}}</td>
+                    <td>{{course.name}}</td>
+                    <td>{{course.max_students}}</td>
+                    <td><a href="{% url 'users:details' course.id%}">details</a></td>
                 {% endfor %}
               </tbody>
             </table>
@@ -249,14 +242,10 @@
           <form action="/users/add_course/" method="POST" accept-charset="UTF-8">
             {% csrf_token %}
             <div class="form-group">
-              <label>Course ID</label>
-              <input name="id" type="text" class="form-control">
               <label>Course Name</label>
               <input name="name" type="text" class="form-control">
               <label>Faculty</label>
               <input name="prof" type="text" class="form-control">
-              <label>Type</label>
-              <input name="type" type="text" class="form-control">
               <label>Max Students</label>
               <input name="max_students" type="text" class="form-control">
               <label>Rigour</label>
@@ -270,11 +259,6 @@
                 <option value="0">No</option>
               </select>
               </div>
-              <label for="category">Credits</label>
-              <select class="form-control" name="credits">
-                <option value="2">2</option>
-                <option value="4">4</option>
-              </select>
               <label>Delivery Mode</label>
               <input type="text" name="delivery_mode" class="form-control">
               <label>Description</label>
