@@ -1,9 +1,7 @@
 <!-- templates/home.html -->
-{# % extends 'base.html' % #} 
-
-{# % block title %}Home{% endblock % #}
 
 {% block content %}
+
 {% if user.is_authenticated %}
 {% load staticfiles %}
 
@@ -19,7 +17,13 @@
     crossorigin="anonymous">
     
   <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
-    
+  
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.common.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+  
+     
+   <link rel="stylesheet" href="{% static "css/style.css" %}">    
   <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">
   
     
@@ -132,27 +136,41 @@ window.history.back();
             <div class="card-header">
               <h4>My Course List</h4>
             </div>
+             <form method="POST"  enctype="multipart/form-data" id="mform">
+   			 {% csrf_token %}
+    		{{ form.data }}
             <table id="courseTable" class="table table-striped" name="mycourses" value="{{user.id}}">
               <thead class="thead-dark">
                 <tr>
+                  <th></th>
                   <th>Course Id</th>
                   <th>Course Name</th>
                   <th>Course Credits</th>
+                  <th>Registration Status</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
-                {#% from users.models import CourseRegistrations %#}
+                {#% from users.models import StudentRegistrations %#}
                 {% for s in queryvals %}
-                <tr>
-                {% for i in s %}                  
-                    <td>{{ i }}</td>                   
-                {% endfor %}
-                </tr>
+                <tr name="crow" data-toggle="modal" data-id="{{ s.studentregistrations_sid}}">
+                   <td ><input type="checkbox" class="cbox" name="delCourse" value="{{s.studentregistrations_cid__course_id}}"/> &nbsp; </td>  
+                   <td id="scid" name="scid"> {{s.studentregistrations_cid__course_id}}</td>
+                  <td id="scname" name="scname">{{s.studentregistrations_cid__course_name}}</td> 
+                  <td id="scredit" name="scredits">{{s.studentregistrations_cid__course_credits}}</td> 
+                  <td id="scstatus" name="scstatus">{{s.studentregistrations_status}}</td>   
+                  <td><input type="checkbox" name="scsid" style="display:none" value="{{s.studentregistrations_sid}}"></td>                                                    
+               </tr>
                 {% endfor %}
               </tbody>
             </table>
+             <div class="btn-toolbar float-right mb-1">
+            <button type="submit" class="btn btn-primary btn-md mr-3"  id="delcourse" name="delCourseBtn" value="{{ user.user}}">Delete Course</button> 
+            </div>
+            </form>
           </div>
         </div>
+       
         <div class="col-md-3">
           <div class="card text-center bg-primary text-white mb-3">
             <div class="card-body">
@@ -177,7 +195,15 @@ window.history.back();
         </div>
       </div>
     </div>
-  </section>
+    {% if messages %}
+    {% for message in messages %}
+     <script>
+     var msg = '{{ message }}';
+     sweetAlert(msg);
+     </script>
+    {% endfor %}
+    {% endif %}      
+ </section>
   
     
 <!-- View Courses MODAL -->
@@ -191,8 +217,8 @@ window.history.back();
         <div class="modal-body">
           <form action="" method="GET" accept-charset="UTF-8">
             {% csrf_token %}
-              <table id="courseist" class="table table-striped">
-              <thead class="thead-dark">
+              <table id="courseList" class="table table-striped">
+              <thead>
                 <tr>
                   <th>Course Id</th>
                   <th>Course Name</th>
@@ -220,6 +246,21 @@ window.history.back();
     </div>
   </div>
 
+  <!-- FOOTER -->
+  <footer id="main-footer" class="footer fixed-bottom bg-dark text-white p-0">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="lead text-center">
+            Copyright &copy;
+            <span id="year">2018 </span>
+            Online Course Registration
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
  
  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -241,12 +282,18 @@ window.history.back();
     }
     );
 } );
+    
+
     </script>
+
+{% else %}
+ <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a> 
+{% endif %}
+{% endblock %}
+
 </body>
 
 </html>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> |
-{% endif %}
-{% endblock %}
+
+

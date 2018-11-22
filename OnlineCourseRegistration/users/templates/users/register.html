@@ -1,7 +1,6 @@
-
-
 {% block content %}
 
+{% if user.is_authenticated %}
 {% load staticfiles %}
 
 <!DOCTYPE html>
@@ -26,38 +25,9 @@
    <link rel="stylesheet" href="{% static "css/style.css" %}">
    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">   
     
-   
-  <style>
-  .footer {
-  position: absolute;
-  bottom: 1px;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  background-color: #f5f5f5;
-}  
-
-#mydiv {
-    border: 1px solid black; 
-    display: inline-block;
-    float: left;
-    padding:10px;
-    width:800px;
-    margin-left:60px;
-}
-
-#mydiv2 {
-     display: inline-block;
-    float: right;
-    clear: right;
-    width: 700px; 
-    margin-left:60px;  
-    margin-right:40px;
-}
 
 
-
-  </style> 
+ 
    
   <title>Online Course Registeration</title>
   
@@ -155,7 +125,7 @@ window.history.back();
   <!-- POSTS -->
   <section id="courses"> 
       <div class="row"> 
-      <div class="col-lg-6">        
+      <div class="col-lg-8">        
        <div id="mydiv" class="table-responsive">
         <h4 class="text-center">Registration Course List</h4>
            <!--------form entry ------->  
@@ -163,29 +133,29 @@ window.history.back();
    			 {% csrf_token %}
     		{{ form.data }}
             <table id="ctable" class="table table-striped">
-              <thead class="thead-dark">
+              <thead>
                 <tr>
                    <th></th>
                   <th>Course Id</th>
                   <th>Course Name</th>
                   <th>Course Credits</th>
-                  <th>Faculty</th>                 
-                  <th>Details</th> 
-                  <th></th>                 
+                  <th>Faculty Name</th>
+                  <th>Faculty Id</th>               
+                  <th>Details</th>                           
                 </tr>
               </thead>
               <tbody>   
                {#% from users.models import Courses,Courseregistrations%#}  
                {% for set in queryvals %}         
                  <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
-                   <td ><input type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_cid__course_id }}"/> &nbsp; </td>
+                   <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_cid_id }}"/> &nbsp; </td>
                   <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
                   <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
-                    <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td> 
-           <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
-                  <i class="fas fa-angle-double-right"></i>Details</a></td> 
-                   <td ><input type="hidden" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" autocomplete="off" /></td>              
+                    <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td>                        
+                    <td><input type="text" size="2" name="fid" value="{{ set.courseregistrations_fid__faculty_id }}" class="border-0 bg-transparent"/></td> 
+                    <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
+                  <i class="fas fa-angle-double-right"></i>Details</a></td>            
                 </tr>
                 {% endfor %}
                </tbody>
@@ -193,17 +163,17 @@ window.history.back();
           
             <div class="btn-toolbar float-right mb-1">
             <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>  
+
             <div>
             <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="{{ user.username }}">Submit</button>
             </div>
-            </div>                         
-            
+            </div>                      
            </form>                            
         </div>  
      </div>
            
 <!--- To do list --->
-       <div class="col-lg-6">
+       <div class="col-lg-3">
         <div id="mydiv2"  class="table-responsive">
             <h4 class="text-center">Courses To be Completed</h4>
              <table id="table2" class="table table-striped">
@@ -253,20 +223,21 @@ window.history.back();
 </section>
 
 
-     <!-- FOOTER -->
-  <footer id="main-footer" class="footer bg-dark text-white p-0">
+ <!-- FOOTER -->
+  <footer id="main-footer" class="footer fixed-bottom bg-dark text-white p-0">
     <div class="container">
       <div class="row">
         <div class="col">
           <p class="lead text-center">
             Copyright &copy;
-            <span id="year"></span>
-            ProjectA09
+            <span id="year">2018 </span>
+            Online Course Registration
           </p>
         </div>
       </div>
     </div>
   </footer>
+
   
    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -281,6 +252,7 @@ window.history.back();
     {
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user
+
         "lengthMenu": [ 4, 8, 10, 15, 20, 50, 100 ], 
         
         // Set the default no. of rows to display
@@ -288,9 +260,17 @@ window.history.back();
     }
     );
 } );
-    </script>
-     
- </body>
 
+    
+</script>
+
+
+{% else %}
+ <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a> 
+{% endif %}
+     
+</body>
 </html>
 {% endblock %}
+
