@@ -148,7 +148,7 @@ window.history.back();
                {#% from users.models import Courses,Courseregistrations%#}  
                {% for set in queryvals %}         
                  <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
-                   <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_cid_id }}"/> &nbsp; </td>
+                   <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_id }}"/> &nbsp; </td>
                   <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
                   <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
