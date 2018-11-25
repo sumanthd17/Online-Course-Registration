@@ -112,14 +112,20 @@ window.history.back();
         <div class="col-md-3">
           <a href="/users/register.html" class="btn btn-primary btn-block">Course Registeration</a>
         </div>
-        <div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">
-            <i class="fas fa-plus"></i> Audit Course
-          </a>
-        </div>  
-         <div class="col-md-3">
-          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#viewGradesModal">Drop Course</a>
-        </div> 
+          <div class="col-md-3">
+          {% if enable %}
+           <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">Add Course</a>
+           {% else %}
+           <a href="#" class="btn btn-success btn-block disabled"" data-toggle="modal" data-target="#addCourseModal">Add Course</a>
+           {% endif %}
+           </div> 
+          <div class="col-md-3">
+           {% if enable %}
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#dropCourseModal">Drop Course</a>
+          {% else %}
+          <a href="#" class="btn btn-primary btn-block disabled" data-toggle="modal" data-target="#dropCourseModal">Drop Course</a>
+          {% endif %}
+          </div> 
          <div class="col-md-3">
           <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#viewGradesModal">View Grades</a>
         </div>       
@@ -147,6 +153,7 @@ window.history.back();
                   <th>Course Name</th>
                   <th>Course Credits</th>
                   <th>Registration Status</th>
+                  <th>Audit Option</th>
                   <th></th>
                 </tr>
               </thead>
@@ -158,8 +165,8 @@ window.history.back();
                    <td id="scid" name="scid"> {{s.studentregistrations_cid__course_id}}</td>
                   <td id="scname" name="scname">{{s.studentregistrations_cid__course_name}}</td> 
                   <td id="scredit" name="scredits">{{s.studentregistrations_cid__course_credits}}</td> 
-                  <td id="scstatus" name="scstatus">{{s.studentregistrations_status}}</td>   
-                  <td><input type="checkbox" name="scsid" style="display:none" value="{{s.studentregistrations_sid}}"></td>                                                    
+                  <td id="scstatus" name="scstatus">{{s.studentregistrations_status}}</td>
+                    <td id="scaudit" name="scaudit">{{s.studentregistrations_auditoption}}</td>                                                                     
                </tr>
                 {% endfor %}
               </tbody>
@@ -170,10 +177,13 @@ window.history.back();
             </form>
           </div>
         </div>
-       
-        <div class="col-md-3">
-          <div class="card text-center bg-primary text-white mb-3">
-            <div class="card-body">
+      
+      
+      
+      
+    <div class="col-md-3 py-4">      
+         <div class="card text-center bg-primary text-white mb-3">  
+            <div class="card-body">              
               <h3>Courses</h3>
               <h4 class="display-4">
                 <i class="fas fa-folder"></i> {{ total_courses }}
@@ -181,20 +191,20 @@ window.history.back();
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewCoursesModal">View</a>
             </div>
           </div>
-
-          <div class="card text-center bg-success text-white mb-3">
-            <div class="card-body">
+      
+         <div class="card text-center bg-success text-white">  
+            <div class="card-body">              
               <h3>Faculty</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> 4
+                <i class="fas fa-folder"></i> {{ total_faculty }}
               </h4>
-              <a href="#" class="btn btn-outline-light btn-sm">View</a>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewFacultyModal">View</a>
             </div>
           </div>
-         </div>
-        </div>
-      </div>
-    </div>
+       </div>
+    </div>   
+       
+   
     {% if messages %}
     {% for message in messages %}
      <script>
@@ -204,6 +214,65 @@ window.history.back();
     {% endfor %}
     {% endif %}      
  </section>
+  
+  
+<!-- Add Course MODAL -->
+  <div class="modal fade" id="addCourseModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course Details</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+              <div class="row">
+    		<div class="form-group col-lg-12">
+    		<label class="mr-2">Course Type</label><input name="ctype" class="mr-2" size="15" type="text" value="" required/>
+    		<label class="mr-2">Course Name</label><input name="cname" class="mr-2" size="10" type="text" value="" required/>
+    		<label class="mr-2">Audit Option</label>
+    		<select id="csel" name="csel">
+                   <option selected="selected" disabled></option>
+                   <option value="yes">yes</option>
+                    <option value="no">no</option>
+              </select>
+    		</div>
+    		</div>
+    		<input type="submit" name="addCourseBtn"/>    
+          </form>
+        </div>
+       </div>
+    </div>
+  </div> 
+  
+
+ 
+<!-- Drop Course MODAL -->
+  <div class="modal fade" id="dropCourseModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course Details</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+               <div class="row">
+    		<div class="form-group col-lg-9">
+    		<label>Course Name</label><input name="cname" class="mr-2" size="8" type="text" value=""/>	
+         
+    		</div>
+    		</div>
+          </form>
+        </div>
+       </div>
+    </div>
+  </div> 
+
+
+
   
     
 <!-- View Courses MODAL -->
@@ -244,7 +313,46 @@ window.history.back();
         </div>
        </div>
     </div>
-  </div>
+  </div> 
+
+ 
+ <!--- Faculty --->
+      <div class="modal fade" id="viewFacultyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Faculty Details</h4>
+             <table id="table2" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Faculty Id</th>
+                  <th>Faculty Name</th>
+                  <th>Faculty Designation</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in faculty %}
+                <tr>
+                 <td id="facultid" name="cid"> {{ set.faculty_id }} </td>
+                  <td id="fname" name="fname"> {{ set.faculty_name }} </td>
+                   <td id="fd" name="fdes"> {{ set.faculty_designation }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>    
+
+
 
   <!-- FOOTER -->
   <footer id="main-footer" class="footer fixed-bottom bg-dark text-white p-0">
