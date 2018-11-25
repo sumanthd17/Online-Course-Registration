@@ -110,7 +110,7 @@ class Student(models.Model):
 	student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False)
 	student_reg_year = models.CharField(db_column='Student_Registered_Year', max_length=10,null=False)
 	student_cur_year = models.CharField(db_column='Student_Current_Year',max_length=10,null=False)
-	student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=5,null=False)
+	student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=10,null=False)
 	student_degree = models.CharField(db_column='Student_degree', max_length=15,null=False)
 	student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
 	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
@@ -188,7 +188,7 @@ class Studentregistrations(models.Model):
     studentregistrations_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='studentRegistrations_cid')  # Field name made lowercase.
     studentregistrations_sid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentRegistrations_sid')  # Field name made lowercase.
     studentregistrations_preferences = models.CharField(db_column='studentRegistrations_preferences', max_length=45, blank=True, null=True)  # Field name made lowercase.
-    studentregistrations_auditoption = models.IntegerField(db_column='studentRegistrations_auditOption', blank=True, null=True)  # Field name made lowercase.
+    studentregistrations_auditoption = models.CharField(db_column='studentRegistrations_auditOption', max_length=10,blank=True, null=True)  # Field name made lowercase.
     studentregistrations_approvedby = models.IntegerField(db_column='studentRegistrations_approvedBy', blank=True, null=True)  # Field name made lowercase.
     studentregistrations_status = models.CharField(db_column='studentRegistrations_status', max_length=10)  # Field name made lowercase.
     studentregistrations_comments = models.CharField(db_column='studentRegistrations_comments', max_length=200, blank=True, null=True)  # Field name made lowercase.
