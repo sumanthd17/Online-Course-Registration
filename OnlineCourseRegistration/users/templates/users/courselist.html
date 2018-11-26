@@ -108,20 +108,37 @@ window.history.back();
     		{{ form.data }} 
     		<div class="row">
     		<div class="form-group col-lg-9">
+    		{% if enable %}
+    		<label>Start Date</label><input name="sdate" class="mr-3" size="8" type="date" value="{{ startdate|date:'Y-m-d' }}"/>
+    		<label>End Date</label><input name ="edate" class="mr-3" size="8" type="date" value="{{ enddate|date:'Y-m-d' }}"/>
+    		{% else %}     		
     		<label>Start Date</label><input name="sdate" class="mr-3" size="8" type="date" value=""/>
     		<label>End Date</label><input name ="edate" class="mr-3" size="8" type="date" value=""/>
+    		{% endif %}
     		<label>Semester</label><select id="sem" name="sem">
                    <option selected="selected" disabled></option>
-                   <option value="Spring">Spring</option>
+                   {% if Spring %}
+                   <option value="Spring" selected>Spring</option>
                     <option value="Fall">Fall</option>
+                   {% endif %}
+                   {% if Fall %}
+                    <option value="Fall" selected>Fall</option>
+                     <option value="Spring">Spring</option>
+                   {% endif %}                
             </select>
     		</div>
     		</div>
     		<div class="row">
-    		<div class="form-group col-lg-9">    	
+    		<div class="form-group col-lg-9"> 
+    		{% if enable %}   	
+    		<label>Update Date</label><input name="udate" class="mr-3" type="date" size="8" value="{{ updatedate|date:'Y-m-d' }}"/> 
+    		<label>Final Date</label><input name ="fdate" class="mr-3" type="date" size="8" value="{{ finaldate|date:'Y-m-d' }}"/>
+    		<label>Year</label><input name="year" class=="mr-3 size="4" type=int value="{{ year }}"/>  
+    		{% else %}
     		<label>Update Date</label><input name="udate" class="mr-3" type="date" size="8" value=""/> 
     		<label>Final Date</label><input name ="fdate" class="mr-3" type="date" size="8" value=""/>
     		<label>Year</label><input name="year" class=="mr-3 size="4" type=int value=""/>  
+    		{% endif %}
     		</div>
     		</div>
     		
