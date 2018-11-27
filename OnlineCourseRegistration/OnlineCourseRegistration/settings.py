@@ -26,7 +26,7 @@ SECRET_KEY = 'a_(kd!db6d)bn(*t7i%g6l_-i4!7t88(=4y4w+w)c39#*m^9+b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','rocky-chamber-26134.herokuapp.com']
 
 # templates
 LOGIN_REDIRECT_URL = 'home'
@@ -77,7 +77,7 @@ TEMPLATES = [
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 
 TEMPLATE_DIRS = (
@@ -139,3 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
