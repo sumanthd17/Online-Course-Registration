@@ -89,8 +89,8 @@ TEMPLATE_DIRS = (
 WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
 
+DATABASES = { 'default': dj_database_url.config() }
 
-DATABASES.update(default=db_from_env)
 
 
 # Database
