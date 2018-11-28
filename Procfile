@@ -1,1 +1,1 @@
-web: gunicorn OnlineCourseRegistration.wsgi --log-file -
+web: python OnlineCourseRegistration/manage.py runserver --log-file -
