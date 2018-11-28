@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 
 
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+DATABASES.update(default=db_from_env)
 
 
 # Database
