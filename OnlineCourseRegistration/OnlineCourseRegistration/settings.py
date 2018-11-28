@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +27,7 @@ SECRET_KEY = 'a_(kd!db6d)bn(*t7i%g6l_-i4!7t88(=4y4w+w)c39#*m^9+b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','rocky-chamber-26134.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','https://obscure-basin-53087.herokuapp.com']
 
 # templates
 LOGIN_REDIRECT_URL = 'home'
@@ -86,6 +87,10 @@ TEMPLATE_DIRS = (
 )
 
 WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
+
+
+
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 # Database
