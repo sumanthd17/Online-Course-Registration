@@ -1,1 +1,1 @@
-web: python OnlineCourseRegistration/manage.py runserver --log-file -
+web: python OnlineCourseRegistration/manage.py runserver
