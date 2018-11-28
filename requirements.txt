@@ -3,4 +3,4 @@ gunicorn
 django-heroku
 dj-database-url==0.3.0
 mysql
-requests
+requests==2.13.0
