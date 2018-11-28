@@ -102,7 +102,7 @@ DATABASES = {
         'NAME': 'IIITS',
         'USER': 'rusheel',
         'PASSWORD': 'rushi123',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'HOST': '192.168.1.101',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }
@@ -145,7 +145,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
