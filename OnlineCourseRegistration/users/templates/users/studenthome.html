@@ -192,7 +192,7 @@ window.history.back();
             </div>
           </div>
       
-         <div class="card text-center bg-success text-white">  
+         <div class="card text-center bg-success text-white mb-3">  
             <div class="card-body">              
               <h3>Faculty</h3>
               <h4 class="display-4">
@@ -201,7 +201,17 @@ window.history.back();
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewFacultyModal">View</a>
             </div>
           </div>
-       </div>
+          
+           <div class="card text-center bg-primary text-white mb-3">  
+            <div class="card-body">              
+              <h3>Registration Course List</h3>
+              <h4 class="display-4">
+                <i class="fas fa-folder"></i> {{ total_courses }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewReglistModal">View</a>
+            </div>
+          </div>       
+       </div> 
     </div>   
        
    
@@ -271,9 +281,42 @@ window.history.back();
     </div>
   </div> 
 
+<!--- Reg Course List --->
+      <div class="modal fade" id="viewReglistModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Registration Course Details</h4>
+             <table id="table2" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Credits</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in coursevals %}
+                <tr>
+                 <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
+                  <td id="cname" name="cname"> {{ set.courseregistrations_cid__course_name }} </td>
+                   <td id="ccredits" name="ccredits"> {{ set.courseregistrations_cid__course_credits }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>    
 
-
-  
     
 <!-- View Courses MODAL -->
   <div class="modal fade" id="viewCoursesModal">
@@ -380,6 +423,16 @@ window.history.back();
     <script>
     $(document).ready(function() {
     $('#courseList').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    }
+    );
+     $('#table2').DataTable(
     {
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user

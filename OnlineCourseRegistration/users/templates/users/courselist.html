@@ -124,6 +124,9 @@ window.history.back();
                    {% if Fall %}
                     <option value="Fall" selected>Fall</option>
                      <option value="Spring">Spring</option>
+                    {% else %}
+                     <option value="Fall">Fall</option>
+                     <option value="Spring">Spring</option>
                    {% endif %}                
             </select>
     		</div>
@@ -198,7 +201,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Registration Policy</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_faculty }}
+                <i class="fas fa-folder"></i> {{ total_policy }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewPolicyModal">View</a>
             </div>
@@ -411,10 +414,10 @@ window.history.back();
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user
 
-        "lengthMenu": [ 4, 8, 10, 15, 20, 50, 100 ], 
+        "lengthMenu": [ 5, 10, 15, 20, 50, 100 ], 
         
         // Set the default no. of rows to display
-        "pageLength": 4
+        "pageLength": 5
     }
     );
 } );
