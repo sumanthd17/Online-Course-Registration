@@ -377,7 +377,6 @@ class CourseListView(View):
 				if listlen <= 0:
 					raise IndexError()
 				for i in range(listlen):
-					print("i is ")
 					student_id = CustomUser.objects.values('id').filter(username=myname[0])
 					for j in student_id:
 						sid = j['id']
@@ -388,7 +387,7 @@ class CourseListView(View):
 					#print(student_roll)
 					print(courseregistrations_id[i])
 					val=courseregistrations_id[i]			
-					coursereg = Courseregistrations.objects.filter(courseregistrations_id=int(val)).values('courseregistrations_cid')
+					coursereg = Courseregistrations.objects.filter(courseregistrations_id=val).values('courseregistrations_cid')
 					print(coursereg)
 					for p in coursereg:
 						courseregistrations_cid=p['courseregistrations_cid']
@@ -510,6 +509,7 @@ class StudentCourseListView(View):
 		total_courses=len(Course.objects.all())
 		faculty = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
 		total_faculty=len(Faculty.objects.all())
+		coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 		getdates = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_updatedate','courseregistrations_finaldate')
 		for s in getdates:
 			udate=s[0]
@@ -523,6 +523,7 @@ class StudentCourseListView(View):
 		context['total_courses']=total_courses
 		context['faculty']=faculty
 		context['total_faculty']=total_faculty
+		context['coursevals']=coursevals
 		if today > udate:
 			enable=False
 		else:
@@ -543,12 +544,14 @@ class StudentCourseListView(View):
 				total_courses=len(Course.objects.all())
 				faculty = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
 				total_faculty=len(Faculty.objects.all())
+				coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 				context={}
 				context['queryvals']=queryvals
 				context['course']=course
 				context['total_courses']=total_courses
 				context['faculty']=faculty
 				context['total_faculty']=total_faculty
+				context['coursevals']=coursevals
 				getdates = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_updatedate','courseregistrations_finaldate')
 				for s in getdates:
 					udate=s[0]
@@ -599,12 +602,14 @@ class StudentCourseListView(View):
 				total_courses=len(Course.objects.all())
 				faculty = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
 				total_faculty=len(Faculty.objects.all())
+				caoursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 				context={}
 				context['queryvals']=queryvals
 				context['course']=course
 				context['total_courses']=total_courses
 				context['faculty']=faculty
 				context['total_faculty']=total_faculty
+				context['coursevals']=coursevals
 				print(ctype)
 				print(cname)
 				print(option)

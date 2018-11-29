@@ -84,18 +84,23 @@ class FacultyCourseOffer(models.Model):
 
 
 class Grades(models.Model):
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    courseid = models.ForeignKey(Course, models.DO_NOTHING, db_column='courseid')
-    course_grade = models.CharField(max_length=3)
-    course_offered_year = models.CharField(max_length=45)
-    course_sem = models.CharField(max_length=45)
-    grades_last_updated = models.DateTimeField(max_length=45,auto_now=True)
-
-    class Meta:
-        managed = True
-        db_table = 'Grades'
-
-
+	Course_Statuses = (('I', 'In Progress'),('N', 'Not Started'),('P', 'Completed'),('F', 'Failed'),('D', 'Deferred'))
+	grade_id = models.AutoField(db_column='grade_id', primary_key=True)
+	studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
+	courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseid')
+	grade_approvedby = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='grade_approvedby')
+	course_grade = models.CharField(max_length=3)
+	course_offered_year = models.CharField(max_length=45)
+	course_completed_year = models.CharField(max_length=45,null=True,blank=True)
+	course_sem = models.CharField(max_length=45)
+	grades_last_updated = models.DateTimeField(max_length=45,auto_now=True)
+	course_status = models.CharField(db_column='course_status', max_length=30, blank=False,default='N',choices=Course_Statuses)	
+	approval_comments = models.CharField(db_column='approval_comments', max_length=200, blank=True, null=True)
+	
+	class Meta:
+		managed = True
+		db_table = 'Grades'
+		unique_together = (('studentid', 'courseid'),)
 
 class Student(models.Model):
 	student_roll_no = models.IntegerField(db_column='Student_roll_no', primary_key=True)
@@ -199,20 +204,7 @@ class Studentregistrations(models.Model):
         db_table = 'studentRegistrations'
         unique_together = (('studentregistrations_cid', 'studentregistrations_sid'),)
         
-class Student_Edu_History(models.Model):
-    student_eduid = models.AutoField(auto_created=True,db_column='student_eduid', primary_key=True)
-    student_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='student_cid')
-    student_sid = models.ForeignKey(Student, models.DO_NOTHING, db_column='student_sid')
-    student_course_status = models.CharField(db_column='student_course_status', max_length=45, blank=True, null=True)
-    student_course_approvedby = models.IntegerField(db_column='student_course_approvedby', blank=True, null=True)
-    student_comments = models.CharField(db_column='student_comments', max_length=200, blank=True, null=True)
-    student_last_updated = models.DateTimeField(db_column='student_edu_last_updated', auto_now=True)
-    student_id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='student_id') 
-
-    class Meta:
-        managed = True
-        db_table = 'studentEduHistory'
-        unique_together = (('student_cid', 'student_sid'),)
+      
         
 class RegistrationPolicy(models.Model):
 	regPolicy_Id = models.AutoField(auto_created=True,db_column='regPolicy_Id', primary_key=True)
