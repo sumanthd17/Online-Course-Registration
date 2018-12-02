@@ -9,6 +9,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser,Group,User,Permission
 
 from datetime import datetime
+from django_enumfield import enum
 
 
 # Create your models here.
@@ -58,6 +59,7 @@ class Grade(models.Model):
 
     def __str__(self):
         return u'%s - %s - %s' % (self.student_id, self.course, self.grade_point)
+
   
 class Faculty(models.Model):
     faculty_id = models.AutoField(db_column='Faculty_id',auto_created=True, primary_key=True)  # Field name made lowercase.
@@ -84,7 +86,6 @@ class FacultyCourseOffer(models.Model):
 
 
 class Grades(models.Model):
-	Course_Statuses = (('I', 'In Progress'),('N', 'Not Started'),('P', 'Completed'),('F', 'Failed'),('D', 'Deferred'))
 	grade_id = models.AutoField(db_column='grade_id', primary_key=True)
 	studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
 	courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseid')
@@ -94,7 +95,7 @@ class Grades(models.Model):
 	course_completed_year = models.CharField(max_length=45,null=True,blank=True)
 	course_sem = models.CharField(max_length=45)
 	grades_last_updated = models.DateTimeField(max_length=45,auto_now=True)
-	course_status = models.CharField(db_column='course_status', max_length=30, blank=False,default='N',choices=Course_Statuses)	
+	course_status = models.CharField(max_length=30,blank=False,default='Not Started')	
 	approval_comments = models.CharField(db_column='approval_comments', max_length=200, blank=True, null=True)
 	
 	class Meta:
@@ -198,6 +199,8 @@ class Studentregistrations(models.Model):
     studentregistrations_status = models.CharField(db_column='studentRegistrations_status', max_length=10)  # Field name made lowercase.
     studentregistrations_comments = models.CharField(db_column='studentRegistrations_comments', max_length=200, blank=True, null=True)  # Field name made lowercase.
     studentregistrations_last_updated = models.DateTimeField(db_column='Student_Spe_Req_last_updated', auto_now=True)  # Field name made lowercase.
+    studentregistrations_semester = models.CharField(db_column='studentRegistrations_semester', max_length=15,blank=True,null=True,default=' ')  # Field name made lowercase.
+    studentregistrations_year = models.IntegerField(db_column='studentRegistrations_year', blank=True,default=2018) 
 
     class Meta:
         managed = True
