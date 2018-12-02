@@ -183,12 +183,15 @@ window.history.back();
             </table>        
           
             <div class="btn-toolbar float-right mb-1">
-            <button type="submit" class="btn btn-primary btn-md mr-5"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button> 
+            <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button> 
             <div>
             <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changeScheduleModal">Change Schedule</a>
             </div>
             <div>
             <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#addPolicyModal">Add Policy</a>
+            </div> 
+               <div>
+            <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changePolicyModal">Change Policy</a>
             </div> 
              </div>                 
            </form>                            
@@ -281,7 +284,7 @@ window.history.back();
           <form action="" method="GET" accept-charset="UTF-8">
             {% csrf_token %}
             <h4 class="text-center">Faculty Details</h4>
-             <table id="table2" class="table table-striped">
+             <table id="table4" class="table table-striped">
               <thead class="thead-dark">
                 <tr>
                   <th>Faculty Id</th>
@@ -367,6 +370,8 @@ window.history.back();
                     <option value="5">5</option>
                     <option value="6">6</option>
                       <option value="8">8</option>
+                      <option value="12">12</option>
+                        <option value="16">16</option>
             </select>
     		<label>Policy Year</label><input name="pyear" class="mr-1" type="text" size="8" value="" required/> 
     		</div>
@@ -377,6 +382,53 @@ window.history.back();
        </div>
     </div>
   </div>
+ 
+ 
+ <!--------  Change Policy ----------------->
+ <!--- Faculty --->
+      <div class="modal fade" id="changePolicyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Policy List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Policy Details</h4>
+             <table id="table3" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th></th>
+                  <th>Policy Id</th>
+                  <th>Course Type</th>
+                  <th>Credits</th>
+                  <th>Policy Year</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in policy %}
+                <tr>
+                 <td><input type="checkbox" class="cbox" name="savePolicy" value="{{ set.regPolicy_Id }}"/> &nbsp; </td>
+                 <td><input id="pid" name="pid" size="2" value="{{ set.regPolicy_Id }}" readonly="readonly"/></td>
+                 <td><input id="ctype" name="ctype" size="20" value="{{ set.regPolicy_coursetype }}"/></td>
+                  <td><input id="credits" name="credits" size="4" value="{{ set.regPolicy_credits }}"/></td>
+                   <td><input id="year" name="year" size="4" value="{{ set.regPolicy_year }}"/></td>                
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            <input type="submit" value="Update" name="changePolicyBtn"/>          
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>
+ 
+ 
+ 
+ 
  
  
  
@@ -418,13 +470,23 @@ window.history.back();
         
         // Set the default no. of rows to display
         "pageLength": 5
+    });
+    
+    $('#table2').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
     }
     );
-} );
-    </script>
+});
+
+</script>
      
  </body>
-
 
 {% else %}
  <p>You are not logged in</p>

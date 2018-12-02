@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count,Sum
 
 from .models import Course,Grades, Student,Courseregistrations,RegistrationPolicy,Studentregistrations
 from .models import *
@@ -312,11 +312,37 @@ def faculty(request):
 
 def add_grade(request):
 	if request.method == 'POST':
-		grade = Grade()
-		grade.student_id = request.POST.get('user_id')
-		grade.course = request.POST.get('course')
-		grade.grade_point = request.POST.get('grade_point')
-		grade.save()
+		try:
+			grade = Grades()
+			studentid = request.POST.get('user_id')
+			courseid = request.POST.get('course')
+			coursestatus = request.POST.get('status')
+			coursegrade = request.POST.get('grade_point')
+			student=get_object_or_404(Student,pk=studentid)
+			course=get_object_or_404(Course,pk=courseid)
+			myemail=request.user
+			user=CustomUser.objects.values('id').filter(email=myemail)
+			for x in user:
+				uid=x['id']
+			user=get_object_or_404(CustomUser,pk=uid)
+			sreg = Studentregistrations.objects.filter(studentregistrations_cid=courseid,studentregistrations_sid=studentid).values('studentregistrations_status')
+			if sreg:
+				for x in sreg:
+					status=x['studentregistrations_status']
+					if status!='Approved':
+						raise Exception()
+				grade=Grades.objects.update_or_create(studentid=student,courseid=course,course_status=coursestatus,course_grade=coursegrade,grade_approvedby=user)
+				messages.success(request,"Grade record added!")
+			else:
+				raise IndexError()
+		except ValueError as e:
+			messages.error(request,"Please enter correct student id and course id to add grade!")
+		except IntegrityError as e:
+			messages.error(request,"Grade already exists!")
+		except Exception as e:
+			messages.error(request,"Student registration for this course is not approved!")
+		except IndexError as e:
+			messages.error(request,"This course is not yet started by student!")
 		return HttpResponseRedirect('/users')
 	else :
 		return HttpResponseRedirect('/users')
@@ -335,7 +361,7 @@ class CourseListView(View):
 		context={}
 		context['queryvals']=queryvals
 		myname=request.user
-		student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem').filter(student_email=myname)
+		student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem','student_reg_year').filter(student_email=myname)
 		policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 		total_policy=len(RegistrationPolicy.objects.all())
 		context['policy']=policy
@@ -348,6 +374,29 @@ class CourseListView(View):
 			context['student_roll_no']=i['student_roll_no']
 			context['student_cur_year']=i['student_cur_year']
 			context['student_cur_sem']=i['student_curr_sem']
+			context['student_reg_year']=i['student_reg_year']
+		student_roll = context['student_roll_no']
+		grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','course_status','courseid__course_credits').annotate(total_credits=Sum('courseid__course_credits'))
+		context['grades']=grades
+		context['total_grades']=len(grades)
+		mypolicy = RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')		
+		todo=[]
+		k=0
+		for x in grades:
+			print(x['courseid__course_type'])
+			for y in mypolicy:
+				if x['courseid__course_type'] == y['regPolicy_coursetype']:
+					print(y)
+					mycredits = y['regPolicy_credits']
+					print(mycredits)
+					print("To do credits")
+					balance = mycredits - x['courseid__course_credits']
+					todo.append({'courseid__course_type':x['courseid__course_type'],'total_credits':balance})
+					k=k+1
+					print(balance)	
+		print(todo)	
+		context['todo']=todo
+		context['total_todo']=k		
 		return render(request, self.template_name,context)
 			
 	def post(self, request, *args, **kwargs):
@@ -359,11 +408,11 @@ class CourseListView(View):
 				option=request.POST.getlist('csel')
 				option=list(filter(None,option))
 				context={}
-				student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem').filter(student_email=email)
+				student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem','student_reg_year').filter(student_email=email)
 				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				total_policy=len(RegistrationPolicy.objects.all())
 				context['policy']=policy
-				context['total_policy']=total_policy
+				context['total_policy']=total_policy				
 				for i in student:
 					fname = i['student_first_name']			
 					lname = i['student_last_name']
@@ -372,6 +421,25 @@ class CourseListView(View):
 					context['student_roll_no']=i['student_roll_no']
 					context['student_cur_year']=i['student_cur_year']
 					context['student_cur_sem']=i['student_curr_sem']
+					context['student_reg_year']=i['student_reg_year']
+				student_roll = context['student_roll_no']
+				sem=i['student_curr_sem']
+				grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','course_status').annotate(total_credits=Sum('courseid__course_credits'))
+				context['grades']=grades
+				context['total_grades']=len(grades)
+				mypolicy = RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')		
+				todo=[]
+				k=0
+				for x in grades:
+					for y in mypolicy:
+						if x['courseid__course_type'] == y['regPolicy_coursetype']:
+							mycredits = y['regPolicy_credits']
+							balance = mycredits - x['courseid__course_credits']
+							todo.append({'courseid__course_type':x['courseid__course_type'],'total_credits':balance})
+							k=k+1
+				#print(todo)	
+				context['todo']=todo
+				context['total_todo']=k	
 				listlen = len(courseregistrations_id)
 				optlen=len(option)
 				if listlen <= 0:
@@ -404,9 +472,9 @@ class CourseListView(View):
 							messages.error(request,'Your Registration already completed!! Wait for Add/Drop Course')
 					else:
 						if optlen != 0:
-							tablesave = Studentregistrations.objects.create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Saved',studentregistrations_auditoption=option[i])
+							tablesave = Studentregistrations.objects.create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Saved',studentregistrations_auditoption=option[i],studentregistrations_semester=sem)
 						else:
-							tablesave = Studentregistrations.objects.create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Saved',studentregistrations_auditoption='no')
+							tablesave = Studentregistrations.objects.create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Saved',studentregistrations_auditoption='no',studentregistrations_semester=sem)
 						queryvals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 						context['queryvals']=queryvals
 						messages.success(request, 'Course record saved successfully!')
@@ -430,11 +498,11 @@ class CourseListView(View):
 				option=list(filter(None,option))
 				email=request.user
 				context={}
-				student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem').filter(student_email=email)
+				student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem','student_reg_year').filter(student_email=email)
 				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				total_policy=len(RegistrationPolicy.objects.all())
 				context['policy']=policy
-				context['total_policy']=total_policy				
+				context['total_policy']=total_policy			
 				for i in student:
 					fname = i['student_first_name']			
 					lname = i['student_last_name']
@@ -443,8 +511,27 @@ class CourseListView(View):
 					context['student_roll_no']=i['student_roll_no']
 					context['student_cur_year']=i['student_cur_year']
 					context['student_cur_sem']=i['student_curr_sem']
+					context['student_reg_year']=i['student_reg_year']
+				student_roll = context['student_roll_no']
+				sem=context['student_curr_sem']
+				grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','course_status').annotate(total_credits=Sum('courseid__course_credits'))
+				context['grades']=grades
+				context['total_grades']=len(grades)
 				listlen = len(courseregistrations_id)
 				optlen=len(option)
+				mypolicy = RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')		
+				todo=[]
+				k=0
+				for x in grades:
+					for y in mypolicy:
+						if x['courseid__course_type'] == y['regPolicy_coursetype']:
+							mycredits = y['regPolicy_credits']
+							balance = mycredits - x['courseid__course_credits']
+							todo.append({'courseid__course_type':x['courseid__course_type'],'total_credits':balance})
+							k=k+1
+				#print(todo)	
+				context['todo']=todo
+				context['total_todo']=k
 				student_id = CustomUser.objects.values('id').filter(username=myname[0])
 				for j in student_id:
 					sid = j['id']
@@ -470,9 +557,9 @@ class CourseListView(View):
 							student = get_object_or_404(Student, pk=student_roll)
 							course = get_object_or_404(Course, pk=courseregistrations_cid)
 							if optlen != 0:
-								tablesave= Studentregistrations.objects.update_or_create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Registered',studentregistrations_auditoption=option[i])
+								tablesave= Studentregistrations.objects.update_or_create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Registered',studentregistrations_auditoption=option[i],studentregistrations_semester=sem)
 							else:
-								tablesave= Studentregistrations.objects.update_or_create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Registered',studentregistrations_auditoption='no')
+								tablesave= Studentregistrations.objects.update_or_create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Registered',studentregistrations_auditoption='no',studentregistrations_semester=sem)
 							tablesave = Studentregistrations.objects.all().update(studentregistrations_status='Registered')
 							queryvals =  Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 							context['queryvals']=queryvals
@@ -511,9 +598,12 @@ class StudentCourseListView(View):
 		total_faculty=len(Faculty.objects.all())
 		coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 		getdates = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_updatedate','courseregistrations_finaldate')
-		for s in getdates:
-			udate=s[0]
-			fdate=s[1]
+		if getdates:
+			for s in getdates:
+				udate=s[0]
+				fdate=s[1]
+				break
+		
 		date_format = '%Y-%m-%d'
 		today=setdate()
 		today=dt.strptime(today,date_format).date()
@@ -524,11 +614,14 @@ class StudentCourseListView(View):
 		context['faculty']=faculty
 		context['total_faculty']=total_faculty
 		context['coursevals']=coursevals
-		if today > udate:
-			enable=False
-		else:
-			enable=True
-			context['enable']=enable	
+		context['total_reglist']=len(coursevals)
+		if getdates:
+			if today < udate or today > fdate:
+				enable=False
+			else:
+				enable=True
+				context['enable']=enable
+			
 		return render(request, self.template_name,context)
 	
 	def post(self, request, *args, **kwargs):
@@ -552,10 +645,13 @@ class StudentCourseListView(View):
 				context['faculty']=faculty
 				context['total_faculty']=total_faculty
 				context['coursevals']=coursevals
+				context['total_reglist']=len(coursevals)
 				getdates = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_updatedate','courseregistrations_finaldate')
-				for s in getdates:
-					udate=s[0]
-					fdate=s[1]
+				if getdates:
+					for s in getdates:
+						udate=s[0]
+						fdate=s[1]
+						break
 				student=Student.objects.values('student_roll_no').filter(student_email=uid)
 				for s in student:
 					sid = s['student_roll_no']
@@ -570,22 +666,27 @@ class StudentCourseListView(View):
 						delrecord = Studentregistrations.objects.filter(studentregistrations_sid=sid,studentregistrations_cid=cid[i]).delete()
 						queryvals =Studentregistrations.objects.all().select_related('studentregistrations_cid').prefetch_related('studentregistrations_sid').values('studentregistrations_cid__course_id','studentregistrations_cid__course_name','studentregistrations_cid__course_credits','studentregistrations_status','studentregistrations_sid','studentregistrations_auditoption')
 						context['queryvals']=queryvals
+						context['total_reglist']=len(coursevals)
 					#messages.success(request,"Selected courses deleted from registration list!")
 					else:
 						print("Do not delete")
 						messages.error(request,'Data already submitted to review and cannot be deleted!!')				
-				if today > udate:
-					enable=False
-				else:
-					enable=True
-					context['enable']=enable
+				if getdates:
+					if today < udate and today > fdate:
+						enable=False
+					else:
+						enable=True
+						context['enable']=enable
+						context['total_reglist']=len(coursevals)
 			except IndexError as e:
 				queryvals =Studentregistrations.objects.all().select_related('studentregistrations_cid').prefetch_related('studentregistrations_sid').values('studentregistrations_cid__course_id','studentregistrations_cid__course_name','studentregistrations_cid__course_credits','studentregistrations_status','studentregistrations_sid','studentregistrations_auditoption')
 				context['queryvals']=queryvals
+				context['total_reglist']=len(coursevals)
 				messages.error(request,"Please select a record to delete!!")
 			except Exception as e:
 				queryvals =Studentregistrations.objects.all().select_related('studentregistrations_cid').prefetch_related('studentregistrations_sid').values('studentregistrations_cid__course_id','studentregistrations_cid__course_name','studentregistrations_cid__course_credits','studentregistrations_status','studentregistrations_sid','studentregistrations_auditoption')
 				context['queryvals']=queryvals
+				context['total_reglist']=len(coursevals)
 				messages.error(request,repr(e))
 			return render(request, self.template_name,context)
 		elif 'addCourseBtn' in request.POST:
@@ -610,6 +711,7 @@ class StudentCourseListView(View):
 				context['faculty']=faculty
 				context['total_faculty']=total_faculty
 				context['coursevals']=coursevals
+				context['total_reglist']=len(coursevals)
 				print(ctype)
 				print(cname)
 				print(option)
@@ -651,15 +753,19 @@ class StudentCourseListView(View):
 					messages.success(request,"Record added to registration list")
 					queryvals = Studentregistrations.objects.all().select_related('studentregistrations_cid').prefetch_related('studentregistrations_sid').values('studentregistrations_cid__course_id','studentregistrations_cid__course_name','studentregistrations_cid__course_credits','studentregistrations_status','studentregistrations_sid','studentregistrations_auditoption')
 					context['queryvals']=queryvals
+					context['total_reglist']=len(coursevals)
 				getdates = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_updatedate','courseregistrations_finaldate')
-				for s in getdates:
-					udate=s[0]
-					fdate=s[1]
-				if today > udate:
-					enable=False
-				else:
-					enable=True
-					context['enable']=enable
+				if getdates:
+					for s in getdates:
+						udate=s[0]
+						fdate=s[1]
+						break
+				if getdates:
+					if today < udate and today > fdate:
+						enable=False
+					else:
+						enable=True
+						context['enable']=enable
 			except Exception as e:
 				messages.error(request,repr(e))
 			return render(request, self.template_name,context)			
@@ -931,11 +1037,76 @@ class RegCourseListView(View):
 				print(user)
 				regpolicy = RegistrationPolicy.objects.create(regPolicy_coursetype=ctype,regPolicy_credits=credits,regPolicy_year=year,regPolicy_updateddby=user)
 				if regpolicy:
-					messages.success(request,"Created new policy!")
+					messages.success(request,"Created new policy!")			
+				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+				total_policy=len(RegistrationPolicy.objects.all())
+				context={}
+				regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+				if regvals:
+					for r in regvals:
+						context['startdate']=r['courseregistrations_startdate']
+						context['enddate']=r['courseregistrations_enddate']
+						context['updatedate']=r['courseregistrations_updatedate']
+						context['finaldate']=r['courseregistrations_finaldate']
+						context['sem']=r['courseregistrations_semester']
+						if context['sem'] == 'Spring':
+							context['Spring']=True
+						elif context['sem'] == 'Fall':
+							context['Fall']=True
+						context['year']=r['courseregistrations_year']			
+					context['enable']=True
+				context['course']=courselist
+				context['faculty']=facultylist
+				context['policy']=policy
+				context['total_courses']=total_courses
+				context['total_faculty']=total_faculty
+				context['total_policy']=total_policy
 			except ValueError as e:
 				messages.error(request,repr(e)+'Add all details to add policy details!')
-			policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
-			total_policy=len(RegistrationPolicy.objects.all())
+			return render(request, self.template_name,context)
+		elif 'changePolicyBtn' in request.POST:
+			try:
+				print("Now change policy details")
+				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
+				total_courses=len(Course.objects.all())
+				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
+				total_faculty=len(Faculty.objects.all())
+				ctype=request.POST.getlist('ctype')
+				credits=request.POST.getlist('credits')
+				year=request.POST.getlist('year')
+				ids=request.POST.getlist('savePolicy')
+				pids=request.POST.getlist('pid')
+				name=request.user
+				user=CustomUser.objects.values('id').filter(email=name)
+				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+				total_policy=len(RegistrationPolicy.objects.all())
+				for x in user:
+					uid=x['id']
+				user=get_object_or_404(CustomUser,pk=uid)				
+				l1=len(ctype)
+				l2=len(credits)
+				l3=len(year)
+				l4=len(ids)
+				l5=len(pids)
+				if l1==0 or l2==0 or l3==0 or l4==0:
+					raise ValueError()
+				if l1!=l2 or l1!=l3 or l2!=l3:
+					raise ValueError()
+				for i in range(l4):
+					print(ids[i])
+					for j in range(l5):
+						if ids[i]==pids[j]:
+							break					
+					if not ctype[j] or not credits[j] or not year[j]:
+						raise ValueError()
+					policy=get_object_or_404(RegistrationPolicy,pk=ids[i])
+					regVal = RegistrationPolicy.objects.filter(pk=ids[i]).update(regPolicy_coursetype=ctype[j],regPolicy_credits=credits[j],regPolicy_year=year[j])				
+				if regVal:										
+					messages.success(request,"Updated policy details!")
+				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+				total_policy=len(RegistrationPolicy.objects.all())		
+			except ValueError as e:
+				messages.error(request,repr(e)+'Add all details to change policy details!')
 			context={}
 			regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
 			if regvals:
@@ -956,5 +1127,5 @@ class RegCourseListView(View):
 			context['policy']=policy
 			context['total_courses']=total_courses
 			context['total_faculty']=total_faculty
-			context['total_policy']=total_policy
+			context['total_policy']=total_policy			
 			return render(request, self.template_name,context)
