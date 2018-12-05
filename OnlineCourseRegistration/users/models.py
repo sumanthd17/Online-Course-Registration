@@ -9,7 +9,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser,Group,User,Permission
 
 from datetime import datetime
-from django_enumfield import enum
 
 
 # Create your models here.
