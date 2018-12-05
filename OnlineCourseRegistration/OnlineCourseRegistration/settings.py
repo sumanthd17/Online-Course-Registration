@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'a_(kd!db6d)bn(*t7i%g6l_-i4!7t88(=4y4w+w)c39#*m^9+b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','https://obscure-basin-53087.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 # templates
 LOGIN_REDIRECT_URL = 'home'
@@ -91,16 +92,7 @@ WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'IIITS',
-        'USER': 'rusheel',
-        'PASSWORD': 'rushi123',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-    }
-}
+DATABASES['default'] =  dj_database_url.config()
 
 
 # Password validation
