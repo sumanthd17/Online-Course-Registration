@@ -360,10 +360,6 @@ class CourseListView(View):
 	def get(self, request, *args, **kwargs):
 		queryvals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 		context={}
-		if queryvals:
-			context['queryvals']=queryvals
-		else:
-			messages.success(request,"Course Registration is closed!")
 		myname=request.user
 		student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem','student_reg_year').filter(student_email=myname)
 		policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
@@ -383,7 +379,6 @@ class CourseListView(View):
 		grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','courseid__course_name','course_status','courseid__course_credits')
 		context['grades']=grades
 		context['total_grades']=len(grades)
-		print(grades)
 		mypolicy = RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')		
 		todo=[]
 		k=0
@@ -812,26 +807,22 @@ class RegCourseListView(View):
 		today=setdate()
 		today=dt.strptime(today,date_format).date()
 		getreg = Courseregistrations.objects.filter(courseregistrations_isactive=False)
-		if getreg:
-			context['enable']=False
-			messages.success(request,"Course registrations already closed!")
-		else:
-			regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-			if regvals:
-				for r in regvals:
-					context['startdate']=r['courseregistrations_startdate']
-					context['enddate']=r['courseregistrations_enddate']
-					context['updatedate']=r['courseregistrations_updatedate']
-					context['finaldate']=r['courseregistrations_finaldate']
-					context['sem']=r['courseregistrations_semester']
-					if context['sem'] == 'Spring':
-						context['Spring']=True
-					elif context['sem'] == 'Fall':
-						context['Fall']=True
-					context['year']=r['courseregistrations_year']			
-				context['enable']=True					
-				context['course']=course
-				context['total_courses']=total_courses
+		regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+		if regvals:
+			for r in regvals:
+				context['startdate']=r['courseregistrations_startdate']
+				context['enddate']=r['courseregistrations_enddate']
+				context['updatedate']=r['courseregistrations_updatedate']
+				context['finaldate']=r['courseregistrations_finaldate']
+				context['sem']=r['courseregistrations_semester']
+				if context['sem'] == 'Spring':
+					context['Spring']=True
+				elif context['sem'] == 'Fall':
+					context['Fall']=True
+				context['year']=r['courseregistrations_year']			
+		context['enable']=True					
+		context['course']=course
+		context['total_courses']=total_courses
 		context['faculty']=faculty
 		context['policy']=policy		
 		context['total_faculty']=total_faculty

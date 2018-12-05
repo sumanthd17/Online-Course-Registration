@@ -1,5 +1,3 @@
-<!-- templates/home.html -->
-
 {% block content %}
 
 {% if user.is_authenticated %}
@@ -484,19 +482,19 @@ window.history.back();
     {
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user
-        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        "lengthMenu": [ 3,5,10, 15, 20, 50, 100 ], 
         
         // Set the default no. of rows to display
-        "pageLength": 5
+        "pageLength": 3
     });
       $('#courseTable').DataTable(
     {
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user
-        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        "lengthMenu": [ 3,5,10, 15, 20, 50, 100 ], 
         
         // Set the default no. of rows to display
-        "pageLength": 5
+        "pageLength": 3
     });
 });
     
@@ -507,10 +505,11 @@ window.history.back();
  <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a> 
 {% endif %}
-{% endblock %}
+
 
 </body>
 
 </html>
+{% endblock %}
 
 
