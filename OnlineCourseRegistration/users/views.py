@@ -621,7 +621,6 @@ class StudentCourseListView(View):
 		today=dt.strptime(today,date_format).date()		
 		if queryvals:
 			context['queryvals']=queryvals
-			enable=False
 		context['course']=course
 		context['total_courses']=total_courses
 		context['faculty']=faculty
@@ -633,7 +632,7 @@ class StudentCourseListView(View):
 				enable=False
 			else:
 				enable=True
-		context['enable']=enable
+			context['enable']=enable
 		total_credits=0
 		grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','course_status','course_grade','courseid__course_name','courseid__course_credits')
 		context['grades']=grades
@@ -793,8 +792,7 @@ class StudentCourseListView(View):
 class RegCourseListView(View):
 	model=Courseregistrations
 	template_name="users/courselist.html"
-	context_object_name = 'clist'
-			
+	coursereg=True
 	def get(self, request, *args, **kwargs):
 		course = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
 		total_courses=len(Course.objects.all())
@@ -806,7 +804,6 @@ class RegCourseListView(View):
 		date_format = '%Y-%m-%d'
 		today=setdate()
 		today=dt.strptime(today,date_format).date()
-		getreg = Courseregistrations.objects.filter(courseregistrations_isactive=False)
 		regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
 		if regvals:
 			for r in regvals:
@@ -820,7 +817,10 @@ class RegCourseListView(View):
 				elif context['sem'] == 'Fall':
 					context['Fall']=True
 				context['year']=r['courseregistrations_year']			
-		context['enable']=True					
+		if self.coursereg == True:
+			context['register']=True
+		else:
+			context['register']=False
 		context['course']=course
 		context['total_courses']=total_courses
 		context['faculty']=faculty
@@ -868,7 +868,13 @@ class RegCourseListView(View):
 						elif context['sem'] == 'Fall':
 							context['Fall']=True
 						context['year']=r['courseregistrations_year']			
-						context['enable']=True
+					context['enable']=True
+				else:
+					context['enable']=False
+				if self.coursereg == True:
+					context['register']=True
+				else:
+					context['register']=False
 				context['course']=courselist
 				context['faculty']=facultylist
 				context['policy']=policy
@@ -916,8 +922,14 @@ class RegCourseListView(View):
 								context['Spring']=True
 							elif context['sem'] == 'Fall':
 								context['Fall']=True
-							context['year']=r['courseregistrations_year']			
-							context['enable']=True		
+							context['year']=r['courseregistrations_year']
+						context['enable']=True
+					else:
+						context['enable']=False
+					if self.coursereg == True:
+						context['register']=True
+					else:
+						context['register']=False
 				else:
 					messages.error(request,"No matching records to update schedule for current registration!")
 			except ValueError as e:
@@ -969,7 +981,13 @@ class RegCourseListView(View):
 						elif context['sem'] == 'Fall':
 							context['Fall']=True
 						context['year']=r['courseregistrations_year']			
-						context['enable']=True
+					context['enable']=True
+				else:
+					context['enable']=False
+				if self.coursereg == True:
+					context['register']=True
+				else:
+					context['register']=False
 				context['course']=courselist
 				context['faculty']=facultylist
 				context['policy']=policy
@@ -977,7 +995,7 @@ class RegCourseListView(View):
 				context['total_faculty']=total_faculty
 				context['total_policy']=total_policy
 				today=setdate()
-				print(today)				
+				#print(today)				
 				if listlen <=0:
 					raise IndexError()
 				else:
@@ -1079,6 +1097,12 @@ class RegCourseListView(View):
 							context['Fall']=True
 						context['year']=r['courseregistrations_year']			
 					context['enable']=True
+				else:
+					context['enable']=False
+				if self.coursereg == True:
+					context['register']=True
+				else:
+					context['register']=False
 				context['course']=courselist
 				context['faculty']=facultylist
 				context['policy']=policy
@@ -1146,6 +1170,12 @@ class RegCourseListView(View):
 						context['Fall']=True
 					context['year']=r['courseregistrations_year']			
 				context['enable']=True
+			else:
+				context['enable']=False
+			if self.coursereg == True:
+				context['register']=True
+			else:
+				context['register']=False
 			context['course']=courselist
 			context['faculty']=facultylist
 			context['policy']=policy
@@ -1155,7 +1185,6 @@ class RegCourseListView(View):
 			return render(request, self.template_name,context)
 		elif 'closeRegBtn' in request.POST:
 			try:
-				print("Now close registration")
 				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
 				total_courses=len(Course.objects.all())
 				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
@@ -1168,10 +1197,12 @@ class RegCourseListView(View):
 				today=dt.strptime(today,date_format).date()
 				getreg = Courseregistrations.objects.filter(courseregistrations_isactive=True).update(courseregistrations_isactive=False)
 				if getreg:
-					context['enable']=False
+					context['register']=False
+					self.coursereg=False
 					messages.success(request,"Course registration closed!")
 				else:
-					regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+					messages.error(request,"No active registrations to close!")
+					regvals =  Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
 					if regvals:
 						for r in regvals:
 							context['startdate']=r['courseregistrations_startdate']
@@ -1184,13 +1215,19 @@ class RegCourseListView(View):
 							elif context['sem'] == 'Fall':
 								context['Fall']=True
 							context['year']=r['courseregistrations_year']			
-						context['enable']=True					
+						context['enable']=True
+					else:
+						context['enable']=False
+				if self.coursereg == True:
+					context['register']=True
+				else:
+					context['register']=False
 				context['course']=courselist
 				context['faculty']=facultylist
 				context['policy']=policy
 				context['total_courses']=total_courses
 				context['total_faculty']=total_faculty
-				context['total_policy']=total_policy
+				context['total_policy']=total_policy				
 			except Exception as e:
 				print(e)
 				messages.error(request,repr(e)+"Registration Closure failed!")			
