@@ -183,15 +183,30 @@ window.history.back();
             </table>        
           
             <div class="btn-toolbar float-right mb-1">
+            {% if enable %}   
             <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button> 
+            {% else %}
+             <button type="submit" class="btn btn-primary btn-md mr-3 disabled"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>
+            {% endif %}
             <div>
+             {% if enable %}  
             <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changeScheduleModal">Change Schedule</a>
+            {% else %}
+             <a href="#" class="btn btn-primary btn-md mr-3 disabled" data-toggle="modal" data-target="#changeScheduleModal">Change Schedule</a>
+             {% endif %}
             </div>
             <div>
             <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#addPolicyModal">Add Policy</a>
             </div> 
                <div>
             <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changePolicyModal">Change Policy</a>
+            </div> 
+              <div>
+                {% if enable %}  
+            <button type="submit" class="btn btn-primary btn-md mr-3" id="delReg" name="closeRegBtn">Close Registraion</button>
+            {% else %}
+             <button type="submit" class="btn btn-primary btn-md mr-3 disabled" id="delReg" name="closeRegBtn">Close Registraion</button>
+             {% endif %}
             </div> 
              </div>                 
            </form>                            
@@ -385,8 +400,8 @@ window.history.back();
  
  
  <!--------  Change Policy ----------------->
- <!--- Faculty --->
-      <div class="modal fade" id="changePolicyModal">
+ 
+    <div class="modal fade" id="changePolicyModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
@@ -425,10 +440,6 @@ window.history.back();
        </div>
     </div>
   </div>
- 
- 
- 
- 
  
  
  

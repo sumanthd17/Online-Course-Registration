@@ -35,6 +35,7 @@ class Course(models.Model):
     class Meta:
         managed = True
         db_table = 'Course'
+        unique_together = (('course_id', 'course_name'),)
 
 class SpecialPermissions(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

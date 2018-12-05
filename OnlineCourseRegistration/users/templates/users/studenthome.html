@@ -110,7 +110,11 @@ window.history.back();
     <div class="container">
       <div class="row">
         <div class="col-md-3">
+            {% if enable %}
           <a href="/users/register.html" class="btn btn-primary btn-block">Course Registeration</a>
+           {% else %}
+            <a href="/users/register.html" class="btn btn-primary btn-block disabled">Course Registeration</a>
+            {% endif %}
         </div>
           <div class="col-md-3">
           {% if enable %}
@@ -145,8 +149,8 @@ window.history.back();
              <form method="POST"  enctype="multipart/form-data" id="mform">
    			 {% csrf_token %}
     		{{ form.data }}
-            <table id="courseTable" class="table table-striped" name="mycourses" value="{{user.id}}">
-              <thead class="thead-dark">
+            <table id="courseTable" class="table table-striped">
+              <thead>
                 <tr>
                   <th></th>
                   <th>Course Id</th>
@@ -154,7 +158,6 @@ window.history.back();
                   <th>Course Credits</th>
                   <th>Registration Status</th>
                   <th>Audit Option</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -255,6 +258,52 @@ window.history.back();
        </div>
     </div>
   </div> 
+
+<!----------View Grdes------------------>
+
+<!--- Reg Course List --->
+     <div class="modal fade" id="viewGradesModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Completed Course & Grade Details</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Total Grades earned - {{ total_credits }}</h4>
+             <table id="table2" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Course Type</th>
+                  <th>Course Name</th>
+                   <th>Course Grade</th>
+                  <th>Course Credits</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in grades %}
+                <tr>
+                 <td id="ctype" name="ctype"> {{ set.courseid__course_type }} </td>
+                  <td id="cname" name="cname"> {{ set.courseid__course_name }} </td>
+                  <td id="cgrade" name="cgrade"> {{ set.course_grade }} </td>
+                   <td id="ccredits" name="ccredits"> {{ set.courseid__course_credits }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>    
+
+
+
+
+
+
   
 
  
@@ -282,7 +331,7 @@ window.history.back();
   </div> 
 
 <!--- Reg Course List --->
-      <div class="modal fade" id="viewReglistModal">
+     <div class="modal fade" id="viewReglistModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
@@ -360,7 +409,7 @@ window.history.back();
 
  
  <!--- Faculty --->
-      <div class="modal fade" id="viewFacultyModal">
+    <div class="modal fade" id="viewFacultyModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
@@ -430,9 +479,8 @@ window.history.back();
         
         // Set the default no. of rows to display
         "pageLength": 5
-    }
-    );
-     $('#table2').DataTable(
+    });
+    $('#table2').DataTable(
     {
       "sPaginationType": "full_numbers",
        // Sets the row-num-selection "Show %n entries" for the user
@@ -440,9 +488,17 @@ window.history.back();
         
         // Set the default no. of rows to display
         "pageLength": 5
-    }
-    );
-} );
+    });
+      $('#courseTable').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    });
+});
     
 
     </script>
