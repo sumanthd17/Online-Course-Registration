@@ -14,6 +14,7 @@ from django.views import View
 from django.contrib.auth import *
 import requests, json
 from datetime import datetime as dt
+from datetime import timedelta
 import pytz
 
 
@@ -792,46 +793,57 @@ class StudentCourseListView(View):
 class RegCourseListView(View):
 	model=Courseregistrations
 	template_name="users/courselist.html"
-	coursereg=True
 	def get(self, request, *args, **kwargs):
+		context={}
 		course = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
 		total_courses=len(Course.objects.all())
 		faculty = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
 		total_faculty=len(Faculty.objects.all())
 		policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
-		total_policy=len(RegistrationPolicy.objects.all())
-		context={}
+		total_policy=len(RegistrationPolicy.objects.all())		
 		date_format = '%Y-%m-%d'
 		today=setdate()
 		today=dt.strptime(today,date_format).date()
-		regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-		if regvals:
-			for r in regvals:
-				context['startdate']=r['courseregistrations_startdate']
-				context['enddate']=r['courseregistrations_enddate']
-				context['updatedate']=r['courseregistrations_updatedate']
-				context['finaldate']=r['courseregistrations_finaldate']
-				context['sem']=r['courseregistrations_semester']
-				if context['sem'] == 'Spring':
-					context['Spring']=True
-				elif context['sem'] == 'Fall':
-					context['Fall']=True
-				context['year']=r['courseregistrations_year']			
-		if self.coursereg == True:
-			context['register']=True
+		coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+		if coursevals:
+			regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+			if regvals:
+				for r in regvals:
+					context['startdate']=r['courseregistrations_startdate']
+					context['enddate']=r['courseregistrations_enddate']
+					context['updatedate']=r['courseregistrations_updatedate']
+					context['finaldate']=r['courseregistrations_finaldate']
+					context['sem']=r['courseregistrations_semester']
+					if context['sem'] == 'Spring':
+						context['Spring']=True
+					elif context['sem'] == 'Fall':
+						context['Fall']=True
+					context['year']=r['courseregistrations_year']
+				context['enable']=True			
+			if today > context['finaldate']:
+				print("reg date is over")
+				context['enable']=False
 		else:
-			context['register']=False
+			day=setdate()
+			courseids =Courseregistrations.objects.filter(courseregistrations_finaldate__lt=day)
+			if courseids:
+				context['enable']=False
+			else:
+				context['enable']=True
 		context['course']=course
 		context['total_courses']=total_courses
 		context['faculty']=faculty
 		context['policy']=policy		
 		context['total_faculty']=total_faculty
-		context['total_policy']=total_policy	
+		context['total_policy']=total_policy
+		context['coursevals']=coursevals
+		context['total_reglist']=len(coursevals)			
 		return render(request, self.template_name,context)
 		
 	def post(self, request, *args, **kwargs):
 		if 'changeBtn' in request.POST:
 			try:
+				context={}
 				start_date = request.POST.getlist('sdate')
 				end_date=request.POST.getlist('edate')
 				update_date=request.POST.getlist('udate')
@@ -842,46 +854,51 @@ class RegCourseListView(View):
 				course_offered_to = request.POST.getlist('csel')
 				size = request.POST.getlist('max')
 				faculty = request.POST.getlist('fid')
-				print(start_date)
-				print(end_date)
-				print(update_date)
-				print(final_date)
-				print(sem)
-				print(year)
+				date_format = '%Y-%m-%d'
+				today=setdate()
+				today=dt.strptime(today,date_format).date()
 				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
+				context['course']=courselist
 				total_courses=len(Course.objects.all())
+				context['total_courses']=total_courses
 				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
+				context['faculty']=facultylist
 				total_faculty=len(Faculty.objects.all())
+				context['total_faculty']=total_faculty
 				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				total_policy=len(RegistrationPolicy.objects.all())
-				context={}
-				regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-				if regvals:
-					for r in regvals:
-						context['startdate']=r['courseregistrations_startdate']
-						context['enddate']=r['courseregistrations_enddate']
-						context['updatedate']=r['courseregistrations_updatedate']
-						context['finaldate']=r['courseregistrations_finaldate']
-						context['sem']=r['courseregistrations_semester']
-						if context['sem'] == 'Spring':
-							context['Spring']=True
-						elif context['sem'] == 'Fall':
-							context['Fall']=True
-						context['year']=r['courseregistrations_year']			
-					context['enable']=True
-				else:
-					context['enable']=False
-				if self.coursereg == True:
-					context['register']=True
-				else:
-					context['register']=False
-				context['course']=courselist
-				context['faculty']=facultylist
-				context['policy']=policy
-				context['total_courses']=total_courses
-				context['total_faculty']=total_faculty
+				context['policy']=policy				
 				context['total_policy']=total_policy
-				date_format = '%Y-%m-%d'
+				coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+				if coursevals:
+					context['coursevals']=coursevals
+					context['total_reglist']=len(coursevals)
+					regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+					if regvals:
+						for r in regvals:
+							context['startdate']=r['courseregistrations_startdate']
+							context['enddate']=r['courseregistrations_enddate']
+							context['updatedate']=r['courseregistrations_updatedate']
+							context['finaldate']=r['courseregistrations_finaldate']
+							context['sem']=r['courseregistrations_semester']
+							if context['sem'] == 'Spring':
+								context['Spring']=True
+							elif context['sem'] == 'Fall':
+								context['Fall']=True
+							context['year']=r['courseregistrations_year']			
+						context['enable']=True
+						if today > context['finaldate']:
+							print("reg date is over")
+							context['enable']=False
+							raise ValueError('Registration Final Date is earlier than today')
+				else: 
+					day=setdate()
+					courseids =Courseregistrations.objects.filter(courseregistrations_finaldate__lt=day)
+					if courseids:
+						context['enable']=False
+					else:
+						context['enable']=True
+					
 				db_start_date=dt.strptime(start_date[0], date_format).date()
 				print(db_start_date)
 				db_end_date=dt.strptime(end_date[0], date_format).date()
@@ -890,8 +907,6 @@ class RegCourseListView(View):
 				print(db_update_date)
 				db_final_date=dt.strptime(final_date[0], date_format).date()
 				print(db_final_date)
-				today=setdate()
-				today=dt.strptime(today,date_format).date()
 				print(today)
 				if today > db_start_date:
 					raise ValueError('Start date is earlier than today')
@@ -925,11 +940,7 @@ class RegCourseListView(View):
 							context['year']=r['courseregistrations_year']
 						context['enable']=True
 					else:
-						context['enable']=False
-					if self.coursereg == True:
-						context['register']=True
-					else:
-						context['register']=False
+						context['enable']=False					
 				else:
 					messages.error(request,"No matching records to update schedule for current registration!")
 			except ValueError as e:
@@ -937,6 +948,7 @@ class RegCourseListView(View):
 			return render(request, self.template_name,context)
 		elif 'saveCourseBtn' in request.POST:
 			try:
+				context={}
 				start_date = request.POST.getlist('sdate')
 				end_date=request.POST.getlist('edate')
 				update_date=request.POST.getlist('udate')
@@ -947,6 +959,9 @@ class RegCourseListView(View):
 				course_offered_to = request.POST.getlist('csel')
 				size = request.POST.getlist('max')
 				faculty = request.POST.getlist('fid')
+				date_format = '%Y-%m-%d'
+				today=setdate()
+				today=dt.strptime(today,date_format).date()
 				print(start_date)
 				print(end_date)
 				print(update_date)
@@ -967,242 +982,17 @@ class RegCourseListView(View):
 				total_faculty=len(Faculty.objects.all())
 				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				total_policy=len(RegistrationPolicy.objects.all())
-				context={}
-				regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-				if regvals:
-					for r in regvals:
-						context['startdate']=r['courseregistrations_startdate']
-						context['enddate']=r['courseregistrations_enddate']
-						context['updatedate']=r['courseregistrations_updatedate']
-						context['finaldate']=r['courseregistrations_finaldate']
-						context['sem']=r['courseregistrations_semester']
-						if context['sem'] == 'Spring':
-							context['Spring']=True
-						elif context['sem'] == 'Fall':
-							context['Fall']=True
-						context['year']=r['courseregistrations_year']			
-					context['enable']=True
-				else:
-					context['enable']=False
-				if self.coursereg == True:
-					context['register']=True
-				else:
-					context['register']=False
 				context['course']=courselist
 				context['faculty']=facultylist
 				context['policy']=policy
 				context['total_courses']=total_courses
 				context['total_faculty']=total_faculty
 				context['total_policy']=total_policy
-				today=setdate()
-				#print(today)				
-				if listlen <=0:
-					raise IndexError()
-				else:
-					date_format = '%Y-%m-%d'
-					today=dt.strptime(today,date_format).date()
-					db_start_date=dt.strptime(start_date[0], date_format).date()
-					print(db_start_date)
-					if today > db_start_date:
-						raise ValueError('Start date is earlier than today')
-					db_end_date=dt.strptime(end_date[0], date_format).date()
-					if today > db_end_date:
-						raise ValueError('End date is earlier than today')
-					print(db_end_date)
-					db_update_date=dt.strptime(update_date[0], date_format).date()
-					if today > db_update_date:
-						raise ValueError('Update date is earlier than today')
-					print(db_update_date)
-					db_final_date=dt.strptime(final_date[0], date_format).date()
-					print(db_final_date)					
-					if today > db_final_date:
-						raise ValueError('Final date is earlier than today')
-					if db_start_date > db_end_date:
-						raise ValueError('Start date is later than end date')
-					if db_update_date < db_start_date:
-						raise ValueError('Update data is earlier than start date')
-					if db_final_date < db_update_date:
-						raise ValueError('Final date is earlier than update date')
-					getreg = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-					if getreg:
-						for s in getreg:
-							sdate=str(s[0])
-							edate=str(s[1])
-							udate=str(s[2])
-							fdate=str(s[3])
-							csem=str(s[4])
-							cyear=str(s[5])
-						if sdate!=start_date[0]:
-							raise ValueError('Original Start Date is '+sdate+' Click on change Schedule to update the details!')
-						elif edate!=end_date[0]:
-							raise ValueError('Original End Date is '+edate+' Click on change Schedule to update the details!')
-						elif udate!=update_date[0]:
-							raise ValueError('Original Update Date is '+udate+'  Click on change Schedule to update the details!')
-						elif fdate!=final_date[0]:
-							raise ValueError('Original Final Date is '+fdate+'  Click on change Schedule to update the details!')
-						elif csem!=sem[0]:
-							raise ValueError('Earlier Semester is '+csem+'  Click on change Schedule to update the details!')
-						elif cyear!=year[0]:
-							raise ValueError('Earlier year is '+cyear+'  Click on change Schedule to update the details!')
-						else:
-							for i in range(listlen):
-								courseinfo = get_object_or_404(Course, pk=int(course_id[i]))
-								f=get_object_or_404(Faculty,pk=int(faculty[i]))
-								tablesave =Courseregistrations.objects.update_or_create(courseregistrations_cid=courseinfo,courseregistrations_fid=f,courseregistrations_startdate=db_start_date,courseregistrations_enddate=db_end_date,courseregistrations_updatedate=db_update_date,courseregistrations_finaldate=db_final_date,courseregistrations_semester=sem[0],courseregistrations_year=year[0],courseregistrations_offeredto=course_offered_to[i],courseregistrations_classsize=size[i],courseregistrations_isactive=True)
-								messages.success(request,"Selected courses added to registration list!")
-					else:
-						for i in range(listlen):
-							courseinfo = get_object_or_404(Course, pk=int(course_id[i]))
-							f=get_object_or_404(Faculty,pk=int(faculty[i]))
-							tablesave =Courseregistrations.objects.update_or_create(courseregistrations_cid=courseinfo,courseregistrations_fid=f,courseregistrations_startdate=db_start_date,courseregistrations_enddate=db_end_date,courseregistrations_updatedate=db_update_date,courseregistrations_finaldate=db_final_date,courseregistrations_semester=sem[0],courseregistrations_year=year[0],courseregistrations_offeredto=course_offered_to[i],courseregistrations_classsize=size[i],courseregistrations_isactive=True)
-							messages.success(request,"Selected courses added to registration list!")			
-			except IndexError as e:
-				print("Please select a record and save!!")
-				messages.error(request,"Please select a record to save!")
-			except ValueError as e:
-				messages.error(request,repr(e))
-			return render(request, self.template_name,context)
-		elif 'addPolicyBtn' in request.POST:
-			try:
-				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
-				total_courses=len(Course.objects.all())
-				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
-				total_faculty=len(Faculty.objects.all())
-				ctype=request.POST.get('ctype')
-				credits=request.POST.get('pcredits')
-				year=request.POST.get('pyear')
-				name=request.user
-				user=CustomUser.objects.values('id').filter(email=name)
-				for x in user:
-					uid=x['id']
-				user=get_object_or_404(CustomUser,pk=uid)				
-				print(user)
-				regpolicy = RegistrationPolicy.objects.create(regPolicy_coursetype=ctype,regPolicy_credits=credits,regPolicy_year=year,regPolicy_updateddby=user)
-				if regpolicy:
-					messages.success(request,"Created new policy!")			
-				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
-				total_policy=len(RegistrationPolicy.objects.all())
-				context={}
-				regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-				if regvals:
-					for r in regvals:
-						context['startdate']=r['courseregistrations_startdate']
-						context['enddate']=r['courseregistrations_enddate']
-						context['updatedate']=r['courseregistrations_updatedate']
-						context['finaldate']=r['courseregistrations_finaldate']
-						context['sem']=r['courseregistrations_semester']
-						if context['sem'] == 'Spring':
-							context['Spring']=True
-						elif context['sem'] == 'Fall':
-							context['Fall']=True
-						context['year']=r['courseregistrations_year']			
-					context['enable']=True
-				else:
-					context['enable']=False
-				if self.coursereg == True:
-					context['register']=True
-				else:
-					context['register']=False
-				context['course']=courselist
-				context['faculty']=facultylist
-				context['policy']=policy
-				context['total_courses']=total_courses
-				context['total_faculty']=total_faculty
-				context['total_policy']=total_policy
-			except ValueError as e:
-				messages.error(request,repr(e)+'Add all details to add policy details!')
-			return render(request, self.template_name,context)
-		elif 'changePolicyBtn' in request.POST:
-			try:
-				print("Now change policy details")
-				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
-				total_courses=len(Course.objects.all())
-				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
-				total_faculty=len(Faculty.objects.all())
-				ctype=request.POST.getlist('ctype')
-				credits=request.POST.getlist('credits')
-				year=request.POST.getlist('year')
-				ids=request.POST.getlist('savePolicy')
-				pids=request.POST.getlist('pid')
-				name=request.user
-				user=CustomUser.objects.values('id').filter(email=name)
-				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
-				total_policy=len(RegistrationPolicy.objects.all())
-				for x in user:
-					uid=x['id']
-				user=get_object_or_404(CustomUser,pk=uid)				
-				l1=len(ctype)
-				l2=len(credits)
-				l3=len(year)
-				l4=len(ids)
-				l5=len(pids)
-				if l1==0 or l2==0 or l3==0 or l4==0:
-					raise ValueError()
-				if l1!=l2 or l1!=l3 or l2!=l3:
-					raise ValueError()
-				for i in range(l4):
-					print(ids[i])
-					for j in range(l5):
-						if ids[i]==pids[j]:
-							break					
-					if not ctype[j] or not credits[j] or not year[j]:
-						raise ValueError()
-					policy=get_object_or_404(RegistrationPolicy,pk=ids[i])
-					regVal = RegistrationPolicy.objects.filter(pk=ids[i]).update(regPolicy_coursetype=ctype[j],regPolicy_credits=credits[j],regPolicy_year=year[j])				
-				if regVal:										
-					messages.success(request,"Updated policy details!")
-				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
-				total_policy=len(RegistrationPolicy.objects.all())		
-			except ValueError as e:
-				messages.error(request,repr(e)+'Add all details to change policy details!')
-			context={}
-			regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
-			if regvals:
-				for r in regvals:
-					context['startdate']=r['courseregistrations_startdate']
-					context['enddate']=r['courseregistrations_enddate']
-					context['updatedate']=r['courseregistrations_updatedate']
-					context['finaldate']=r['courseregistrations_finaldate']
-					context['sem']=r['courseregistrations_semester']
-					if context['sem'] == 'Spring':
-						context['Spring']=True
-					elif context['sem'] == 'Fall':
-						context['Fall']=True
-					context['year']=r['courseregistrations_year']			
-				context['enable']=True
-			else:
-				context['enable']=False
-			if self.coursereg == True:
-				context['register']=True
-			else:
-				context['register']=False
-			context['course']=courselist
-			context['faculty']=facultylist
-			context['policy']=policy
-			context['total_courses']=total_courses
-			context['total_faculty']=total_faculty
-			context['total_policy']=total_policy			
-			return render(request, self.template_name,context)
-		elif 'closeRegBtn' in request.POST:
-			try:
-				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
-				total_courses=len(Course.objects.all())
-				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
-				total_faculty=len(Faculty.objects.all())
-				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
-				total_policy=len(RegistrationPolicy.objects.all())
-				context={}
-				date_format = '%Y-%m-%d'
-				today=setdate()
-				today=dt.strptime(today,date_format).date()
-				getreg = Courseregistrations.objects.filter(courseregistrations_isactive=True).update(courseregistrations_isactive=False)
-				if getreg:
-					context['register']=False
-					self.coursereg=False
-					messages.success(request,"Course registration closed!")
-				else:
-					messages.error(request,"No active registrations to close!")
-					regvals =  Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+				coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+				if coursevals:
+					context['coursevals']=coursevals
+					context['total_reglist']=len(coursevals)
+					regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
 					if regvals:
 						for r in regvals:
 							context['startdate']=r['courseregistrations_startdate']
@@ -1216,18 +1006,342 @@ class RegCourseListView(View):
 								context['Fall']=True
 							context['year']=r['courseregistrations_year']			
 						context['enable']=True
+						if today > context['finaldate']:
+							print("reg date is over")
+							context['enable']=False
+							raise ValueError('Registration Final Date is earlier than today')
+						#print(today)				
+					if listlen <=0:
+						raise IndexError()
 					else:
-						context['enable']=False
-				if self.coursereg == True:
-					context['register']=True
+						db_start_date=dt.strptime(start_date[0], date_format).date()
+						print(db_start_date)
+						if today > db_start_date:
+							raise ValueError('Start date is earlier than today')
+						db_end_date=dt.strptime(end_date[0], date_format).date()
+						if today > db_end_date:
+							raise ValueError('End date is earlier than today')
+						print(db_end_date)
+						db_update_date=dt.strptime(update_date[0], date_format).date()
+						if today > db_update_date:
+							raise ValueError('Update date is earlier than today')
+						print(db_update_date)
+						db_final_date=dt.strptime(final_date[0], date_format).date()
+						print(db_final_date)					
+						if today > db_final_date:
+							raise ValueError('Final date is earlier than today')
+						if db_start_date > db_end_date:
+							raise ValueError('Start date is later than end date')
+						if db_update_date < db_start_date:
+							raise ValueError('Update data is earlier than start date')
+						if db_final_date < db_update_date:
+							raise ValueError('Final date is earlier than update date')
+						getreg = Courseregistrations.objects.filter(courseregistrations_isactive=True).values_list('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+						if getreg:
+							for s in getreg:
+								sdate=str(s[0])
+								edate=str(s[1])
+								udate=str(s[2])
+								fdate=str(s[3])
+								csem=str(s[4])
+								cyear=str(s[5])
+							if sdate!=start_date[0]:
+								raise ValueError('Original Start Date is '+sdate+' Click on change Schedule to update the details!')
+							elif edate!=end_date[0]:
+								raise ValueError('Original End Date is '+edate+' Click on change Schedule to update the details!')
+							elif udate!=update_date[0]:
+								raise ValueError('Original Update Date is '+udate+'  Click on change Schedule to update the details!')
+							elif fdate!=final_date[0]:
+								raise ValueError('Original Final Date is '+fdate+'  Click on change Schedule to update the details!')
+							elif csem!=sem[0]:
+								raise ValueError('Earlier Semester is '+csem+'  Click on change Schedule to update the details!')
+							elif cyear!=year[0]:
+								raise ValueError('Earlier year is '+cyear+'  Click on change Schedule to update the details!')
+							else:
+								for i in range(listlen):
+									courseinfo = get_object_or_404(Course, pk=int(course_id[i]))
+									f=get_object_or_404(Faculty,pk=int(faculty[i]))
+									tablesave=								Courseregistrations.objects.update_or_create(courseregistrations_cid=courseinfo,courseregistrations_fid=f,courseregistrations_startdate=db_start_date,courseregistrations_enddate=db_end_date,courseregistrations_updatedate=db_update_date,courseregistrations_finaldate=db_final_date,courseregistrations_semester=sem[0],courseregistrations_year=year[0],courseregistrations_offeredto=course_offered_to[i],courseregistrations_classsize=size[i],courseregistrations_isactive=True)
+								messages.success(request,"Selected courses added to registration list!")
+						else:
+							for i in range(listlen):
+								courseinfo = get_object_or_404(Course, pk=int(course_id[i]))
+								f=get_object_or_404(Faculty,pk=int(faculty[i]))
+								tablesave =Courseregistrations.objects.update_or_create(courseregistrations_cid=courseinfo,courseregistrations_fid=f,courseregistrations_startdate=db_start_date,courseregistrations_enddate=db_end_date,courseregistrations_updatedate=db_update_date,courseregistrations_finaldate=db_final_date,courseregistrations_semester=sem[0],courseregistrations_year=year[0],courseregistrations_offeredto=course_offered_to[i],courseregistrations_classsize=size[i],courseregistrations_isactive=True)
+								messages.success(request,"Selected courses added to registration list!")
 				else:
-					context['register']=False
+					context['enable']=True
+				if tablesave:
+					coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+					print("updated list")
+					context['coursevals']=coursevals
+					context['total_reglist']=len(coursevals)
+					#detailed added to reg course list after save record			
+			except IndexError as e:
+				print("Please select a record and save!!") 
+				messages.error(request,"Please select a record and fill all details to save the course!")
+			except ValueError as e:
+				messages.error(request,repr(e))
+			except IntegrityError as e:
+				messages.error(request,repr(e))
+			
+			return render(request, self.template_name,context)
+		elif 'addPolicyBtn' in request.POST:
+			try:
+				context={}
+				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
+				total_courses=len(Course.objects.all())
+				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
+				total_faculty=len(Faculty.objects.all())
+				ctype=request.POST.get('ctype')
+				credits=request.POST.get('pcredits')
+				year=request.POST.get('pyear')
+				name=request.user
+				user=CustomUser.objects.values('id').filter(email=name)
+				date_format = '%Y-%m-%d'
+				today=setdate()
+				today=dt.strptime(today,date_format).date()
+				for x in user:
+					uid=x['id']
+				user=get_object_or_404(CustomUser,pk=uid)				
+				print(user)
+				regpolicy = RegistrationPolicy.objects.create(regPolicy_coursetype=ctype,regPolicy_credits=credits,regPolicy_year=year,regPolicy_updateddby=user)
+				if regpolicy:
+					messages.success(request,"Created new policy!")			
+				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+				total_policy=len(RegistrationPolicy.objects.all())
 				context['course']=courselist
 				context['faculty']=facultylist
 				context['policy']=policy
 				context['total_courses']=total_courses
 				context['total_faculty']=total_faculty
-				context['total_policy']=total_policy				
+				context['total_policy']=total_policy
+				coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+				if coursevals:
+					context['coursevals']=coursevals
+					context['total_reglist']=len(coursevals)
+					regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+					if regvals:
+						for r in regvals:
+							context['startdate']=r['courseregistrations_startdate']
+							context['enddate']=r['courseregistrations_enddate']
+							context['updatedate']=r['courseregistrations_updatedate']
+							context['finaldate']=r['courseregistrations_finaldate']
+							context['sem']=r['courseregistrations_semester']
+							if context['sem'] == 'Spring':
+								context['Spring']=True
+							elif context['sem'] == 'Fall':
+								context['Fall']=True
+							context['year']=r['courseregistrations_year']			
+						context['enable']=True
+						if today > context['finaldate']:
+							context['enable']=False
+					else:
+						context['enable']=False				
+			except ValueError as e:
+				messages.error(request,repr(e)+'Add all details to add policy details!')
+			return render(request, self.template_name,context)
+		elif 'changePolicyBtn' in request.POST:
+			try:
+			    context={}
+			    courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
+			    total_courses=len(Course.objects.all())
+			    facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
+			    total_faculty=len(Faculty.objects.all())
+			    policy=RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+			    total_policy=len(RegistrationPolicy.objects.all())
+			    date_format = '%Y-%m-%d'
+			    today=setdate()
+			    today=dt.strptime(today,date_format).date()
+			    context['course']=courselist
+			    context['faculty']=facultylist
+			    context['policy']=policy
+			    context['total_courses']=total_courses
+			    context['total_faculty']=total_faculty
+			    context['total_policy']=total_policy
+			    coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+			    if coursevals:
+			    	context['coursevals']=coursevals
+			    	context['total_reglist']=len(coursevals)
+			    	regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+			    	if regvals:
+			    		for r in regvals:
+			    			context['startdate']=r['courseregistrations_startdate']
+			    			context['enddate']=r['courseregistrations_enddate']
+			    			context['updatedate']=r['courseregistrations_updatedate']
+			    			context['finaldate']=r['courseregistrations_finaldate']
+			    			context['sem']=r['courseregistrations_semester']
+			    			if context['sem'] == 'Spring':
+			    				context['Spring']=True
+			    			elif context['sem'] == 'Fall':
+			    				context['Fall']=True
+			    			context['year']=r['courseregistrations_year']
+			    		context['enable']=True
+			    		if today > context['finaldate']:
+			    			context['enable']=False
+			    	else:
+			    		context['enable']=False
+			    ctype=request.POST.getlist('ctype')
+			    credits=request.POST.getlist('credits')
+			    year=request.POST.getlist('year')
+			    ids=request.POST.getlist('savePolicy')
+			    pids=request.POST.getlist('pid')
+			    name=request.user
+			    user=CustomUser.objects.values('id').filter(email=name)
+			    for x in user:
+			    	uid=x['id']
+			    user=get_object_or_404(CustomUser,pk=uid)
+			    l1=len(ctype)
+			    l2=len(credits)
+			    l3=len(year)
+			    l4=len(ids)
+			    l5=len(pids)
+			    if l1==0 or l2==0 or l3==0 or l4==0:
+			    	raise ValueError()
+			    if l1!=l2 or l1!=l3 or l2!=l3:
+			    	raise ValueError()
+			    for i in range(l4):
+			    	print(ids[i])
+			    	for j in range(l5):
+			    		if ids[i]==pids[j]:
+			    			break
+			    	if not ctype[j] or not credits[j] or not year[j]:
+			    		raise ValueError()
+			    	policy=get_object_or_404(RegistrationPolicy,pk=ids[i])
+			    	regVal =RegistrationPolicy.objects.filter(pk=ids[i]).update(regPolicy_coursetype=ctype[j],regPolicy_credits=credits[j],regPolicy_year=year[j])
+			    	if regVal:
+			    		messages.success(request,"Updated policy details!")
+			    policy=RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+			    total_policy=len(RegistrationPolicy.objects.all())		
+			except ValueError as e:
+				messages.error(request,repr(e)+'Add all details to change policy details!')
+			return render(request, self.template_name,context)
+		elif 'delCourseBtn' in request.POST:
+			try:
+				context={}
+				start_date = request.POST.getlist('sdate')
+				end_date=request.POST.getlist('edate')
+				update_date=request.POST.getlist('udate')
+				final_date=request.POST.getlist('fdate')
+				sem=request.POST.getlist('sem')
+				year=request.POST.getlist('year')
+				course_id = request.POST.getlist('saveCourse')
+				course_offered_to = request.POST.getlist('csel')
+				size = request.POST.getlist('max')
+				faculty = request.POST.getlist('fid')
+				size=list(filter(None,size))
+				faculty=list(filter(None,faculty))
+				listlen = len(faculty)
+				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
+				total_courses=len(Course.objects.all())
+				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
+				total_faculty=len(Faculty.objects.all())
+				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+				total_policy=len(RegistrationPolicy.objects.all())
+				context['course']=courselist
+				context['faculty']=facultylist
+				context['policy']=policy
+				context['total_courses']=total_courses
+				context['total_faculty']=total_faculty
+				context['total_policy']=total_policy			
+				date_format = '%Y-%m-%d'
+				today=setdate()
+				today=dt.strptime(today,date_format).date()
+				coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+				if coursevals:
+					print(coursevals)
+					context['coursevals']=coursevals
+					context['total_reglist']=len(coursevals)
+					regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+					if regvals:
+						for r in regvals:
+							context['startdate']=r['courseregistrations_startdate']
+							context['enddate']=r['courseregistrations_enddate']
+							context['updatedate']=r['courseregistrations_updatedate']
+							context['finaldate']=r['courseregistrations_finaldate']
+							context['sem']=r['courseregistrations_semester']
+							if context['sem'] == 'Spring':
+								context['Spring']=True
+							elif context['sem'] == 'Fall':
+								context['Fall']=True
+							context['year']=r['courseregistrations_year']			
+						context['enable']=True
+						print("set enable ")
+						if today > context['finaldate']:
+							print("reg date is over")
+							context['enable']=False
+							raise ValueError('Registration Final Date is earlier than today')							
+						if listlen <=0:
+							raise IndexError()
+						else:
+							for i in range(listlen):
+								courseinfo = get_object_or_404(Course, pk=int(course_id[i]))
+								f=get_object_or_404(Faculty,pk=int(faculty[i]))
+								tablesave=								Courseregistrations.objects.filter(courseregistrations_cid=courseinfo,courseregistrations_fid=f,courseregistrations_isactive=True).delete()
+								messages.success(request,"Selected courses deleted from registration list!")
+					else:
+						context['enable']=True
+					if tablesave:
+						coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+						print("updated list")
+						context['coursevals']=coursevals
+						context['total_reglist']=len(coursevals)
+						#detailed added to reg course list after save record			
+			except IndexError as e:
+				print("Please select a record to delete!!") 
+				messages.error(request,"Please select a record  to delete the course!")
+			except ValueError as e:
+				messages.error(request,repr(e))
+			except IntegrityError as e:
+				messages.error(request,repr(e))			
+			return render(request, self.template_name,context)
+		elif 'closeRegBtn' in request.POST:
+			try:
+				context={}
+				courselist = Course.objects.all().values('course_id','course_name','course_delivery_mode','course_type','course_credits')
+				total_courses=len(Course.objects.all())
+				facultylist = Faculty.objects.all().values('faculty_id','faculty_name','faculty_designation')
+				total_faculty=len(Faculty.objects.all())
+				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+				total_policy=len(RegistrationPolicy.objects.all())				
+				date_format = '%Y-%m-%d'
+				today=setdate()
+				today=dt.strptime(today,date_format).date()
+				context['course']=courselist
+				context['faculty']=facultylist
+				context['policy']=policy
+				context['total_courses']=total_courses
+				context['total_faculty']=total_faculty
+				context['total_policy']=total_policy
+				coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+				if coursevals:
+					context['coursevals']=coursevals
+					context['total_reglist']=len(coursevals)
+					regvals = Courseregistrations.objects.filter(courseregistrations_isactive=True).values('courseregistrations_startdate','courseregistrations_enddate','courseregistrations_updatedate','courseregistrations_finaldate','courseregistrations_semester','courseregistrations_year')
+					if regvals:
+						for r in regvals:
+							context['startdate']=r['courseregistrations_startdate']
+							context['enddate']=r['courseregistrations_enddate']
+							context['updatedate']=r['courseregistrations_updatedate']
+							context['finaldate']=r['courseregistrations_finaldate']
+							context['sem']=r['courseregistrations_semester']
+							if context['sem'] == 'Spring':
+								context['Spring']=True
+							elif context['sem'] == 'Fall':
+								context['Fall']=True
+							context['year']=r['courseregistrations_year']			
+						context['enable']=True
+						if today > context['finaldate']:
+							context['enable']=False
+							raise ValueError('Registration Final Date is earlier than today')							
+					prevday=today-timedelta(days=1)
+					print(prevday)					getreg=Courseregistrations.objects.filter(courseregistrations_isactive=True).update(courseregistrations_isactive=False,courseregistrations_finaldate=prevday)
+					if getreg:
+						messages.success(request,"Course registration closed!")
+						context['enable']=False
+						coursevals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id','courseregistrations_offeredto','courseregistrations_classsize')
+						context['coursevals']=coursevals
+						context['total_reglist']=len(coursevals)
 			except Exception as e:
 				print(e)
 				messages.error(request,repr(e)+"Registration Closure failed!")			

@@ -170,7 +170,7 @@ class Courseregistrations(models.Model):
     class Meta:
         managed = True
         db_table = 'CourseRegistrations'
-        unique_together = (('courseregistrations_cid', 'courseregistrations_fid'),)
+        unique_together = (('courseregistrations_cid', 'courseregistrations_fid','courseregistrations_isactive'),)
 
 
 
