@@ -1333,9 +1333,9 @@ class RegCourseListView(View):
 						context['enable']=True
 						if today > context['finaldate']:
 							context['enable']=False
-							raise ValueError('Registration Final Date is earlier than today')							
+							raise ValueError('Registration Final Date is earlier than today')
 					prevday=today-timedelta(days=1)
-					print(prevday)					getreg=Courseregistrations.objects.filter(courseregistrations_isactive=True).update(courseregistrations_isactive=False,courseregistrations_finaldate=prevday)
+					getreg=Courseregistrations.objects.filter(courseregistrations_isactive=True).update(courseregistrations_isactive=False,courseregistrations_finaldate=prevday)
 					if getreg:
 						messages.success(request,"Course registration closed!")
 						context['enable']=False
