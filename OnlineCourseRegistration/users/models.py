@@ -104,7 +104,7 @@ class Grades(models.Model):
 		unique_together = (('studentid', 'courseid'),)
 
 class Student(models.Model):
-	student_roll_no = models.IntegerField(db_column='Student_roll_no', primary_key=True)
+	student_roll_no = models.CharField(db_column='Student_roll_no', max_length=30,primary_key=True)
 	student_first_name = models.CharField(db_column='Student_First_Name', max_length=100,null=False)
 	student_middle_name = models.CharField(db_column='Student_Middle_Name', max_length=100,blank=True)
 	student_last_name = models.CharField(db_column='Student_Last_Name', max_length=100,null=False)
