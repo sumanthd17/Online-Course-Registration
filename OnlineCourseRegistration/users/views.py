@@ -430,22 +430,26 @@ class CourseListView(View):
 					context['student_reg_year']=i['student_reg_year']
 				student_roll = context['student_roll_no']
 				sem=i['student_curr_sem']
-				grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','course_status').annotate(total_credits=Sum('courseid__course_credits'))
+				grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','courseid__course_name','course_status','courseid__course_credits')
 				context['grades']=grades
 				context['total_grades']=len(grades)
-				mypolicy = RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')		
+				mypolicy=RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				todo=[]
 				k=0
-				for x in grades:
-					for y in mypolicy:
-						if x['courseid__course_type'] == y['regPolicy_coursetype']:
-							mycredits = y['regPolicy_credits']
-							balance = mycredits - x['courseid__course_credits']
-							todo.append({'courseid__course_type':x['courseid__course_type'],'total_credits':balance})
-							k=k+1
-				#print(todo)	
+				balance=0
+				total=0
+				for y in mypolicy:
+					for x in grades:
+						if y['regPolicy_coursetype'] == x['courseid__course_type']:
+							total = total + x['courseid__course_credits']
+					balance = y['regPolicy_credits']-total			
+					todo.append({'courseid__course_type':y['regPolicy_coursetype'],'total_credits':balance})
+					k=k+1
+					balance=0
+					total=0						
+				print(todo)	
 				context['todo']=todo
-				context['total_todo']=k	
+				context['total_todo']=k
 				listlen = len(courseregistrations_id)
 				optlen=len(option)
 				if listlen <= 0:
@@ -497,45 +501,50 @@ class CourseListView(View):
 				messages.error(request,'Please select a course to save!!')
 			return render(request,self.template_name,context)
 		elif 'submitCourseBtn' in request.POST:
-			try:
+			try:	
+				print("To submit course list")
+				context={}
 				courseregistrations_id = request.POST.getlist('saveCourse')
 				myname = request.POST.getlist('submitCourseBtn')
 				option=request.POST.getlist('csel')
 				option=list(filter(None,option))
+				listlen = len(courseregistrations_id)
+				optlen=len(option)
 				email=request.user
-				context={}
 				student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem','student_reg_year').filter(student_email=email)
 				policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				total_policy=len(RegistrationPolicy.objects.all())
 				context['policy']=policy
-				context['total_policy']=total_policy			
+				context['total_policy']=total_policy
 				for i in student:
 					fname = i['student_first_name']			
 					lname = i['student_last_name']
 					name = fname+" "+lname
 					context['name']=name
-					context['student_roll_no']=i['student_roll_no']
+					context['student_roll_no']=i['student_roll_no']					
 					context['student_cur_year']=i['student_cur_year']
 					context['student_cur_sem']=i['student_curr_sem']
 					context['student_reg_year']=i['student_reg_year']
 				student_roll = context['student_roll_no']
-				sem=context['student_curr_sem']
-				grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','course_status').annotate(total_credits=Sum('courseid__course_credits'))
+				sem=context['student_cur_sem']
+				grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','courseid__course_name','course_status','courseid__course_credits')
 				context['grades']=grades
 				context['total_grades']=len(grades)
-				listlen = len(courseregistrations_id)
-				optlen=len(option)
-				mypolicy = RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')		
+				mypolicy=RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 				todo=[]
 				k=0
-				for x in grades:
-					for y in mypolicy:
-						if x['courseid__course_type'] == y['regPolicy_coursetype']:
-							mycredits = y['regPolicy_credits']
-							balance = mycredits - x['courseid__course_credits']
-							todo.append({'courseid__course_type':x['courseid__course_type'],'total_credits':balance})
-							k=k+1
-				#print(todo)	
+				balance=0
+				total=0
+				for y in mypolicy:
+					for x in grades:
+						if y['regPolicy_coursetype'] == x['courseid__course_type']:
+							total = total + x['courseid__course_credits']
+					balance = y['regPolicy_credits']-total			
+					todo.append({'courseid__course_type':y['regPolicy_coursetype'],'total_credits':balance})
+					k=k+1
+					balance=0
+					total=0						
+				#print(todo)
 				context['todo']=todo
 				context['total_todo']=k
 				student_id = CustomUser.objects.values('id').filter(username=myname[0])
