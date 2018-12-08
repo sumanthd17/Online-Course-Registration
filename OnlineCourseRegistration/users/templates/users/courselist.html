@@ -210,6 +210,10 @@ window.history.back();
                <div>
             <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changePolicyModal">Change Policy</a>
             </div> 
+             <div>
+            <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#addPrerequisiteModal">Add Prerequisite</a>
+            </div>
+            
        <!---     <div>
              {% if enable %}  
       <button type="submit" class="btn btn-primary btn-md mr-3" id="closeReg" name="closeRegBtn">Close Registrations</button>
@@ -227,7 +231,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Registration Policy</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_policy }}
+                <i class="fas"></i> {{ total_policy }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewPolicyModal">View</a>
             </div>
@@ -237,7 +241,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Faculty</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_faculty }}
+                <i class="fas fa-user"></i> {{ total_faculty }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewFacultyModal">View</a>
             </div>
@@ -248,7 +252,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Registration Course List</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_reglist }}
+                <i class="fas"></i> {{ total_reglist }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewReglistModal">View</a>
             </div>
@@ -412,6 +416,39 @@ window.history.back();
     		<label>Policy Year</label><input name="pyear" class="mr-1" type="text" size="8" value="" required/> 
     		</div>
     	    <input type="submit" name="addPolicyBtn"/>      
+           </form>
+           </div>
+          </div>
+       </div>
+    </div>
+  </div>
+ 
+ <!------Add Prerequisite modal ---------->
+ 
+    <div class="modal fade" id="addPrerequisiteModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add Prerequisites</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center"></h4><br>
+           	<div class="form-group">
+    		<label>Course Name  </label><input name="cname" class="mr-1" size="15" type="text" value="" required/>
+    		<label>Prerequisite Course  </label><input name="pname" class="mr-1" size="15" type="text" value="" required/>
+    		<label>Min Grade </label><select id="mingrade" class="mr-1" name="mingrade" required>
+                   <option selected="selected" disabled></option>
+                   <option value="A">A</option>
+                    <option value="A-">A-</option>
+                    <option value="B">B</option>
+                    <option value="B-">B-</option>
+            </select> </br></br>
+            <label>Comments  </label><input name="comments" class="mr-1" size="60" type="text" value="" required/>
+    		</div>
+    	    <input type="submit" name="addPrerequisiteBtn"/>      
            </form>
            </div>
           </div>

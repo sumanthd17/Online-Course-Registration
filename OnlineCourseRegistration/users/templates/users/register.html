@@ -146,8 +146,8 @@ window.history.back();
               <tbody>   
                {#% from users.models import Courses,Courseregistrations%#}  
                {% for set in queryvals %}         
-                 <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
-                   <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_id }}"/> &nbsp; </td>
+              <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
+          <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_id }}"/> &nbsp;</td>
                   <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
                   <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
@@ -157,6 +157,7 @@ window.history.back();
                    <option value="yes">yes</option>
                     <option value="no">no</option>
                     </select>
+                    </td>
                     <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
                   <i class="fas fa-angle-double-right"></i>Details</a></td>            
                 </tr>
@@ -166,7 +167,7 @@ window.history.back();
           
             <div class="btn-toolbar float-right mb-1">            
              
-            <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button> 
+            <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Add Course</button> 
 
             <div>
             <button type="submit" class="btn btn-primary btn-md mr-1" id="submitcourse" name="submitCourseBtn" value="{{ user.username }}">Submit</button>
@@ -183,7 +184,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Registration Policy</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_policy }}
+                <i class="fas"></i> {{ total_policy }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewPolicyModal">View</a>
             </div>
@@ -193,7 +194,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Course Type wise Pending</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_todo }}
+                <i class="fas"></i> {{ total_todo }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewTodoModal">View</a>
             </div>

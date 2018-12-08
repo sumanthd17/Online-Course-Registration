@@ -52,7 +52,7 @@ window.history.back();
             <a href="/users/studenthome.html" class="nav-link">Student Dashboard</a>
           </li>
           <li class="nav-item px-2">
-            <a href="/register.html" class="nav-link active">Register</a>
+            <a href="/users/register.html" class="nav-link">Register</a>
           </li>  
           <li>
           <a href = "javascript:history.back();" class="nav-link">Back</a>      
@@ -120,7 +120,7 @@ window.history.back();
        <div class="col-md-9">
           <div class="card">
             <div class="card-header">
-              <h4>Courses</h4>
+              <h4>Details</h4>
             </div>
             <table class="table table-striped">
               <thead class="thead-dark">
@@ -134,10 +134,10 @@ window.history.back();
               <tbody>
                {% for set in queryvals %}  
                <tr>
-               <td>{{set.courseregistrations_cid__course_id}}</td>
-               <td>{{set.courseregistrations_cid__course_name}}</td>
-               <td>{{set.courseregistrations_cid__course_credits}}</td>
-               <td>{{set.courseregistrations_fid__faculty_name}}</td>
+               <td>{{set.course_id}}</td>
+               <td>{{set.course_name}}</td>
+               <td>{{set.course_credits}}</td>
+               <td>{{set.faculty_name}}</td>
                </tr>
                {% endfor %}
               </tbody>

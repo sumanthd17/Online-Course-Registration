@@ -107,27 +107,21 @@ window.history.back();
   <section id="actions" class="py-4 mb-4 bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-md-3">
-          
-          <a href="/users/register.html" class="btn btn-primary btn-block">Course Registeration</a>
-          
+        <div class="col-md-3">          
+          <a href="/users/register.html" class="btn btn-primary btn-block">Course Registeration</a>          
         </div>
           <div class="col-md-3">
-          {% if enable %}
-           <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">Add Course</a>
-           {% else %}
-           <a href="#" class="btn btn-success btn-block disabled"" data-toggle="modal" data-target="#addCourseModal">Add Course</a>
-           {% endif %}
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#auditCourseModal">Audit Course</a>          
            </div> 
-          <div class="col-md-3">
+      <!--    <div class="col-md-3">
            {% if enable %}
           <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#dropCourseModal">Drop Course</a>
           {% else %}
           <a href="#" class="btn btn-primary btn-block disabled" data-toggle="modal" data-target="#dropCourseModal">Drop Course</a>
           {% endif %}
-          </div> 
+          </div> ---->
          <div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#viewGradesModal">View Grades</a>
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#viewGradesModal">View Grades</a>
         </div>       
       </div>
     </div>
@@ -137,7 +131,7 @@ window.history.back();
   <section id="courses">
     <div class="container">
       <div class="row">
-        <div class="col-md-9">
+         <div class="col-md-9">
           <div class="card">
             <div class="card-header">
               <h4>My Course List</h4>
@@ -160,32 +154,31 @@ window.history.back();
                 {#% from users.models import StudentRegistrations %#}
                 {% for s in queryvals %}
                 <tr name="crow" data-toggle="modal" data-id="{{ s.studentregistrations_sid}}">
-                   <td ><input type="checkbox" class="cbox" name="delCourse" value="{{s.studentregistrations_cid__course_id}}"/> &nbsp; </td>  
+                <td ><input type="checkbox" class="cbox" name="delCourse" value="{{s.studentregistrations_cid__course_id}}"/></td>  
                    <td id="scid" name="scid"> {{s.studentregistrations_cid__course_id}}</td>
                   <td id="scname" name="scname">{{s.studentregistrations_cid__course_name}}</td> 
                   <td id="scredit" name="scredits">{{s.studentregistrations_cid__course_credits}}</td> 
                   <td id="scstatus" name="scstatus">{{s.studentregistrations_status}}</td>
-                    <td id="scaudit" name="scaudit">{{s.studentregistrations_auditoption}}</td>                                                                     
+                  <td id="scaudit" name="scaudit">{{s.studentregistrations_auditoption}}
+                  </td>                                                                
                </tr>
                 {% endfor %}
               </tbody>
             </table>
-             <div class="btn-toolbar float-right mb-1">
-            <button type="submit" class="btn btn-primary btn-md mr-3"  id="delcourse" name="delCourseBtn" value="{{ user.user}}">Delete Course</button> 
+            <div class="btn-toolbar float-right mb-1">
+  <button type="submit" class="btn btn-primary btn-md mr-3"  id="delcourse" name="delCourseBtn" value="{{ user.user}}">Drop Course</button> 
             </div>
             </form>
           </div>
         </div>
+          
       
-      
-      
-      
-    <div class="col-md-3 py-2">      
-         <div class="card text-center bg-primary text-white mb-3">  
+      <div class="col-md-3 py-1">      
+       <div class="card text-center bg-primary text-white mb-3">  
             <div class="card-body">              
               <h3>Courses</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_courses }}
+                <i class="fas"></i> {{ total_courses }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewCoursesModal">View</a>
             </div>
@@ -195,7 +188,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Faculty</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_faculty }}
+                <i class="fas fa-user"></i> {{ total_faculty }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewFacultyModal">View</a>
             </div>
@@ -205,7 +198,7 @@ window.history.back();
             <div class="card-body">              
               <h3>Registration Course List</h3>
               <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_reglist }}
+                <i class="fas"></i> {{ total_reglist }}
               </h4>
               <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewReglistModal">View</a>
             </div>
