@@ -1,3 +1,8 @@
+
+{% block content %}
+
+{% if user.is_authenticated %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,18 +10,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">   
    
-  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-  <link rel="stylesheet" href="css/style.css">     
+   <link rel="stylesheet" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
    
-  <title>A07 Frontend</title>
-  <script type="text/javascript">
+        
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.common.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+  
+     
+   <link rel="stylesheet" href="{% static "css/style.css" %}">
+   <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">   
+    
+
+
+ 
    
+  <title>Online Course Registeration</title>
+  
+  
+  
+ <script language="JavaScript" type="text/javascript">
+   
+ function showMsg(m)
+ {
+    sweetAlert(m);
+ }
    
    
 function next(){
@@ -25,33 +47,28 @@ window.history.forward();
 function back(){
 window.history.back();
 }
+
 </script>
     
 </head>
 
-
 <body>
+
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
+      <a href="/index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">Online Course Registration</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav">
           <li class="nav-item px-2">
-            <a href="/index.html" class="nav-link">Dashboard</a>
+            <a href="/home.html" class="nav-link">Dashboard</a>
           </li>
-          <li class="nav-item px-2">
-            <a href="/register.html" class="nav-link active">Register</a>
-          </li>  
           <li>
           <a href = "javascript:history.back();" class="nav-link">Back</a>      
           </li>
-          <li>
-          <a href = "javascript:history.forward();" class="nav-link">Next</a>      
-          </li>
-        </ul>
+       </ul>
 
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown mr-3">
@@ -59,10 +76,10 @@ window.history.back();
               <i class="fas fa-user"></i> {{user.username}}
             </a>
             <div class="dropdown-menu">
-              <a href="/profile.html" class="dropdown-item">
+              <a href="/users/profile.html" class="dropdown-item">
                 <i class="fas fa-user-circle"></i> Profile
               </a>
-              <a href="/settings.html" class="dropdown-item">
+              <a href="/users/settings.html" class="dropdown-item">
                 <i class="fas fa-cog"></i> Settings
               </a>
             </div>
@@ -77,199 +94,540 @@ window.history.back();
     </div>
   </nav>
 
-  <!-- HEADER -->
-  <header id="main-header" class="py-2 bg-primary text-white">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <h2 class="text-center">Select Course List</h2>
-        </div>
+  <!-- Courses -->
+  <section id="courses"> 
+      <div class="row"> 
+      <div class="col-lg-1">
       </div>
-    </div>
-  </header>
-
-  <!-- SEARCH -->
-  <section id="search" class="py-4 mb-6 bg-light">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          Name : Rusheel Koushik
-          <BR>
-          Roll Number : 201601074
-          <BR>
-          Year : 3
-          <BR>
-          Semester : 1 
-          <BR>         
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- POSTS -->
-  <section id="courses">
-     <div class="container">
-      <div class="row">
-<!--- left pane ---->
-        <div class="col-md-2 center mt-4">
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Audit Course">Audit Course</button> <br>
-        <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Check Course">Check Availability</button> <br>
-         <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Add Course">Add Course</button> <br>
-          <button type="submit" class="btn btn-primary btn-md mt-4 mr-1 mb-2"  value="Drop Course">Drop Course</button>
-       </div>
-        
- 
-
-      
-<!----Middle pane ------>      
-        <div class="col-md-6">
-          <div class="card" id="target">                 
-            <div class="card-header">
-              <h4>Select Courses</h4>
-            </div>
-   <!-------- Earlier form entry ------->  
+      <div class="col-lg-9">        
+       <div class="table-responsive">
+        <h4 class="text-center">Fill Details and Save</h4>
+           <!--------form entry ------->  
            <form method="POST"  enctype="multipart/form-data" id="cform">
    			 {% csrf_token %}
-    		{{ form.data }}
-            <table id="ctable" class="table table-striped">
+    		{{ form.data }} 
+    		<div class="row">
+    		<div class="form-group col-lg-9">
+    		{% if enable %}
+    		<label>Start Date</label><input name="sdate" class="mr-3" size="8" type="date" value="{{ startdate|date:'Y-m-d' }}"/>
+    		<label>End Date</label><input name ="edate" class="mr-3" size="8" type="date" value="{{ enddate|date:'Y-m-d' }}"/>
+    		{% else %}     		
+    		<label>Start Date</label><input name="sdate" class="mr-3" size="8" type="date" value=""/>
+    		<label>End Date</label><input name ="edate" class="mr-3" size="8" type="date" value=""/>
+    		{% endif %}
+    		<label>Semester</label><select id="sem" name="sem">
+                   <option selected="selected" disabled></option>
+                   {% if Spring %}
+                   <option value="Spring" selected>Spring</option>
+                    <option value="Fall">Fall</option>
+                   {% endif %}
+                   {% if Fall %}
+                    <option value="Fall" selected>Fall</option>
+                     <option value="Spring">Spring</option>
+                    {% else %}
+                     <option value="Fall">Fall</option>
+                     <option value="Spring">Spring</option>
+                   {% endif %}                
+            </select>
+    		</div>
+    		</div>
+    		<div class="row">
+    		<div class="form-group col-lg-9"> 
+    		{% if enable %}   	
+    		<label>Update Date</label><input name="udate" class="mr-3" type="date" size="8" value="{{ updatedate|date:'Y-m-d' }}"/> 
+    		<label>Final Date</label><input name ="fdate" class="mr-3" type="date" size="8" value="{{ finaldate|date:'Y-m-d' }}"/>
+    		<label>Year</label><input name="year" class=="mr-3 size="4" type=int value="{{ year }}"/>  
+    		{% else %}
+    		<label>Update Date</label><input name="udate" class="mr-3" type="date" size="8" value=""/> 
+    		<label>Final Date</label><input name ="fdate" class="mr-3" type="date" size="8" value=""/>
+    		<label>Year</label><input name="year" class=="mr-3 size="4" type=int value=""/>  
+    		{% endif %}
+    		</div>
+    		</div>
+    		
+            <table id="rtable" class="table table-striped">
               <thead class="thead-dark">
                 <tr>
                   <th></th>
                   <th>Course Id</th>
                   <th>Course Name</th>
-                  <th></th>
+                   <th>Course Type</th>
+                  <th>Course Credits</th>  
+                  <th>Offered To</th>
+                  <th>Max Students</th>
+                  <th>Faculty Id</th>          
                 </tr>
               </thead>
-              <tbody>
-              {% for set in querysets %}              
-                <tr>
-                  <td ><input type="checkbox" />    &nbsp;   </td>
-                   <td class="cid" name="cid"> {{ set.academic_course_id }} </td>
-                  <td class="cname" name="cname">   {{ set.academic_course_name }} </td>
-                   <td> 
-                     <button type="submit" class="ForDetails" name="Details">Details</button>  
-                   </td>
+              <tbody>   
+               {#% from users.models import Courses,Courseregistrations%#}  
+               {% for set in course %}         
+                 <tr>
+                  <td ><input type="checkbox" class="cbox" name="saveCourse" value="{{ set.course_id }}"/></td>
+                  <td id="cid" name="cid"> {{ set.course_id }} </td>
+                  <td id="cname" name="cname">   {{ set.course_name }} </td> 
+                  <td id="ctype" name="ctype">   {{ set.course_type }} </td>
+                  <td id="credit" name="credit">   {{ set.course_credits }} </td>
+                  <td><select id="csel" name="csel">
+                   <option selected="selected" disabled></option>
+                   <option value="UG1">UG1</option>
+                    <option value="UG2">UG2</option>
+                     <option value="UG3">UG3</option>
+                    <option value="UG4">UG4</option>
+                     <option value="Flex">Flex</option>
+                  </select>
+                  </td>
+                  <td><input name="max" size="4" value=""/></td>
+                  <td><input name="fid" size="6" type="text" value=""/></td>              
                 </tr>
                 {% endfor %}
-              </tbody>
-            </table>            
-             </form>             
-            <script>             
-            
-    		$('document').ready(function()
-            {            
-            $('.ForDetails').click(function()
-            {
-              alert("Button clicked!!");              
-              var $courseid = $(this).closest("tr").find(".cid").text();   
-              alert("Course Id is "+$courseid);  
-               var $coursename = $(this).closest("tr").find(".cname").text();   
-              alert("Course Name is "+$coursename); 
-              alert(form.data);
-              
-            });
-            }); 
-            
-            </script> 
-           
-                     
-         
-            <!-- PAGINATION -->
-            <nav class="ml-4">
-              <ul class="pagination">
-                <li class="page-item disabled">
-                  <a href="#" class="page-link">Previous</a>
-                </li>
-                <li class="page-item active">
-                  <a href="#" class="page-link">1</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">2</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">3</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">Next</a>
-                </li>
-              </ul>
-            </nav>  
-         
-       </div>      
-     </div>
-    
-    
-<!--- To do list --->
-        <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-              <h4>Courses To be Completed</h4>
+               </tbody>
+            </table>           
+            <div class="btn-toolbar float-right mb-1">
+            <div>
+            {% if enable %}   
+            <button type="submit" class="btn btn-primary btn-md mr-3"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button> 
+            {% else %}
+             <button type="submit" class="btn btn-primary btn-md mr-3 disabled"  id="savecourse" name="saveCourseBtn" value="{{ user.username }}">Save Course</button>
+            {% endif %}
             </div>
-            <table class="table table-striped">
+             <div>
+             {% if enable %}  
+            <button type="submit" class="btn btn-primary btn-md mr-3" id="delReg" name="delCourseBtn">Delete Course</button>
+            {% else %}
+             <button type="submit" class="btn btn-primary btn-md mr-3 disabled" id="delReg" name="delCourseBtn">Delete Course</button>
+             {% endif %}
+            </div> 
+            <div>
+             {% if enable %}  
+            <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changeScheduleModal">Change Schedule</a>
+            {% else %}
+             <a href="#" class="btn btn-primary btn-md mr-3 disabled" data-toggle="modal" data-target="#changeScheduleModal">Change Schedule</a>
+             {% endif %}
+            </div>
+            <div>
+            <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#addPolicyModal">Add Policy</a>
+            </div> 
+               <div>
+            <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#changePolicyModal">Change Policy</a>
+            </div> 
+             <div>
+            <a href="#" class="btn btn-primary btn-md mr-3" data-toggle="modal" data-target="#addPrerequisiteModal">Add Prerequisite</a>
+            </div>
+            
+       <!---     <div>
+             {% if enable %}  
+      <button type="submit" class="btn btn-primary btn-md mr-3" id="closeReg" name="closeRegBtn">Close Registrations</button>
+              {% else %}
+       <button type="submit" class="btn btn-primary btn-md mr-3 disabled" id="closeReg" name="closeRegBtn">Close Registrations</button>
+              {% endif %}
+            </div> ------>
+            </div>               
+           </form>                            
+        </div>  
+     </div>
+          
+      <div class="col-md-2 py-4">      
+         <div class="card text-center bg-primary text-white mb-3">  
+            <div class="card-body">              
+              <h3>Registration Policy</h3>
+              <h4 class="display-4">
+                <i class="fas"></i> {{ total_policy }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewPolicyModal">View</a>
+            </div>
+          </div>
+      
+         <div class="card text-center bg-success text-white mb-3">  
+            <div class="card-body">              
+              <h3>Faculty</h3>
+              <h4 class="display-4">
+                <i class="fas fa-user"></i> {{ total_faculty }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewFacultyModal">View</a>
+            </div>
+          </div>
+          
+           
+           <div class="card text-center bg-primary text-white mb-3">  
+            <div class="card-body">              
+              <h3>Registration Course List</h3>
+              <h4 class="display-4">
+                <i class="fas"></i> {{ total_reglist }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewReglistModal">View</a>
+            </div>
+          </div>  
+          
+          
+       </div>
+    </div>
+</section>
+
+    {% if messages %}
+    {% for message in messages %}
+     <script>
+     var msg = '{{ message }}';
+     sweetAlert(msg);
+     </script>
+    {% endfor %}
+    {% endif %}   
+
+ <!--- View Policy --->
+      <div class="modal fade" id="viewPolicyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Registration Policies</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Policy Details</h4>
+             <table id="table2" class="table table-striped">
               <thead class="thead-dark">
                 <tr>
-                  <th>#</th>
                   <th>Course Type</th>
-                  <th>Number of Courses</th>
-                  <th></th>
+                  <th>Course Credits</th>
+                  <th>Policy Year</th>
                 </tr>
               </thead>
               <tbody>
+               {% for set in policy %}
                 <tr>
-                  <td></td>
-                  <td>IT Electives</td>
-                  <td>3</td>
-                  <td>
-                   <a href="/details.html" class="btn btn-secondary">
-                      <i class="fas fa-angle-double-right"></i> Details
-                    </a>
-                  </td>
+                 <td id="ctype" name="ctype"> {{ set.regPolicy_coursetype }} </td>
+                  <td id="ccredits" name="ccredits"> {{ set.regPolicy_credits }} </td>
+                  <td id="cyear" name="cyear"> {{ set.regPolicy_year }} </td>                 
                 </tr>
+                {% endfor %}
                  </tbody>
             </table>
-        </div>
+            </form>
+       </div>
+       </div>
     </div>
-   </div>     
   </div>
-  <div class="row">
-  <div class="col-md-6">
-  </div>
-  <div class="col-md-6">
-  <div class="btn-toolbar float-right">
-         <button type="submit" class="btn btn-primary btn-md mr-2"  value="Save Courselist">Save Courselist</button>  
-        <button type="submit" class="btn btn-primary btn-md mr-1" value="Submit list">Submit</button>
-   </div>  
-  </div>
-  
-  </div>
-  
- </section>
+
+
+    
+
  
-     <!-- FOOTER -->
-  <footer id="main-footer" class="bg-dark text-white mt-5 p-5">
+ <!--- Faculty --->
+      <div class="modal fade" id="viewFacultyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Faculty Details</h4>
+             <table id="table4" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Faculty Id</th>
+                  <th>Faculty Name</th>
+                  <th>Faculty Designation</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in faculty %}
+                <tr>
+                 <td id="facultid" name="cid"> {{ set.faculty_id }} </td>
+                  <td id="fname" name="fname"> {{ set.faculty_name }} </td>
+                   <td id="fd" name="fdes"> {{ set.faculty_designation }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>
+  
+ <!------Change Schedule ---------->
+ 
+    <div class="modal fade modal-lg" id="changeScheduleModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Registration Schedule</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Change Schedule Details</h4><br>
+             <div class="row">
+    		<div class="form-group col-lg-12">
+    		<label>Start Date</label><input name="sdate" class="mr-2" size="8"  type="date" value=""/>
+    		<label>End Date</label><input name ="edate" class="mr-2" size="8" type="date" value=""/>
+    		<label>Semester</label><select id="sem" name="sem">
+                   <option selected="selected" disabled></option>
+                   <option value="Spring">Spring</option>
+                    <option value="Fall">Fall</option>
+            </select>
+    		</div>
+    		</div>
+    		<div class="row">
+    		<div class="form-group col-lg-12">    	
+    		<label>Update Date</label><input name="udate" class="mr-2" size="8" type="date"  value=""/> 
+    		<label>Final Date</label><input name ="fdate" class="mr-2" size="8" type="date"  value=""/>
+    		<label>Year</label><input name="year" class=="mr-2" size="4" type=int value=""/>  
+    		</div>
+    		</div>
+    	  <input type="submit" name="changeBtn"/>      
+           </form>
+          </div>
+       </div>
+    </div>
+  </div>
+ 
+  
+ <!------add Policy ---------->
+ 
+    <div class="modal fade" id="addPolicyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add Policy</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Policy Details</h4><br>
+           	<div class="form-group">
+    		<label>Course Type</label><input name="ctype" class="mr-2" size="8" type="text" value="" required/>
+    		<label>Course Credits</label><select id="pcredits" class="mr-2" name="pcredits" required>
+                   <option selected="selected" disabled></option>
+                   <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                      <option value="8">8</option>
+                      <option value="12">12</option>
+                        <option value="16">16</option>
+            </select>
+    		<label>Policy Year</label><input name="pyear" class="mr-1" type="text" size="8" value="" required/> 
+    		</div>
+    	    <input type="submit" name="addPolicyBtn"/>      
+           </form>
+           </div>
+          </div>
+       </div>
+    </div>
+  </div>
+ 
+ <!------Add Prerequisite modal ---------->
+ 
+    <div class="modal fade" id="addPrerequisiteModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add Prerequisites</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center"></h4><br>
+           	<div class="form-group">
+    		<label>Course Name  </label><input name="cname" class="mr-1" size="15" type="text" value="" required/>
+    		<label>Prerequisite Course  </label><input name="pname" class="mr-1" size="15" type="text" value="" required/>
+    		<label>Min Grade </label><select id="mingrade" class="mr-1" name="mingrade" required>
+                   <option selected="selected" disabled></option>
+                   <option value="A">A</option>
+                    <option value="A-">A-</option>
+                    <option value="B">B</option>
+                    <option value="B-">B-</option>
+            </select> </br></br>
+            <label>Comments  </label><input name="comments" class="mr-1" size="60" type="text" value="" required/>
+    		</div>
+    	    <input type="submit" name="addPrerequisiteBtn"/>      
+           </form>
+           </div>
+          </div>
+       </div>
+    </div>
+  </div>
+ 
+ 
+ <!--------  Change Policy ----------------->
+ 
+    <div class="modal fade" id="changePolicyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Policy List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Policy Details</h4>
+             <table id="table3" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th></th>
+                  <th>Policy Id</th>
+                  <th>Course Type</th>
+                  <th>Credits</th>
+                  <th>Policy Year</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in policy %}
+                <tr>
+                 <td><input type="checkbox" class="cbox" name="savePolicy" value="{{ set.regPolicy_Id }}"/> &nbsp; </td>
+                 <td><input id="pid" name="pid" size="2" value="{{ set.regPolicy_Id }}" readonly="readonly"/></td>
+                 <td><input id="ctype" name="ctype" size="20" value="{{ set.regPolicy_coursetype }}"/></td>
+                  <td><input id="credits" name="credits" size="4" value="{{ set.regPolicy_credits }}"/></td>
+                   <td><input id="year" name="year" size="4" value="{{ set.regPolicy_year }}"/></td>                
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            <input type="submit" value="Update" name="changePolicyBtn"/>          
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>
+ 
+ <!--- Reg Course List --->
+     <div class="modal fade" id="viewReglistModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Registration Course Details</h4>
+             <table id="tablereg" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Credits</th>
+                  <th>Course OfferedTo</th>
+                  <th>Class Size</th>
+                  <th>Faculty Id</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in coursevals %}
+                <tr>
+                 <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
+                  <td id="cname" name="cname"> {{ set.courseregistrations_cid__course_name }} </td>
+                   <td id="ccredits" name="ccredits"> {{ set.courseregistrations_cid__course_credits }} </td> 
+                   <td id="coffer" name="coffer"> {{ set.courseregistrations_offeredto }} </td> 
+                    <td id="csize" name="csize"> {{ set.courseregistrations_classsize }} </td> 
+                    <td id="fid" name="fid"> {{ set.courseregistrations_fid__faculty_id }} </td>                
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>
+ 
+  
+ <!-- FOOTER -->
+  <footer id="main-footer" class="footer fixed-bottom bg-dark text-white p-0">
     <div class="container">
       <div class="row">
         <div class="col">
           <p class="lead text-center">
             Copyright &copy;
-            <span id="year"></span>
-            ProjectA07
+            <span id="year">2018 </span>
+            Online Course Registration
           </p>
         </div>
       </div>
     </div>
   </footer>
 
- 
+  
 
-  <script>
-    // Get the current year for the copyright
-    $('#year').text(new Date().getFullYear());
-  </script>
-  
-  
-  
-  
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous">
+    </script>
+    
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+    $('#rtable').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+
+        "lengthMenu": [ 3,5,10, 12, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    });
+    
+    $('#table2').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    }
+    );
+     $('#table4').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    }
+    );
+     $('#tablereg').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    }
+    );
+      $('#table3').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    }
+    );
+});
+
+</script>     
 </body>
 
+{% else %}
+ <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
 </html>
+{% endblock %}
+

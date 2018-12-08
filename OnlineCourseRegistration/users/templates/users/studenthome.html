@@ -1,9 +1,5 @@
-<!-- templates/home.html -->
-{# % extends 'base.html' % #} 
-
-{# % block title %}Home{% endblock % #}
-
 {% block content %}
+
 {% if user.is_authenticated %}
 {% load staticfiles %}
 
@@ -19,13 +15,17 @@
     crossorigin="anonymous">
     
   <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
-    
+  
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.common.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+  
+     
+   <link rel="stylesheet" href="{% static "css/style.css" %}">    
   <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png">
   
     
-  <link rel="stylesheet" href="{% static "css/style.css" %}">
-  
-  
+  <link rel="stylesheet" href="{% static "css/style.css" %}"> 
   
   
   <title>Student Dashboard</title>
@@ -107,107 +107,398 @@ window.history.back();
   <section id="actions" class="py-4 mb-4 bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-md-3">
-          <a href="/users/register.html" class="btn btn-primary btn-block">Course Registeration</a>
+        <div class="col-md-3">          
+          <a href="/users/register.html" class="btn btn-primary btn-block">Course Registeration</a>          
         </div>
-        <div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addCourseModal">
-            <i class="fas fa-plus"></i> Audit Course
-          </a>
-        </div>  
+          <div class="col-md-3">
+          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#auditCourseModal">Audit Course</a>          
+           </div> 
+      <!--    <div class="col-md-3">
+           {% if enable %}
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#dropCourseModal">Drop Course</a>
+          {% else %}
+          <a href="#" class="btn btn-primary btn-block disabled" data-toggle="modal" data-target="#dropCourseModal">Drop Course</a>
+          {% endif %}
+          </div> ---->
          <div class="col-md-3">
-          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#viewGradesModal">Drop Course</a>
-        </div> 
-         <div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#viewGradesModal">View Grades</a>
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#viewGradesModal">View Grades</a>
         </div>       
       </div>
     </div>
   </section>
 
-  <!-- POSTS -->
-  <section id="posts">
+  <!-- Courses -->
+  <section id="courses">
     <div class="container">
       <div class="row">
-        <div class="col-md-9">
+         <div class="col-md-9">
           <div class="card">
             <div class="card-header">
               <h4>My Course List</h4>
             </div>
-            <table id="courseTable" class="table table-striped" name="mycourses" value="{{user.id}}">
-              <thead class="thead-dark">
+             <form method="POST"  enctype="multipart/form-data" id="mform">
+   			 {% csrf_token %}
+    		{{ form.data }}
+            <table id="courseTable" class="table table-striped">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Credits</th>
+                  <th>Registration Status</th>
+                  <th>Audit Option</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#% from users.models import StudentRegistrations %#}
+                {% for s in queryvals %}
+                <tr name="crow" data-toggle="modal" data-id="{{ s.studentregistrations_sid}}">
+                <td ><input type="checkbox" class="cbox" name="delCourse" value="{{s.studentregistrations_cid__course_id}}"/></td>  
+                   <td id="scid" name="scid"> {{s.studentregistrations_cid__course_id}}</td>
+                  <td id="scname" name="scname">{{s.studentregistrations_cid__course_name}}</td> 
+                  <td id="scredit" name="scredits">{{s.studentregistrations_cid__course_credits}}</td> 
+                  <td id="scstatus" name="scstatus">{{s.studentregistrations_status}}</td>
+                  <td id="scaudit" name="scaudit">{{s.studentregistrations_auditoption}}
+                  </td>                                                                
+               </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <div class="btn-toolbar float-right mb-1">
+  <button type="submit" class="btn btn-primary btn-md mr-3"  id="delcourse" name="delCourseBtn" value="{{ user.user}}">Drop Course</button> 
+            </div>
+            </form>
+          </div>
+        </div>
+          
+      
+      <div class="col-md-3 py-1">      
+       <div class="card text-center bg-primary text-white mb-3">  
+            <div class="card-body">              
+              <h3>Courses</h3>
+              <h4 class="display-4">
+                <i class="fas"></i> {{ total_courses }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewCoursesModal">View</a>
+            </div>
+          </div>
+      
+         <div class="card text-center bg-success text-white mb-3">  
+            <div class="card-body">              
+              <h3>Faculty</h3>
+              <h4 class="display-4">
+                <i class="fas fa-user"></i> {{ total_faculty }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewFacultyModal">View</a>
+            </div>
+          </div>
+          
+           <div class="card text-center bg-primary text-white mb-3">  
+            <div class="card-body">              
+              <h3>Registration Course List</h3>
+              <h4 class="display-4">
+                <i class="fas"></i> {{ total_reglist }}
+              </h4>
+              <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#viewReglistModal">View</a>
+            </div>
+          </div>       
+       </div> 
+    </div>   
+       
+   
+    {% if messages %}
+    {% for message in messages %}
+     <script>
+     var msg = '{{ message }}';
+     sweetAlert(msg);
+     </script>
+    {% endfor %}
+    {% endif %}      
+ </section>
+  
+  
+<!-- Add Course MODAL -->
+  <div class="modal fade" id="addCourseModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course Details</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+              <div class="row">
+    		<div class="form-group col-lg-12">
+    		<label class="mr-2">Course Type</label><input name="ctype" class="mr-2" size="15" type="text" value="" required/>
+    		<label class="mr-2">Course Name</label><input name="cname" class="mr-2" size="10" type="text" value="" required/>
+    		<label class="mr-2">Audit Option</label>
+    		<select id="csel" name="csel">
+                   <option selected="selected" disabled></option>
+                   <option value="yes">yes</option>
+                    <option value="no">no</option>
+              </select>
+    		</div>
+    		</div>
+    		<input type="submit" name="addCourseBtn"/>    
+          </form>
+        </div>
+       </div>
+    </div>
+  </div> 
+
+<!----------View Grdes------------------>
+
+<!--- Reg Course List --->
+     <div class="modal fade" id="viewGradesModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Completed Course & Grade Details</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Total Grades earned - {{ total_credits }}</h4>
+             <table id="table2" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Course Type</th>
+                  <th>Course Name</th>
+                   <th>Course Grade</th>
+                  <th>Course Credits</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in grades %}
+                <tr>
+                 <td id="ctype" name="ctype"> {{ set.courseid__course_type }} </td>
+                  <td id="cname" name="cname"> {{ set.courseid__course_name }} </td>
+                  <td id="cgrade" name="cgrade"> {{ set.course_grade }} </td>
+                   <td id="ccredits" name="ccredits"> {{ set.courseid__course_credits }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>    
+
+
+
+
+
+
+  
+
+ 
+<!-- Drop Course MODAL -->
+  <div class="modal fade" id="dropCourseModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course Details</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+               <div class="row">
+    		<div class="form-group col-lg-9">
+    		<label>Course Name</label><input name="cname" class="mr-2" size="8" type="text" value=""/>	
+         
+    		</div>
+    		</div>
+          </form>
+        </div>
+       </div>
+    </div>
+  </div> 
+
+<!--- Reg Course List --->
+     <div class="modal fade" id="viewReglistModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Registration Course Details</h4>
+             <table id="table2" class="table table-striped">
+              <thead>
                 <tr>
                   <th>Course Id</th>
                   <th>Course Name</th>
                   <th>Course Credits</th>
-                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in coursevals %}
+                <tr>
+                 <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
+                  <td id="cname" name="cname"> {{ set.courseregistrations_cid__course_name }} </td>
+                   <td id="ccredits" name="ccredits"> {{ set.courseregistrations_cid__course_credits }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>    
+
+    
+<!-- View Courses MODAL -->
+  <div class="modal fade" id="viewCoursesModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+              <table id="courseList" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Course Id</th>
+                  <th>Course Name</th>
+                  <th>Course Delivery Mode</th>
+                  <th>Course Type</th>
+                  <th>Course Credits</th>
                 </tr>
               </thead>
               <tbody>
                 {#% from users.models import CourseRegistrations %#}
-                {% for s in queryvals %}
+                {% for s in course %}
                 <tr>
-                {% for i in s %}                  
-                    <td>{{ i }}</td>                   
-                {% endfor %}
+                 <td>{{ s.course_id }}</td>  
+                 <td>{{ s.course_name }}</td> 
+                 <td>{{ s.course_delivery_mode }}</td>                      
+                 <td>{{ s.course_type }}</td> 
+                 <td>{{ s.course_credits }}</td>                   
                 </tr>
                 {% endfor %}
               </tbody>
-            </table>
-          </div>
+            </table> 
+          </form>
         </div>
-        <div class="col-md-3">
-          <div class="card text-center bg-primary text-white mb-3">
-            <div class="card-body">
-              <h3>Courses</h3>
-              <h4 class="display-4">
-                <i class="fas fa-folder"></i> {{ total_courses }}
-              </h4>
-              <a href="Courselist.html" class="btn btn-outline-light btn-sm">View</a>
-            </div>
-          </div>
+       </div>
+    </div>
+  </div> 
 
-          <div class="card text-center bg-success text-white mb-3">
-            <div class="card-body">
-              <h3>Prof</h3>
-              <h4 class="display-4">
-                <i class="fas fa-folder"></i> 4
-              </h4>
-              <a href="categories.html" class="btn btn-outline-light btn-sm">View</a>
-            </div>
-          </div>
-         </div>
+ 
+ <!--- Faculty --->
+    <div class="modal fade" id="viewFacultyModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Course List</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="GET" accept-charset="UTF-8">
+            {% csrf_token %}
+            <h4 class="text-center">Faculty Details</h4>
+             <table id="table2" class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Faculty Id</th>
+                  <th>Faculty Name</th>
+                  <th>Faculty Designation</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for set in faculty %}
+                <tr>
+                 <td id="facultid" name="cid"> {{ set.faculty_id }} </td>
+                  <td id="fname" name="fname"> {{ set.faculty_name }} </td>
+                   <td id="fd" name="fdes"> {{ set.faculty_designation }} </td>                 
+                </tr>
+                {% endfor %}
+                 </tbody>
+            </table>
+            </form>
+       </div>
+       </div>
+    </div>
+  </div>    
+
+
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="footer fixed-bottom bg-dark text-white p-0">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="lead text-center">
+            Copyright &copy;
+            <span id="year">2018 </span>
+            Online Course Registration
+          </p>
         </div>
       </div>
     </div>
-  </section>
+  </footer>
+
  
+ <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous">
+    </script>
+    
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 
-  <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
-
-  <script>
-    // Get the current year for the copyright
-    $('#year').text(new Date().getFullYear());
-
-    CKEDITOR.replace('editor1');
-    $(document).ready(function(){
-    $('#courseTable').dataTable();
+    <script>
+    $(document).ready(function() {
+    $('#courseList').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    });
+    $('#table2').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 3,5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    });
+      $('#courseTable').DataTable(
+    {
+      "sPaginationType": "full_numbers",
+       // Sets the row-num-selection "Show %n entries" for the user
+        "lengthMenu": [ 3,5,10, 15, 20, 50, 100 ], 
+        
+        // Set the default no. of rows to display
+        "pageLength": 5
+    });
 });
+    
+
 </script>
-    
-    
-  </script>
 </body>
 
-</html>
 {% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> |
+ <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a> 
 {% endif %}
+
+</html>
 {% endblock %}
+
+

@@ -14,6 +14,14 @@
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
     crossorigin="anonymous">
+    
+         
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.common.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+  
+    
+    
   <link rel="stylesheet" href="css/style.css">
   <title>Dashboard</title>
 </head>
@@ -106,6 +114,10 @@
         <div class="col-md-3">
             <a href="{% url 'users:approve_req' %}" class="btn btn-primary btn-block">
               <i class="fas fa-plus"></i> Approve Requests
+            </a>
+        </div>
+         <div class="col-md-3">
+            <a href="/users/courselist.html" class="btn btn-success btn-block">Registration Courses & Rules
             </a>
         </div>
         <!-- <div class="col-md-3">
@@ -245,8 +257,6 @@
           <form action="/users/add_course/" method="POST" accept-charset="UTF-8">
             {% csrf_token %}
             <div class="form-group">
-              <label>Course ID</label>
-              <input name="id" type="text" class="form-control">
               <label>Course Name</label>
               <input name="name" type="text" class="form-control">
               <label>Faculty</label>
@@ -269,7 +279,10 @@
               <label for="category">Credits</label>
               <select class="form-control" name="credits">
                 <option value="2">2</option>
+                  <option value="3">3</option>
                 <option value="4">4</option>
+                  <option value="6">6</option>
+                    <option value="8">8</option>
               </select>
               <label>Delivery Mode</label>
               <input type="text" name="delivery_mode" class="form-control">
@@ -303,8 +316,18 @@
             <div class="form-group">
               <label>Student Id</label>
               <input name="user_id" type="text" class="form-control">
-              <label>Course name</label>
+              <label>Course Id</label>
               <input name="course" type="text" class="form-control">
+               <div class="form-group">
+              <label for="category">Course Status</label>
+              <select class="form-control" name="cstatus">
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Failed">Failed</option>
+                <option value="Deferred">Deferred</option>
+              </select>
+              </div>             
               <label>Grade</label>
               <input name="grade_point" type="text" class="form-control">
             </div>
@@ -346,6 +369,15 @@
     </div>
   </div>
 </div>
+
+   {% if messages %}
+    {% for message in messages %}
+     <script>
+     var msg = '{{ message }}';
+     sweetAlert(msg);
+     </script>
+    {% endfor %}
+    {% endif %} 
 
   <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>

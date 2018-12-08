@@ -8,6 +8,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser,Group,User,Permission
 
+from datetime import datetime
 
 
 # Create your models here.
@@ -18,21 +19,23 @@ class CustomUser(AbstractUser):
 		return self.email
 
 class Course(models.Model):
-    course_id = models.IntegerField(primary_key=True)
+    course_id = models.AutoField(auto_created=True,primary_key=True)
     course_name = models.CharField(max_length=45)
-    course_prof = models.CharField(max_length=45, null=False)
-    course_max_students = models.IntegerField(null=False)
+    course_prof = models.CharField(max_length=45, null=True)
+    course_max_students = models.IntegerField(null=True)
     course_delivery_mode = models.CharField(max_length=45, blank=True, null=True)
     course_description = models.CharField(max_length=80, blank=True, null=True)
     course_type = models.CharField(max_length=45)
-    courses_last_updated = models.DateTimeField(auto_now=True)  # Field name made lowercase.(auto_now=True)
+    courses_last_updated = models.DateTimeField(auto_now=True)
     course_credits = models.SmallIntegerField()
     course_rigour = models.CharField(db_column='course_Rigour', max_length=2)  # Field name made lowercase.
     course_hasprereqs = models.IntegerField(db_column='course_hasPrereqs')  # Field name made lowercase.
        
+       	
     class Meta:
         managed = True
         db_table = 'Course'
+        unique_together = (('course_id', 'course_name'),)
 
 class SpecialPermissions(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -57,9 +60,10 @@ class Grade(models.Model):
 
     def __str__(self):
         return u'%s - %s - %s' % (self.student_id, self.course, self.grade_point)
+
   
 class Faculty(models.Model):
-    faculty_id = models.IntegerField(db_column='Faculty_id', primary_key=True)  # Field name made lowercase.
+    faculty_id = models.AutoField(db_column='Faculty_id',auto_created=True, primary_key=True)  # Field name made lowercase.
     faculty_name = models.CharField(db_column='Faculty_name', max_length=80)  # Field name made lowercase.
     faculty_email_id = models.CharField(db_column='Faculty_email_id', max_length=45)  # Field name made lowercase.
     faculty_designation = models.CharField(db_column='Faculty_designation', max_length=45)  # Field name made lowercase.
@@ -83,43 +87,46 @@ class FacultyCourseOffer(models.Model):
 
 
 class Grades(models.Model):
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    courseid = models.ForeignKey(Course, models.DO_NOTHING, db_column='courseid')
-    course_grade = models.CharField(max_length=3)
-    course_offered_year = models.CharField(max_length=45)
-    course_sem = models.CharField(max_length=45)
-    grades_last_updated = models.DateTimeField(max_length=45,auto_now=True)
-
-    class Meta:
-        managed = True
-        db_table = 'Grades'
-
-
+	grade_id = models.AutoField(db_column='grade_id', primary_key=True)
+	studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
+	courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseid')
+	grade_approvedby = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='grade_approvedby',null=True)
+	course_grade = models.CharField(max_length=3)
+	course_offered_year = models.CharField(max_length=45)
+	course_completed_year = models.CharField(max_length=45,null=True,blank=True)
+	course_sem = models.CharField(max_length=45)
+	grades_last_updated = models.DateTimeField(max_length=45,auto_now=True)
+	course_status = models.CharField(max_length=30,blank=False,default='Not Started')	
+	approval_comments = models.CharField(db_column='approval_comments', max_length=200, blank=True, null=True) 
+	
+	class Meta:
+		managed = True
+		db_table = 'Grades'
+		unique_together = (('studentid', 'courseid'),)
 
 class Student(models.Model):
-    student_cgpa = models.FloatField(db_column='Student_cgpa',null=False, default=False)
-    student_roll_no = models.IntegerField(db_column='Student_roll_no', primary_key=True)
-    student_first_name = models.CharField(db_column='Student_First_Name', max_length=100,null=False)
-    student_middle_name = models.CharField(db_column='Student_Middle_Name', max_length=100,blank=True)
-    student_last_name = models.CharField(db_column='Student_Last_Name', max_length=100,null=False)
-    student_dob = models.DateField(db_column='Student_dob', blank=True, null=True)
-    student_gender = models.CharField(db_column='Student_Gender', max_length=6,null=False)
-    student_mobile = models.CharField(db_column='Student_mobile', max_length=15)
-    student_email = models.CharField(db_column='Student_email', max_length=45)
-    student_blood_group = models.CharField(db_column='Student_BloodGroup',max_length=4,null=False)
-    student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False)
-    student_reg_year = models.CharField(db_column='Student_Registered_Year', max_length=10,null=False)
-    student_cur_year = models.CharField(db_column='Student_Current_Year',max_length=10,null=False)
-    student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=5,null=False)
-    student_degree = models.CharField(db_column='Student_degree', max_length=15,null=False)
-    student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
-    student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
-    last_updated = models.DateTimeField(max_length=45,auto_now=True)
-    student_grade = models.CharField(db_column = 'Student_Grade',max_length=100,null=False)
+	student_roll_no = models.CharField(db_column='Student_roll_no', max_length=30,primary_key=True)
+	student_first_name = models.CharField(db_column='Student_First_Name', max_length=100,null=False)
+	student_middle_name = models.CharField(db_column='Student_Middle_Name', max_length=100,blank=True)
+	student_last_name = models.CharField(db_column='Student_Last_Name', max_length=100,null=False)
+	student_dob = models.DateField(db_column='Student_dob', blank=True, null=True)
+	student_gender = models.CharField(db_column='Student_Gender', max_length=6,null=False)
+	student_mobile = models.CharField(db_column='Student_mobile', max_length=15)
+	student_email = models.CharField(db_column='Student_email', max_length=45)
+	student_blood_group = models.CharField(db_column='Student_BloodGroup',max_length=4,null=False)
+	student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False)
+	student_reg_year = models.CharField(db_column='Student_Registered_Year', max_length=10,null=False)
+	student_cur_year = models.CharField(db_column='Student_Current_Year',max_length=10,null=False)
+	student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=10,null=False)
+	student_degree = models.CharField(db_column='Student_degree', max_length=15,null=False)
+	student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
+	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
+	last_updated = models.DateTimeField(max_length=45,auto_now=True)
+	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
     
-    class Meta:
-    	managed = True
-    	db_table = 'Student'
+	class Meta:
+		managed = True
+		db_table = 'Student'
 
 class StudentEducPref(models.Model):
     student_educ_studid = models.ForeignKey(Student, models.DO_NOTHING, db_column='Student_Educ_Studid')  # Field name made lowercase.
@@ -133,7 +140,7 @@ class StudentEducPref(models.Model):
 
 
 class StudentSpeReq(models.Model):
-    student_spe_req_id = models.IntegerField(db_column='Student_Spe_Req_id', primary_key=True)  # Field name made lowercase.
+    student_spe_req_id = models.AutoField(db_column='Student_Spe_Req_id', auto_created=True,primary_key=True)  # Field name made lowercase.
     student_spe_req_studid = models.ForeignKey(Student, models.DO_NOTHING, db_column='Student_Spe_Req_studid')  # Field name made lowercase.
     student_spe_req_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='Student_Spe_Req_cid')  # Field name made lowercase.
     student_spe_req_descr = models.CharField(db_column='Student_Spe_Req_descr', max_length=45)  # Field name made lowercase.
@@ -147,7 +154,7 @@ class StudentSpeReq(models.Model):
 
 
 class Courseregistrations(models.Model):
-    courseregistrations_id = models.AutoField(primary_key=True)
+    courseregistrations_id = models.AutoField(auto_created=True,primary_key=True)
     courseregistrations_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='courseRegistrations_cid')  # Field name made lowercase.
     courseregistrations_fid = models.ForeignKey(Faculty, models.DO_NOTHING, db_column='courseRegistrations_fid')  # Field name made lowercase.
     courseregistrations_last_updated = models.DateTimeField(db_column='courseRegistrations_last_updated',auto_now=True)  # Field name made lowercase.
@@ -155,30 +162,32 @@ class Courseregistrations(models.Model):
     courseregistrations_year = models.CharField(db_column='courseRegistrations_year', max_length=45)  # Field name made lowercase.
     courseregistrations_offeredto = models.CharField(db_column='courseRegistrations_offeredTo', max_length=45)  # Field name made lowercase.
     courseregistrations_classsize = models.CharField(db_column='courseRegistrations_classSize', max_length=45)  # Field name made lowercase.
-    courseregistrations_startdate = models.DateTimeField(db_column='courseRegistrations_StartDate')  # Field name made lowercase.
-    courseregistrations_enddate = models.DateTimeField(db_column='courseRegistrations_EndDate')  # Field name made lowercase.
-    courseregistrations_updatedate = models.DateTimeField(db_column='courseRegistrations_UpdateDate')  # Field name made lowercase.
-    courseregistrations_finaldate = models.DateTimeField(db_column='courseRegistrations_FinalDate')  # Field name made lowercase.
+    courseregistrations_startdate = models.DateField(db_column='courseRegistrations_StartDate')  # Field name made lowercase.
+    courseregistrations_enddate = models.DateField(db_column='courseRegistrations_EndDate')  # Field name made lowercase.
+    courseregistrations_updatedate = models.DateField(db_column='courseRegistrations_UpdateDate')  # Field name made lowercase.
+    courseregistrations_finaldate = models.DateField(db_column='courseRegistrations_FinalDate')  # Field name made lowercase.
+    courseregistrations_isactive = models.BooleanField(db_column='courseRegistrations_isActive',default=False)
 
     class Meta:
         managed = True
         db_table = 'CourseRegistrations'
-        unique_together = (('courseregistrations_cid', 'courseregistrations_fid'),)
+        unique_together = (('courseregistrations_cid', 'courseregistrations_fid','courseregistrations_isactive'),)
 
 
+class CoursePreReqs(models.Model):
+	prereq_id = models.AutoField(auto_created=True,db_column='prereq_id',primary_key=True)
+	prereq_currentcourse = models.ForeignKey(Course, models.DO_NOTHING,db_column='prereq_currentcourse',related_name='prereq_currentcourse')
+	prereq_courseid = models.ForeignKey(Course, models.DO_NOTHING,db_column='prereq_courseid',related_name='prereq_courseid')
+	prereq_min_grade = models.CharField(db_column='preReq_min_grade', max_length=4)
+	prereq_descr = models.CharField(db_column='preReq_descr', max_length=45,blank=False)
+	prereq_last_updated = models.DateTimeField(db_column='preReq_last_updated', auto_now=True)
+	prereq_last_accessby = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='prereq_last_accessby')
+	
+	class Meta:
+		managed = True
+		db_table = 'Course_PreReqs'
+		unique_together = (('prereq_currentcourse', 'prereq_courseid'),)
 
-
-class CoursePreReq(models.Model):
-    present_course = models.ForeignKey(Course, models.DO_NOTHING)
-    course_pre_req_id = models.IntegerField(db_column='Course_Pre_Req_id')  # Field name made lowercase.
-    course_pre_req_min_grade = models.CharField(db_column='Course_Pre_Req_min_grade', max_length=4)  # Field name made lowercase.
-    course_pre_req_descr = models.CharField(db_column='Course_Pre_Req_descr', max_length=45)  # Field name made lowercase.
-    course_pre_req_last_updated = models.DateTimeField(db_column='Course_Pre_Req_last_updated', auto_now=True)  # Field name made lowercase.
-    course_pre_req_last_access_by = models.CharField(db_column='Course_Pre_Req_last_access_by', max_length=45)
-    
-    class Meta:
-    	managed = True
-    	db_table = 'Course_Pre_Req'
 
 
 class Studentregistrations(models.Model):
@@ -186,11 +195,13 @@ class Studentregistrations(models.Model):
     studentregistrations_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='studentRegistrations_cid')  # Field name made lowercase.
     studentregistrations_sid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentRegistrations_sid')  # Field name made lowercase.
     studentregistrations_preferences = models.CharField(db_column='studentRegistrations_preferences', max_length=45, blank=True, null=True)  # Field name made lowercase.
-    studentregistrations_auditoption = models.IntegerField(db_column='studentRegistrations_auditOption', blank=True, null=True)  # Field name made lowercase.
+    studentregistrations_auditoption = models.CharField(db_column='studentRegistrations_auditOption', max_length=10,blank=True, null=True)  # Field name made lowercase.
     studentregistrations_approvedby = models.IntegerField(db_column='studentRegistrations_approvedBy', blank=True, null=True)  # Field name made lowercase.
     studentregistrations_status = models.CharField(db_column='studentRegistrations_status', max_length=10)  # Field name made lowercase.
     studentregistrations_comments = models.CharField(db_column='studentRegistrations_comments', max_length=200, blank=True, null=True)  # Field name made lowercase.
-    studentregistrations_last_updated = models.DateTimeField(db_column='studentregistrations_last_updated', auto_now=True)  # Field name made lowercase.
+    studentregistrations_last_updated = models.DateTimeField(db_column='Student_Spe_Req_last_updated', auto_now=True)  # Field name made lowercase.
+    studentregistrations_semester = models.CharField(db_column='studentRegistrations_semester', max_length=15,blank=True,null=True,default=' ')  # Field name made lowercase.
+    studentregistrations_year = models.IntegerField(db_column='studentRegistrations_year', blank=True,default=2018) 
 
     class Meta:
         managed = True
@@ -206,3 +217,18 @@ class FinalStudentRegistrations(models.Model):
         db_table = 'FinalStudentRegistrations'
 
     
+        
+      
+        
+class RegistrationPolicy(models.Model):
+	regPolicy_Id = models.AutoField(auto_created=True,db_column='regPolicy_Id', primary_key=True)
+	regPolicy_coursetype = models.CharField(db_column='regPolicy_coursetype',max_length=45,blank=False)
+	regPolicy_year = models.CharField(db_column='regPolicy_year',max_length=45,blank=False)
+	regPolicy_credits = models.IntegerField(db_column='regPolicy_credits',blank=False)
+	regPolicy_last_updated = models.DateTimeField(db_column='regPolicy_last_updated', auto_now=True)
+	regPolicy_updateddby = models.ForeignKey(CustomUser,models.DO_NOTHING,db_column='regPolicy_updatedby')
+	
+	class Meta:
+		managed = True
+		db_table = 'registrationPolicy'
+		unique_together = (('regPolicy_coursetype', 'regPolicy_year','regPolicy_credits'),)
