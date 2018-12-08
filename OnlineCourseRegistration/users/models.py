@@ -173,20 +173,20 @@ class Courseregistrations(models.Model):
         unique_together = (('courseregistrations_cid', 'courseregistrations_fid','courseregistrations_isactive'),)
 
 
-
-
-class CoursePreReq(models.Model):
-	course_pre_req_id = models.AutoField(auto_created=True,db_column='Course_Pre_Req_id',primary_key=True)
-	course_present_course = models.ForeignKey(Course, models.DO_NOTHING)
-	course_pre_req_min_grade = models.CharField(db_column='Course_Pre_Req_min_grade', max_length=4)
-	course_pre_req_descr = models.CharField(db_column='Course_Pre_Req_descr', max_length=45)
-	course_pre_req_last_updated = models.DateTimeField(db_column='Course_Pre_Req_last_updated', auto_now=True)
-	course_pre_req_last_access_by = models.CharField(db_column='Course_Pre_Req_last_access_by', max_length=45)
+class CoursePreReqs(models.Model):
+	prereq_id = models.AutoField(auto_created=True,db_column='prereq_id',primary_key=True)
+	prereq_currentcourse = models.ForeignKey(Course, models.DO_NOTHING,db_column='prereq_currentcourse',related_name='prereq_currentcourse')
+	prereq_courseid = models.ForeignKey(Course, models.DO_NOTHING,db_column='prereq_courseid',related_name='prereq_courseid')
+	prereq_min_grade = models.CharField(db_column='preReq_min_grade', max_length=4)
+	prereq_descr = models.CharField(db_column='preReq_descr', max_length=45,blank=False)
+	prereq_last_updated = models.DateTimeField(db_column='preReq_last_updated', auto_now=True)
+	prereq_last_accessby = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='prereq_last_accessby')
 	
 	class Meta:
 		managed = True
-		db_table = 'Course_Pre_Req'
-		unique_together = (('course_pre_req_id', 'course_present_course'),)
+		db_table = 'Course_PreReqs'
+		unique_together = (('prereq_currentcourse', 'prereq_courseid'),)
+
 
 
 class Studentregistrations(models.Model):
