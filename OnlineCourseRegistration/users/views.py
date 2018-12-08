@@ -4,6 +4,10 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib import messages
+from django.db import IntegrityError, connection
+from django.db.models import Count
+
+from .models import Course,Grades, Student,Courseregistrations, FinalStudentRegistrations
 from django.db import IntegrityError
 from django.db.models import Count,Sum
 from django.db import connection
@@ -13,6 +17,7 @@ from .models import *
 from django.contrib.auth import login, logout
 from django.views import View
 from django.contrib.auth import *
+import requests, json, datetime
 import requests, json
 from datetime import datetime as dt
 from datetime import timedelta
@@ -95,7 +100,7 @@ def add_student(request):
 		student.email = request.POST.get('mail')
 		student.year = request.POST.get('year')
 		student.save()
-		#print(student.roll, student.year)
+		print(student.roll, student.year)
 
 	else:
 		print('error in request')
@@ -207,76 +212,48 @@ def audit_course(request):
 	else:
 		return render(request, 'users/audit.html')
 
-def publish_course_registration(request):
+def publish_course_registrations(request):
 	if request.method == 'POST':
-		subject = request.POST.get('course')
-		print('subject')
-		print(subject)
-		course = list(Course.objects.all())
-		c = []
-		#print('course')
-		#print(course)
-		for i in course:
-			c.append(str(i).split(' - '))
-		for i in c:
-			if subject in i:
-				max = i[-1]
-				break
-		#print('max')
-		#print(max)
-		student_list = []
-		student = list(Student.objects.all())
-		#print('student')
-		#print(student)
-		for i in student:
-			student_list.append(str(i).split(' - '))
-		student_list_sel = []
-		#print('student_list')
-		#print(student_list)
-		"""for i in student_list:
-			if subject in i:
-				student_list_sel.append(i)
-		"""
-		register = list(Register.objects.all())
-		reg = []
-		for i in register:
-			reg.append(str(i).split(' - '))
-		for i in reg:
-			if subject in i:
-				student_list_sel.append(i)
-		#print('student_list_sel')
-		#print(student_list_sel)
-		enroll_dict = {}
-		#print('reg')
-		#print(reg)
-		for i in student_list_sel:
-			for j in student_list:
-				if i[0] == j[1]:
-					enroll_dict[i[0]] = j[-1]
-		#print('enroll_dict')
-		#print(enroll_dict)
-		enroll_sorted = sorted(enroll_dict.items(), key=lambda kv:kv[1], reverse=True)
-		#print('enroll_sorted')
-		#print(enroll_sorted)
-		enroll_list = []
-		#print('len')
-		#print(len(enroll_list))
-		for i in range(len(enroll_sorted)):
-			enroll_list.append(enroll_sorted[i][0])
-		print(enroll_list)
+		cid=request.POST.get('course')
+		with connection.cursor() as cursor:
+			cursor.execute('select final_studentregistrations_cid from FinalStudentRegistrations where exists (select final_studentregistrations_cid from FinalStudentRegistrations where final_studentregistrations_cid ='+str(cid)+')')
+			x = cursor.fetchall()
+			if len(x) == 0:
+				cursor.execute("select studentRegistrations.studentRegistrations_id, studentRegistrations.studentRegistrations_cid, studentRegistrations.studentRegistrations_sid, Student.Student_cgpa, Student.Student_current_year from studentRegistrations inner join Student on Student.Student_roll_no = studentRegistrations.studentRegistrations_sid where studentRegistrations_cid = "+str(cid)+" order by Student_current_year DESC, Student_cgpa DESC limit 4")
+				row = cursor.fetchall()
+				print('row/n')
+				print(len(row))
+				print(row)
+				l=[]
+				m=[]
+				for i in range(len(row)):
+					final = FinalStudentRegistrations()
+					s=Student.objects.get(student_roll_no=row[i][2])
+					c=Course.objects.get(course_id=row[i][1])
+					final.final_studentregistrations_sid = s
+					final.final_studentregistrations_cid = c
+					final.final_studentregistrations_last_updated = datetime.datetime.now()
+					final.save()
+					print(s)
+					print(c)
+					l.append(s)
+					m.append(c)
+				g={'student':l}
+				return render(request, 'users/publish_course_registrations.html',g)
+			else :
+				cursor.execute("select final_studentregistrations_sid from FinalStudentRegistrations where final_studentregistrations_cid ="+str(cid))
+				row = cursor.fetchall()
+				l = []
+				for i in range(len(row)):
+					s=Student.objects.get(student_roll_no=row[i][0])
+					print(s)
+					l.append(s)
+				g={'student':l}
 
-		for i in range(len(enroll_list)):
-			final = final_Register()
-			final.student_id = enroll_list[i]
-			final.course=subject
-			final.save()
-		li=[]
-		for i in list(final_Register.objects.filter(course=subject)):
-			k=str(i).split(' - ')
-			li.append(k)
-		final={'x':enroll_list , 'sub':subject}
-		print(final)
-	return render(request, 'users/publish_course_registrations.html',final)
+				return render(request, 'users/publish_course_registrations.html',g)
+	else:
+		return render(request, 'users/publish_course_registrations.html')
+
 
 def ClassRoaster(request):
 	if request.method == 'POST':
@@ -336,7 +313,7 @@ def add_grade(request):
 						raise Exception()
 				grade=Grades.objects.update_or_create(studentid=student,courseid=course,course_status=coursestatus,course_grade=coursegrade,grade_approvedby=user)
 				messages.success(request,"Grade record added!")
-			else:
+			else:                     
 				raise IndexError()
 		except ValueError as e:
 			messages.error(request,"Please enter correct student id and course id to add grade!")
