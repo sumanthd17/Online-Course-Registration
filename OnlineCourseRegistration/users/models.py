@@ -30,6 +30,7 @@ class Course(models.Model):
     course_credits = models.SmallIntegerField()
     course_rigour = models.CharField(db_column='course_Rigour', max_length=2)  # Field name made lowercase.
     course_hasprereqs = models.IntegerField(db_column='course_hasPrereqs')  # Field name made lowercase.
+       
        	
     class Meta:
         managed = True
@@ -89,14 +90,14 @@ class Grades(models.Model):
 	grade_id = models.AutoField(db_column='grade_id', primary_key=True)
 	studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
 	courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseid')
-	grade_approvedby = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='grade_approvedby')
+	grade_approvedby = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='grade_approvedby',null=True)
 	course_grade = models.CharField(max_length=3)
 	course_offered_year = models.CharField(max_length=45)
 	course_completed_year = models.CharField(max_length=45,null=True,blank=True)
 	course_sem = models.CharField(max_length=45)
 	grades_last_updated = models.DateTimeField(max_length=45,auto_now=True)
 	course_status = models.CharField(max_length=30,blank=False,default='Not Started')	
-	approval_comments = models.CharField(db_column='approval_comments', max_length=200, blank=True, null=True)
+	approval_comments = models.CharField(db_column='approval_comments', max_length=200, blank=True, null=True) 
 	
 	class Meta:
 		managed = True
@@ -122,7 +123,7 @@ class Student(models.Model):
 	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
 	last_updated = models.DateTimeField(max_length=45,auto_now=True)
 	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
-	
+    
 	class Meta:
 		managed = True
 		db_table = 'Student'
@@ -206,6 +207,16 @@ class Studentregistrations(models.Model):
         managed = True
         db_table = 'studentRegistrations'
         unique_together = (('studentregistrations_cid', 'studentregistrations_sid'),)
+
+class FinalStudentRegistrations(models.Model):
+    final_studentregistrations_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='final_studentRegistrations_cid') 
+    final_studentregistrations_sid = models.ForeignKey(Student, models.DO_NOTHING, db_column='final_studentRegistrations_sid')
+    final_studentregistrations_last_updated = models.DateTimeField(db_column='final_studentregistrations_last_updated', auto_now=True) 
+    class Meta:
+        managed = True
+        db_table = 'FinalStudentRegistrations'
+
+    
         
       
         
