@@ -29,8 +29,7 @@ class Course(models.Model):
     course_credits = models.SmallIntegerField()
     course_rigour = models.CharField(db_column='course_Rigour', max_length=2)  # Field name made lowercase.
     course_hasprereqs = models.IntegerField(db_column='course_hasPrereqs')  # Field name made lowercase.
-    
-   
+       
     class Meta:
         managed = True
         db_table = 'Course'

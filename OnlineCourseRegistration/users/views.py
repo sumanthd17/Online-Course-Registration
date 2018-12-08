@@ -211,7 +211,7 @@ def publish_course_registrations(request):
 			cursor.execute('select final_studentregistrations_cid from FinalStudentRegistrations where exists (select final_studentregistrations_cid from FinalStudentRegistrations where final_studentregistrations_cid ='+str(cid)+')')
 			x = cursor.fetchall()
 			if len(x) == 0:
-				cursor.execute("select studentRegistrations.studentRegistrations_id, studentRegistrations.studentRegistrations_cid, studentRegistrations.studentRegistrations_sid, Student.Student_cgpa, Student.Student_current_year from studentRegistrations inner join Student on Student.Student_roll_no = studentRegistrations.studentRegistrations_sid where studentRegistrations_cid = 6 order by Student_current_year DESC, Student_cgpa DESC limit 4")
+				cursor.execute("select studentRegistrations.studentRegistrations_id, studentRegistrations.studentRegistrations_cid, studentRegistrations.studentRegistrations_sid, Student.Student_cgpa, Student.Student_current_year from studentRegistrations inner join Student on Student.Student_roll_no = studentRegistrations.studentRegistrations_sid where studentRegistrations_cid = "+str(cid)+" order by Student_current_year DESC, Student_cgpa DESC limit 4")
 				row = cursor.fetchall()
 				print('row/n')
 				print(len(row))
