@@ -96,9 +96,9 @@ WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'IIITS',
-        'USER': 'rusheel',
-        'PASSWORD': 'rushi123',
+        'NAME': 'latest',
+        'USER': 'sumanth',
+        'PASSWORD': 'Sumanth@17',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
