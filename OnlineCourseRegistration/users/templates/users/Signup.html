@@ -1,0 +1,64 @@
+<!-- templates/signup.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<!-- ACTIONS -->
+
+
+<!HTML>
+<head>
+	<title>Signup</title>
+</head>
+
+<!-- ACTIONS -->
+  <section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+
+      </div>
+    </div>
+  </section>
+<!-- LOGIN -->
+  <section id="signup">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header">
+              <h4>User Login</h4>
+            </div>
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              {{ form.as_p }}	
+              <button type="submit" class="btn btn-primary btn-block">Sign up</button>               	 
+			</form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  
+  
+    {% if messages %}
+    {% for message in messages %}
+     <script>
+     var msg = '{{ message }}';
+     sweetAlert(msg);
+     </script>
+    {% endfor %}
+    {% endif %}      
+ </section>
+
+
+</body>
+</html>
+    
+  
+
+
+{% endblock %}

@@ -138,6 +138,7 @@ window.history.back();
                   <th>Course Id</th>
                   <th>Course Name</th>
                   <th>Course Credits</th>
+                  <th>Offered To</th>
                   <th>Faculty Name</th>
                   <th>Audit Option</th>               
                   <th>Details</th>                           
@@ -145,19 +146,19 @@ window.history.back();
               </thead>
               <tbody>   
                {#% from users.models import Courses,Courseregistrations%#}  
-               {% for set in queryvals %}         
-              <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
-          <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_id }}"/> &nbsp;</td>
+                {% for set in queryvals %}         
+                 <tr name="crow" data-toggle="modal" data-id="{{ set.courseregistrations_cid__course_id }}">
+                   <td ><input id="saveCourse" type="checkbox" class="cbox" name="saveCourse" value="{{ set.courseregistrations_id }}"/></td>
                   <td id="cid" name="cid"> {{ set.courseregistrations_cid__course_id }} </td>
                   <td id="cname" name="cname">   {{ set.courseregistrations_cid__course_name }} </td> 
-                  <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td> 
+                  <td id="credit" name="credits">   {{ set.courseregistrations_cid__course_credits }} </td>
+                  <td><input type="text" name="coffer" class="form-control" value="{{set.courseregistrations_offeredto}}" readonly></td>
                     <td id="faculty" name="cfaculty"> {{ set.courseregistrations_fid__faculty_name }} </td>                        
                    <td><select id="csel" name="csel">
                    <option selected="selected" disabled></option>
                    <option value="yes">yes</option>
                     <option value="no">no</option>
                     </select>
-                    </td>
                     <td><a class="btn btn-secondary" href="{% url 'users:coursedetails' set.courseregistrations_cid__course_id set.courseregistrations_fid__faculty_id %}">                 
                   <i class="fas fa-angle-double-right"></i>Details</a></td>            
                 </tr>
@@ -271,7 +272,7 @@ window.history.back();
               <tbody>
                {% for set in todo %}
                 <tr>
-                  <td id="cname" name="cname"> {{ set.courseid__course_type }} </td>
+                  <td id="cname" name="cname"> {{ set.course_type }} </td>
                   <td id="ctype" name="ctype"> {{ set.total_credits }} </td>                              
                 </tr>
                 {% endfor %}
@@ -343,7 +344,7 @@ window.history.back();
 
 {% else %}
  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> 
+  <a href="{% url '/users/login.html' %}">login</a> 
 {% endif %}
      
 </body>
