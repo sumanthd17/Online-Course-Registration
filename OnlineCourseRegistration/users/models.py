@@ -13,7 +13,7 @@ from datetime import datetime
 
 # Create your models here.
 
-ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),('guest','GUEST'),)
+ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),)
 
 class CustomUser(AbstractUser):
 	role = models.CharField(max_length=45,db_column='role',choices=ROLE_CHOICES,blank=False)
