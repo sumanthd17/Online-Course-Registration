@@ -1,0 +1,114 @@
+<!-- templates/registration/login.html -->
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<!HTML>
+<head>
+	<title>Login</title>
+</head>
+
+<!-- ACTIONS -->
+  <section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+
+      </div>
+    </div>
+  </section>
+<!-- LOGIN -->
+  <section id="login">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header">
+              <h4>User Login</h4>
+            </div>
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              {{ form.data }}
+			  <p><label for="id_username">Username</label> <input type="text" name="username" autofocus required id="id_username"></p>
+              <p><label for="id_password">Password</label> <input type="password" name="password" required id="id_password"></p>
+              <p><label for="id_role">&nbsp;&nbsp;&nbsp;Role &nbsp; &nbsp; &nbsp;</label><select id="role" name="role">
+                 <option selected="selected" disabled></option>
+                 <option value="admin">admin</option>
+                    <option value="student" selected>student</option>
+                   <option value="faculty">faculty</option>
+                </select>
+			  <button type="submit" name="loginBtn" class="btn btn-primary btn-block">Login</button>
+			   <a href="#" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#addProfileModal">View</a>			 	 
+			</form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  	<!-- FOOTER -->
+  <!--footer id="main-footer" class="bg-dark text-white mt-5 p-5">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="lead text-center">
+            Copyright &copy;
+            <span id="year"></span>
+            ProjectA09
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer-->
+ 
+ <!-- ADD Student MODAL -->
+ <div class="modal fade" id="addStudentModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add Student</h5>
+          <button class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="/users/add_student/" method="POST" accept-charset="UTF-8">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="title">Name</label>
+              <input type="text" name="name" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Roll Number</label>
+              <input type="text" name="roll_number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Email</label>
+              <input type="text" name="mail" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="category">Year</label>
+              <select class="form-control" name="year">
+                <option value="UG 1">UG 1</option>
+                <option value="UG 2">UG 2</option>
+                <option value="UG 3">UG 3</option>
+                <option value="UG 4">UG 4</option>
+              </select>
+            </div>
+            </div>
+            <input type="submit" name="users"/>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-dismiss="modal">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</body>
+</html>
+  
+  
+{% endblock %}
