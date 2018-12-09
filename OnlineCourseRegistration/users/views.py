@@ -104,30 +104,37 @@ class Login(generic.CreateView):
 		return render(request, 'users/login.html', context)
 	
 	def post(self, request, *args, **kwargs):
-   		if 'loginBtn' in request.POST:
-   			print("Let me login")
-   			context={}
-   			myname=request.POST.get("username")
-   			pwd=request.POST.get("password")
-   			role=request.POST.get("role")
-   			print(myname)
-   			print(pwd)
-   			print(role)   			
-   			user = authenticate(username=myname, password=pwd)
-   			print(user)
-   			if user:
-   				print("Authenticated")
-   				if role=='student':
-   					print("I am a student")
-   					login(request,user)
-   					return HttpResponseRedirect('/users/studenthome.html')  					
-   				elif role=='admin':
-   					login(request,user)
-   					return HttpResponseRedirect('/home.html') 
+		try:
+   			if 'loginBtn' in request.POST:
+   				context={}
+   				myname=request.POST.get("username")
+   				pwd=request.POST.get("password")
+   				role=request.POST.get("role")
+   				user = authenticate(username=myname, password=pwd)
+   				print(user)
+   				if user:
+   					getuser=CustomUser.objects.filter(email=user).values('role','id')
+   					if getuser:
+   						print("found user in db!!")
+   						for p in getuser:
+   							myrole=p['role']
+   							myid=p['id']   								
+   							if myrole!=role:
+   								print("No role match!!")
+   								raise Exception()  
+   					if role=='student':
+   						login(request,user)
+   						return HttpResponseRedirect('/users/studenthome.html')  					
+   					elif role=='admin':
+   						login(request,user)
+   						return HttpResponseRedirect('/home.html') 
    					#return HttpResponseRedirect('/some/where')    				
-   			else:
-   				print("Not authenticated")
-   				return render(request,'users/login.html/',{})
+   				else:
+   					print("Not authenticated")
+   					return render(request,'users/login.html/',{})
+		except Exception as e:
+   			messages.error(request,"Please select correct role to login")
+   			return render(request,'users/login.html/',{})
    			
 
 
@@ -531,8 +538,6 @@ class CourseListView(View):
 			#print(vals[0])
 			#for x in vals:
 			#	queryvals.append({"courseregistrations_id":x[0],"course_id":x[1],"course_name":x[2],"course_credits":x[3],"faculty_id":x[4],"faculty_name":x[5]})
-
-			#queryvals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 			#print(queryvals)
 			myname=request.user
 			print(myname)
@@ -669,15 +674,15 @@ class CourseListView(View):
 					for p in coursereg:
 						courseregistrations_cid=p['courseregistrations_cid']
 						offeredto=p['courseregistrations_offeredto']
-					print(mycurryear)
-					print(offeredto)
-					#if offeredto!=mycurryear and offeredto!='Flex':
-					#	messages.error(request,"Please select coursed offered to your current year")
-					#	raise Exception()
+					#print(mycurryear)
+					#print(offeredto)
+					if offeredto!=mycurryear and offeredto!='Flex':
+						messages.error(request,"Please select coursed offered to your current year")
+						raise Exception()
 					#print(courseregistrations_cid)
 					student = get_object_or_404(Student, pk=student_roll)
 					course=get_object_or_404(Course, pk=courseregistrations_cid)
-					#Check if sum of credits is 24
+					#Check if sum of credits is 24 with raw sql
 					#cursor = connection.cursor()
 					#cursor.execute('''select sum(c.course_credits) from IIITS.studentRegistrations cs join IIITS.Course c on c.course_id = cs.StudentRegistrations_cid  join IIITS.Student s on s.student_roll_no = cs.studentRegistrations_sid where cs.studentRegistrations_sid  = %s and studentRegistrations_status="Saved"''',[student_roll])
 					sumStatus =  Studentregistrations.objects.filter(studentregistrations_sid__in=[student_roll],studentregistrations_status='Saved').select_related('studentregistrations_cid').values('studentregistrations_status').annotate(total_credits=Sum('studentregistrations_cid__course_credits'))
@@ -688,8 +693,35 @@ class CourseListView(View):
 						print(total)
 						if total >= 24:
 							messages.error(request,"Please ensure that total credits doesn't exceed 24!")
-							raise Exception()									
+							raise Exception()
+				    ######### Check for prereqs ############									
+					courseprereqs=Course.objects.filter(course_id=courseregistrations_cid).values('course_hasprereqs')
+					if courseprereqs:
+						for x in courseprereqs:
+							hasprereq=x['course_hasprereqs']
+					if hasprereq:
+						print(hasprereq)
+						getprereqs=CoursePreReqs.objects.filter(prereq_currentcourse=courseregistrations_cid).values('prereq_courseid','prereq_min_grade')
+						if getprereqs:
+							for x in getprereqs:
+								preid=x['prereq_courseid']
+								mingrade=x['prereq_min_grade']
+							getgrade=Grades.objects.filter(studentid=student_roll,courseid=courseregistrations_cid).values('course_grade','course_status')
+							for g in getgrade:
+								ming=g['course_grade']
+								cstatus=g['course_status']
+							if cstatus!="Completed":
+								messages.error("Prerequisite course is not completed!")
+								raise Exceptio()
+							else:
+								print(ming)
+								print(cstatus)
+						else:
+							print("No prereq info..")
+							messages.error(request,"Prerequisite course is not completed!")
+							raise Exception()
 					
+					#########################			
 					checkStatus =  Studentregistrations.objects.filter(studentregistrations_sid__in=[student_roll],studentregistrations_status='Registered').values('studentregistrations_status').annotate(status_count=Count('studentregistrations_status'))
 					if checkStatus:
 						for status in checkStatus:
@@ -809,6 +841,36 @@ class CourseListView(View):
 							if total >= 24:
 								messages.error(request,"Please ensure that total credits doesn't exceed 24!")
 								raise Exception()	
+							
+							 ######### Check for prereqs ############									
+							courseprereqs=Course.objects.filter(course_id=courseregistrations_cid).values('course_hasprereqs')
+							if courseprereqs:
+								for x in courseprereqs:
+									hasprereq=x['course_hasprereqs']
+								if hasprereq:
+									print(hasprereq)
+									getprereqs=CoursePreReqs.objects.filter(prereq_currentcourse=courseregistrations_cid).values('prereq_courseid','prereq_min_grade')
+									if getprereqs:
+										for x in getprereqs:
+											preid=x['prereq_courseid']
+											mingrade=x['prereq_min_grade']
+										getgrade=Grades.objects.filter(studentid=student_roll,courseid=courseregistrations_cid).values('course_grade','course_status')
+										for g in getgrade:
+											ming=g['course_grade']
+											cstatus=g['course_status']
+										if cstatus!="Completed":
+											messages.error("Prerequisite course is not completed!")
+											raise Exceptio()
+										else:
+											print(ming)
+											print(cstatus)
+								else:
+									print("No prereq info..")
+									messages.error(request,"Prerequisite course is not completed!")
+									raise Exception()
+					
+					#########################End of check for prereqs ##############
+							
 							
 							if optlen != 0:
 								tablesave= Studentregistrations.objects.update_or_create(studentregistrations_cid=course,studentregistrations_sid=student,studentregistrations_status='Registered',studentregistrations_auditoption=option[i],studentregistrations_semester=sem)
