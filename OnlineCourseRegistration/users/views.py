@@ -4,10 +4,6 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib import messages
-from django.db import IntegrityError, connection
-from django.db.models import Count
-
-from .models import Course,Grades, Student,Courseregistrations, FinalStudentRegistrations
 from django.db import IntegrityError
 from django.db.models import Count,Sum
 from django.db import connection
@@ -17,7 +13,6 @@ from .models import *
 from django.contrib.auth import login, logout
 from django.views import View
 from django.contrib.auth import *
-import requests, json, datetime
 import requests, json
 from datetime import datetime as dt
 from datetime import timedelta
@@ -46,7 +41,7 @@ def add_sprofile(request):
 		myid=request.POST.get('uid')
 		user=get_object_or_404(CustomUser,pk=myid)	
 		if user:
-			student=Student.objects.update_or_create(student_roll_no=roll_number,student_first_name=fname,student_last_name=lname,student_email=mail,student_gender=mygender,student_dob=mydob,student_mobile=mob,student_reg_year=regyear,student_cur_year=year,student_curr_sem=sem,student_degree="B.Tech",student_degree_duration="4 years",student_Id=user)
+			student=Student.objects.update_or_create(student_roll_no=roll_number,student_first_name=fname,student_last_name=lname,student_email=mail,student_gender=mygender,student_dob=mydob,student_mobile=mob,student_reg_year=regyear,student_cur_year=year,student_curr_sem=sem,student_degree="B.Tech",student_degree_duration="4 years",student_Id=user,student_cgpa=0.0)
 			messages.success(request,"Profile created")
 		else:
 			messages.error(request,"Profile Creation failed!Please check logs")
@@ -81,6 +76,12 @@ class SignUp(generic.CreateView):
 				else:
 					print("I am a new student")
 					return HttpResponseRedirect('/users/profile.html')
+			elif me['role']=='admin':
+				print("I am a admin")
+				return HttpResponseRedirect('/users/login.html')				
+			if me['role']=='faculty':
+				print("I am a faculty")
+				return HttpResponseRedirect('/users/login.html')
 		else:
 			messages.error(request,"Please add all values as per help")
 			return render(request, 'users/Signup.html', {'form': form})
@@ -187,7 +188,7 @@ def add_student(request):
 		student.email = request.POST.get('mail')
 		student.year = request.POST.get('year')
 		student.save()
-		print(student.roll, student.year)
+		#print(student.roll, student.year)
 
 	else:
 		print('error in request')
@@ -299,48 +300,76 @@ def audit_course(request):
 	else:
 		return render(request, 'users/audit.html')
 
-def publish_course_registrations(request):
+def publish_course_registration(request):
 	if request.method == 'POST':
-		cid=request.POST.get('course')
-		with connection.cursor() as cursor:
-			cursor.execute('select final_studentregistrations_cid from FinalStudentRegistrations where exists (select final_studentregistrations_cid from FinalStudentRegistrations where final_studentregistrations_cid ='+str(cid)+')')
-			x = cursor.fetchall()
-			if len(x) == 0:
-				cursor.execute("select studentRegistrations.studentRegistrations_id, studentRegistrations.studentRegistrations_cid, studentRegistrations.studentRegistrations_sid, Student.Student_cgpa, Student.Student_current_year from studentRegistrations inner join Student on Student.Student_roll_no = studentRegistrations.studentRegistrations_sid where studentRegistrations_cid = "+str(cid)+" order by Student_current_year DESC, Student_cgpa DESC limit 4")
-				row = cursor.fetchall()
-				print('row/n')
-				print(len(row))
-				print(row)
-				l=[]
-				m=[]
-				for i in range(len(row)):
-					final = FinalStudentRegistrations()
-					s=Student.objects.get(student_roll_no=row[i][2])
-					c=Course.objects.get(course_id=row[i][1])
-					final.final_studentregistrations_sid = s
-					final.final_studentregistrations_cid = c
-					final.final_studentregistrations_last_updated = datetime.datetime.now()
-					final.save()
-					print(s)
-					print(c)
-					l.append(s)
-					m.append(c)
-				g={'student':l}
-				return render(request, 'users/publish_course_registrations.html',g)
-			else :
-				cursor.execute("select final_studentregistrations_sid from FinalStudentRegistrations where final_studentregistrations_cid ="+str(cid))
-				row = cursor.fetchall()
-				l = []
-				for i in range(len(row)):
-					s=Student.objects.get(student_roll_no=row[i][0])
-					print(s)
-					l.append(s)
-				g={'student':l}
+		subject = request.POST.get('course')
+		print('subject')
+		print(subject)
+		course = list(Course.objects.all())
+		c = []
+		#print('course')
+		#print(course)
+		for i in course:
+			c.append(str(i).split(' - '))
+		for i in c:
+			if subject in i:
+				max = i[-1]
+				break
+		#print('max')
+		#print(max)
+		student_list = []
+		student = list(Student.objects.all())
+		#print('student')
+		#print(student)
+		for i in student:
+			student_list.append(str(i).split(' - '))
+		student_list_sel = []
+		#print('student_list')
+		#print(student_list)
+		"""for i in student_list:
+			if subject in i:
+				student_list_sel.append(i)
+		"""
+		register = list(Register.objects.all())
+		reg = []
+		for i in register:
+			reg.append(str(i).split(' - '))
+		for i in reg:
+			if subject in i:
+				student_list_sel.append(i)
+		#print('student_list_sel')
+		#print(student_list_sel)
+		enroll_dict = {}
+		#print('reg')
+		#print(reg)
+		for i in student_list_sel:
+			for j in student_list:
+				if i[0] == j[1]:
+					enroll_dict[i[0]] = j[-1]
+		#print('enroll_dict')
+		#print(enroll_dict)
+		enroll_sorted = sorted(enroll_dict.items(), key=lambda kv:kv[1], reverse=True)
+		#print('enroll_sorted')
+		#print(enroll_sorted)
+		enroll_list = []
+		#print('len')
+		#print(len(enroll_list))
+		for i in range(len(enroll_sorted)):
+			enroll_list.append(enroll_sorted[i][0])
+		print(enroll_list)
 
-				return render(request, 'users/publish_course_registrations.html',g)
-	else:
-		return render(request, 'users/publish_course_registrations.html')
-
+		for i in range(len(enroll_list)):
+			final = final_Register()
+			final.student_id = enroll_list[i]
+			final.course=subject
+			final.save()
+		li=[]
+		for i in list(final_Register.objects.filter(course=subject)):
+			k=str(i).split(' - ')
+			li.append(k)
+		final={'x':enroll_list , 'sub':subject}
+		print(final)
+	return render(request, 'users/publish_course_registrations.html',final)
 
 def ClassRoaster(request):
 	if request.method == 'POST':
@@ -400,7 +429,7 @@ def add_grade(request):
 						raise Exception()
 				grade=Grades.objects.update_or_create(studentid=student,courseid=course,course_status=coursestatus,course_grade=coursegrade,grade_approvedby=user)
 				messages.success(request,"Grade record added!")
-			else:                     
+			else:
 				raise IndexError()
 		except ValueError as e:
 			messages.error(request,"Please enter correct student id and course id to add grade!")
@@ -432,7 +461,7 @@ class CourseListView(View):
 			cursor.execute('''select cs.courseregistrations_id,c.course_id,c.course_name,c.course_credits,f.faculty_id,f.faculty_name from IIITS.CourseRegistrations cs join IIITS.Course c on c.course_id = cs.courseRegistrations_cid  join IIITS.Faculty f on f.Faculty_id = cs.courseRegistrations_fid ''')
 			vals = cursor.fetchall()
 			queryvals=[]
-			print(vals[0])
+			#print(vals[0])
 			for x in vals:
 				queryvals.append({"courseregistrations_id":x[0],"course_id":x[1],"course_name":x[2],"course_credits":x[3],"faculty_id":x[4],"faculty_name":x[5]})
 			#print(queryvals)
@@ -464,7 +493,7 @@ class CourseListView(View):
 			cursor.execute('''select c.course_type,c.course_name,g.course_status,c.course_credits from IIITS.Grades g join IIITS.Course c on g.courseid=c.course_id where g.course_status= %s and g.studentid=%s ''',[cstatus,student_roll])
 			vals = cursor.fetchall()
 			grades=[]
-			print(vals[0])
+			#print(vals[0])
 			for x in vals:
 				grades.append({"course_type":x[0],"course_name":x[1],"course_status":x[2],"course_credits":x[3]})
 
@@ -494,7 +523,7 @@ class CourseListView(View):
 				k=k+1
 				balance=0
 				total=0						
-			print(todo)	
+			#print(todo)	
 			context['todo']=todo
 			context['total_todo']=k
 		except Exception as e:
