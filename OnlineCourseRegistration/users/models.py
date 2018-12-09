@@ -16,7 +16,7 @@ from datetime import datetime
 ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),('guest','GUEST'),)
 
 class CustomUser(AbstractUser):
-	role = models.CharField(max_length=45,db_column='Role',choices=ROLE_CHOICES,blank=False)
+	role = models.CharField(max_length=45,db_column='role',choices=ROLE_CHOICES,blank=False)
 	def __str__(self):
 		return self.email
 
@@ -116,13 +116,14 @@ class Student(models.Model):
 	student_mobile = models.CharField(db_column='Student_mobile', max_length=15)
 	student_email = models.CharField(db_column='Student_email', max_length=45)
 	student_blood_group = models.CharField(db_column='Student_BloodGroup',max_length=4,null=False)
-	student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False)
+	student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False,default='Telugu')
 	student_reg_year = models.CharField(db_column='Student_Registered_Year', max_length=10,null=False)
 	student_cur_year = models.CharField(db_column='Student_Current_Year',max_length=10,null=False)
 	student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=10,null=False)
 	student_degree = models.CharField(db_column='Student_degree', max_length=15,null=False)
 	student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
-	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
+	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False,default='In Progress')
+	student_cgpa =  models.FloatField(db_column='Student_cgpa',blank=True)
 	last_updated = models.DateTimeField(max_length=45,auto_now=True)
 	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
     
