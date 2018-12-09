@@ -12,9 +12,11 @@ from datetime import datetime
 
 
 # Create your models here.
-   
-class CustomUser(AbstractUser):
 
+ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),('guest','GUEST'),)
+
+class CustomUser(AbstractUser):
+	role = models.CharField(max_length=45,db_column='Role',choices=ROLE_CHOICES,blank=False)
 	def __str__(self):
 		return self.email
 
@@ -67,7 +69,7 @@ class Faculty(models.Model):
     faculty_email_id = models.CharField(db_column='Faculty_email_id', max_length=45)  # Field name made lowercase.
     faculty_designation = models.CharField(db_column='Faculty_designation', max_length=45)  # Field name made lowercase.
     faculty_last_updated = models.DateTimeField(db_column='Faculty_last_updated', auto_now=True)  # Field name made lowercase.
-    faculty_userid = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='Facutly_UserId')
+    faculty_userid = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='Faculty_UserId')
 
     class Meta:
         managed = True
@@ -104,7 +106,7 @@ class Grades(models.Model):
 		unique_together = (('studentid', 'courseid'),)
 
 class Student(models.Model):
-	student_roll_no = models.IntegerField(db_column='Student_roll_no', primary_key=True)
+	student_roll_no = models.CharField(db_column='Student_roll_no', max_length=30,primary_key=True)
 	student_first_name = models.CharField(db_column='Student_First_Name', max_length=100,null=False)
 	student_middle_name = models.CharField(db_column='Student_Middle_Name', max_length=100,blank=True)
 	student_last_name = models.CharField(db_column='Student_Last_Name', max_length=100,null=False)

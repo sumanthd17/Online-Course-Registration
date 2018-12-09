@@ -23,11 +23,98 @@ from django.views import View
 import operator
 
 
+
+
+def add_sprofile(request):
+	print("Now add student profile")
+	if request.method == 'POST':
+		fname=request.POST.get('fname')
+		lname=request.POST.get('lname')
+		roll_number=request.POST.get('roll_number')
+		mail=request.POST.get('mail')
+		mygender=request.POST.get('gender')
+		mydob=request.POST.get('dob')
+		regyear=request.POST.get('regyear')
+		mob=request.POST.get('mobile')
+		year=request.POST.get('year')	
+		sem=request.POST.get('sem')
+		myid=request.POST.get('uid')
+		user=get_object_or_404(CustomUser,pk=myid)	
+		if user:
+			student=Student.objects.update_or_create(student_roll_no=roll_number,student_first_name=fname,student_last_name=lname,student_email=mail,student_gender=mygender,student_dob=mydob,student_mobile=mob,student_reg_year=regyear,student_cur_year=year,student_curr_sem=sem,student_degree="B.Tech",student_degree_duration="4 years",student_Id=user)
+			messages.success(request,"Profile created")
+		else:
+			messages.error(request,"Profile Creation failed!Please check logs")
+	return HttpResponseRedirect('/users/login.html')
+	
+
 # Create your views here.
 class SignUp(generic.CreateView):
-	form_class = CustomUserCreationForm
-	success_url = reverse_lazy('login')
 	template_name = 'Signup.html'
+	model=CustomUser
+	def get(self, request, *args, **kwargs):
+		form_class = CustomUserCreationForm
+		print("Getting Singup page now")
+		return render(request, 'users/Signup.html', {'form':form_class})
+	def post(self, request, *args, **kwargs):
+		form = CustomUserCreationForm(request.POST)
+		print("post signup data")
+		if form.is_valid():
+			print("Valid form")			
+			print("clicked signup")
+			user = form.save()
+			raw_password = form.cleaned_data.get('password1')
+			user = authenticate(username=user.username, password=raw_password)
+			login(request, user)
+			print("authenticated")
+			me = form.cleaned_data
+			if me['role']=='student':
+				print("I am a student")
+				student=Student.objects.filter(student_email=me['email']).values('student_roll_no')
+				if student:					
+					return HttpResponseRedirect('/users/login.html')
+				else:
+					print("I am a new student")
+					return HttpResponseRedirect('/users/profile.html')
+		else:
+			messages.error(request,"Please add all values as per help")
+			return render(request, 'users/Signup.html', {'form': form})
+	   		
+class Login(generic.CreateView):
+	model=CustomUser
+	template_name="/users/login.html/"	
+	def get(self, request, *args, **kwargs):
+		context={}
+		print("Getting login page now")
+		return render(request, 'users/login.html', context)
+	
+	def post(self, request, *args, **kwargs):
+   		if 'loginBtn' in request.POST:
+   			print("Let me login")
+   			context={}
+   			myname=request.POST.get("username")
+   			pwd=request.POST.get("password")
+   			role=request.POST.get("role")
+   			print(myname)
+   			print(pwd)
+   			print(role)   			
+   			user = authenticate(username=myname, password=pwd)
+   			print(user)
+   			if user:
+   				print("Authenticated")
+   				if role=='student':
+   					print("I am a student")
+   					login(request,user)
+   					return HttpResponseRedirect('/users/studenthome.html')  					
+   				elif role=='admin':
+   					login(request,user)
+   					return HttpResponseRedirect('/home.html') 
+   					#return HttpResponseRedirect('/some/where')    				
+   			else:
+   				print("Not authenticated")
+   				return render(request,'users/login.html/',{})
+   			
+
 
 def index(request):
 	courses = Course.objects.all()
@@ -358,12 +445,22 @@ def setdate():
 class CourseListView(View):
 	model=Courseregistrations
 	template_name="users/register.html"
-				
+			
 	def get(self, request, *args, **kwargs):
 		try:
 			context={}
-			queryvals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
+			###### OMR query
+			#queryvals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
+			cursor = connection.cursor()
+			cursor.execute('''select cs.courseregistrations_id,c.course_id,c.course_name,c.course_credits,f.faculty_id,f.faculty_name from IIITS.CourseRegistrations cs join IIITS.Course c on c.course_id = cs.courseRegistrations_cid  join IIITS.Faculty f on f.Faculty_id = cs.courseRegistrations_fid ''')
+			vals = cursor.fetchall()
+			queryvals=[]
+			print(vals[0])
+			for x in vals:
+				queryvals.append({"courseregistrations_id":x[0],"course_id":x[1],"course_name":x[2],"course_credits":x[3],"faculty_id":x[4],"faculty_name":x[5]})
+			#print(queryvals)
 			myname=request.user
+			print(myname)
 			student=Student.objects.values('student_roll_no','student_first_name','student_last_name','student_cur_year','student_curr_sem','student_reg_year').filter(student_email=myname)
 			policy = RegistrationPolicy.objects.all().values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
 			total_policy=len(RegistrationPolicy.objects.all())
@@ -381,20 +478,42 @@ class CourseListView(View):
 				context['student_cur_sem']=i['student_curr_sem']
 				context['student_reg_year']=i['student_reg_year']
 			student_roll = context['student_roll_no']
-			grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','courseid__course_name','course_status','courseid__course_credits')
+			
+			#OMR query
+			#grades = Grades.objects.filter(studentid=student_roll,course_status='Completed').select_related('courseid').values('courseid__course_type','courseid__course_name','course_status','courseid__course_credits')
+			cstatus="Completed"
+			
+			cursor = connection.cursor()
+			cursor.execute('''select c.course_type,c.course_name,g.course_status,c.course_credits from IIITS.Grades g join IIITS.Course c on g.courseid=c.course_id where g.course_status= %s and g.studentid=%s ''',[cstatus,student_roll])
+			vals = cursor.fetchall()
+			grades=[]
+			print(vals[0])
+			for x in vals:
+				grades.append({"course_type":x[0],"course_name":x[1],"course_status":x[2],"course_credits":x[3]})
+
 			context['grades']=grades
 			context['total_grades']=len(grades)
-			mypolicy=RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+			# OMR query
+			#mypolicy=RegistrationPolicy.objects.filter(regPolicy_year=context['student_reg_year']).values('regPolicy_Id','regPolicy_coursetype','regPolicy_credits','regPolicy_year')
+			
+			cursor = connection.cursor()
+			cursor.execute('''select r.regPolicy_Id,r.regPolicy_coursetype,r.regPolicy_credits,r.regPolicy_year from IIITS.registrationPolicy r where r.regPolicy_year= %s ''',[context['student_reg_year']])
+			vals = cursor.fetchall()
+			mypolicy=[]
+			#print(vals[0])
+			for x in vals:
+				mypolicy.append({"regPolicy_Id":x[0],"regPolicy_coursetype":x[1],"regPolicy_credits":x[2],"regPolicy_year":x[3]})	
+			
 			todo=[]
 			k=0
 			balance=0
 			total=0
 			for y in mypolicy:
 				for x in grades:
-					if y['regPolicy_coursetype'] == x['courseid__course_type']:
-						total = total + x['courseid__course_credits']
+					if y['regPolicy_coursetype'] == x['course_type']:
+						total = total + x['course_credits']
 				balance = y['regPolicy_credits']-total			
-				todo.append({'courseid__course_type':y['regPolicy_coursetype'],'total_credits':balance})
+				todo.append({'course_type':y['regPolicy_coursetype'],'total_credits':balance})
 				k=k+1
 				balance=0
 				total=0						
@@ -609,7 +728,7 @@ class StudentCourseListView(View):
 	model=Studentregistrations
 	template_name="users/studenthome.html"
 	context_object_name = 'clist'
-			
+		
 	def get(self, request, *args, **kwargs):
 		try:
 			context={}
@@ -664,6 +783,7 @@ class StudentCourseListView(View):
 		except Exception as e:
 			messages.error(request,repr(e))
 		return render(request, self.template_name,context)
+	
 	def post(self, request, *args, **kwargs):
 		if 'delCourseBtn' in request.POST:
 			try:
