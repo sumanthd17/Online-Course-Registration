@@ -300,7 +300,7 @@ def audit_course(request):
 	else:
 		return render(request, 'users/audit.html')
 
-def publish_course_registration(request):
+def publish_course_registrations(request):
 	if request.method == 'POST':
 		subject = request.POST.get('course')
 		print('subject')
