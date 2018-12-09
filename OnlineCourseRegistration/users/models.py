@@ -12,9 +12,11 @@ from datetime import datetime
 
 
 # Create your models here.
-   
-class CustomUser(AbstractUser):
 
+ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),('guest','GUEST'),)
+
+class CustomUser(AbstractUser):
+	role = models.CharField(max_length=45,db_column='Role',choices=ROLE_CHOICES,blank=False)
 	def __str__(self):
 		return self.email
 
@@ -68,7 +70,7 @@ class Faculty(models.Model):
     faculty_email_id = models.CharField(db_column='Faculty_email_id', max_length=45)  # Field name made lowercase.
     faculty_designation = models.CharField(db_column='Faculty_designation', max_length=45)  # Field name made lowercase.
     faculty_last_updated = models.DateTimeField(db_column='Faculty_last_updated', auto_now=True)  # Field name made lowercase.
-    faculty_userid = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='Facutly_UserId')
+    faculty_userid = models.ForeignKey('CustomUser',models.DO_NOTHING,db_column='Faculty_UserId')
 
     class Meta:
         managed = True

@@ -1,0 +1,185 @@
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Online Course Registration</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA07</a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+     
+
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown mr-3">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-user"></i> Welcome {{user.username}}
+            </a>
+            <div class="dropdown-menu">
+              <a href="profile.html" class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+             <a href="{% url 'logout' %}" class="nav-link">
+              <i class="fas fa-user-times"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h1>
+            <i class="fas fa-user"></i> Edit Profile</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ACTIONS -->
+  <section id="actions" class="py-4 mb-4 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+          <a href="#" class="btn btn-success btn-block">
+            <i class="fas fa-lock"></i> Change Password
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="#" class="btn btn-danger btn-block">
+            <i class="fas fa-trash"></i> Delete Account
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <h4>Edit Profile</h4>
+            </div>
+            <div class="card-body">
+              <form action="/users/add_sprofile/" method="POST"  enctype="multipart/form-data">
+                 {% csrf_token %}
+            <div class="form-group">
+              <label for="title">First Name</label>
+              <input type="text" name="fname" class="form-control" required>
+            </div>
+             <div class="form-group">
+              <label for="title">Last Name</label>
+              <input type="text" name="lname" class="form-control" requred>
+            </div>
+            <div class="form-group">
+              <label for="title">Roll Number</label>
+              <input type="text" name="roll_number" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="title">Email</label>
+              <input type="text" name="mail" class="form-control" value="{{user.email}}" required readonly>
+            </div>
+             <div class="form-group">
+              <label for="title">Mobile</label>
+              <input type="text" name="mobile" class="form-control" value="" required>
+            </div>
+            <div class="form-group">
+              <label for="title">Gender</label>
+              <select class="form-control" name="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+               </select>
+            </div>
+            <div class="form-group">
+              <label for="title">Date of Birth</label>
+              <input type="date" name="dob" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="title">Registered Year</label>
+              <input type="text" name="regyear" class="form-control" required>
+            </div> 
+              <div class="form-group">
+              <label for="title">User Id</label>
+              <input type="text" name="uid" class="form-control" value="{{user.id}}" required readonly>
+            </div>            
+            <div class="form-group">
+              <label for="category">Current Year</label>
+              <select class="form-control" name="year">
+                <option value="UG 1">UG 1</option>
+                <option value="UG 2">UG 2</option>
+                <option value="UG 3">UG 3</option>
+                <option value="UG 4">UG 4</option>
+              </select>
+            </div>
+             <div class="form-group">
+              <label for="category">Current Semester</label>
+              <select class="form-control" name="sem">
+                <option value="Spring">Spring</option>
+                <option value="Fall">Fall</option>             
+              </select>
+            </div>
+            </div>
+            <input type="submit" name="create" value="Create Profile"/>
+            </div>             
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
+
+  <script>
+    // Get the current year for the copyright
+    $('#year').text(new Date().getFullYear());
+
+    CKEDITOR.replace('editor1');
+  </script>
+</body>
+
+{% else %}
+ <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a> 
+{% endif %}
+
+</html>
+
+{% endblock %}

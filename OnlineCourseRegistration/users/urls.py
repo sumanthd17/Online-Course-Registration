@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.views.generic.base import TemplateView,RedirectView
 
 from . import views
-from  .views import CourseListView,StudentCourseListView,RegCourseListView
+from  .views import CourseListView,StudentCourseListView,RegCourseListView,Login,SignUp
 
 #
 
@@ -11,6 +11,10 @@ app_name = 'users'
 
 urlpatterns = [
 	path('signup/', views.SignUp.as_view(), name='signup'),
+	path('login/', Login.as_view(), name='in'),
+	path('login.html/', Login.as_view(), name='in'),
+	path('profile.html/', TemplateView.as_view(template_name='users/profile.html'), name='profile'),
+	path('add_sprofile/', views.add_sprofile, name='sprofile'),	
 	path('', views.index, name='index'),
 	url('^callback/(?P<token>.+)$', views.callback, name='callback'),	
 	path('<int:course_id>/', views.details, name='details'),
@@ -34,5 +38,4 @@ urlpatterns = [
 	#path('studenthome.html/',TemplateView.as_view(template_name='users/studentehome.html'),name="studenthome"),
 	path('studenthome.html/',StudentCourseListView.as_view(),name='MyCourseList'),
 	path('courselist.html/',RegCourseListView.as_view(),name='regcourselist'),
-
 ]
