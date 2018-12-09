@@ -87,46 +87,41 @@
             <i class="fas fa-plus"></i> Class Roaster
           </a>
         </div>
-        <!--<div class="col-md-3">
-          <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#addGradeModal">
-            <i class="fas fa-plus"></i> Add Grades
-          </a>
-        </div>-->
       </div>
     </div>
   </section>
   <div >  
-  <div class=" col-md-8 text-md-center" >
-    <div class="card" style= "margin-left:350px"; >
-        <div class="card-header">
-          <h4>Courses Available</h4>
-        </div>
-        <table class="table table-striped">
-          <thead class="thead-dark">
-            <tr>
-              <th>#</th>
-              <th>Course Name</th>
-              <th>Number of Students</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td></td>
-              <td>DBMS</td>
-              <td>3</td>
-              <td>
-               <a href="/details.html" class="btn btn-secondary">
-                  <i class="fas fa-angle-double-right"></i> Details
-                </a>
-              </td>
-            </tr>
-             </tbody>
-        </table>
-    </div>
+  
   </div>
 </div>
 
+<!--Class Roster-->
+<div class="modal fade" id="addClassRoaster">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title"></h5>
+          <button class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form action="/users/ClassRoaster/" method="POST" accept-charset="UTF-8">
+              {% csrf_token %}
+              <div class="form-group">
+                <label>Course name</label>
+                <input name="course" type="text" class="form-control">
+              </div>
+              <input type="submit" name="users"/>
+            </form>
+          </div>
+        <div class="modal-footer">
+          <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
+          <!-- <input type="submit" name="users"/> -->
+        </div>
+      </div>
+    </div>
+  </div>
 
                   
       <script>             
@@ -148,7 +143,33 @@
       </script>  
     </div>      
   </div>
-
+  <div class="modal fade" id="ClassRoster">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title"></h5>
+            <button class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <form action="/users/publish_course_registration/" method="POST" accept-charset="UTF-8">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label>Course name</label>
+                  <input name="course" type="text" class="form-control">
+                </div>
+                <input type="submit" name="users"/>
+              </form>
+            </div>
+          <div class="modal-footer">
+            <!-- <button class="btn btn-success" data-dismiss="modal">Save Changes</button> -->
+            <!-- <input type="submit" name="users"/> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
 	<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 	crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"

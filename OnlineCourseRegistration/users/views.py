@@ -6,14 +6,16 @@ from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib import messages
 from django.db import IntegrityError, connection
 from django.db.models import Count
-
+from django.views.generic import View
 from .models import Course,Grades, Student,Courseregistrations, FinalStudentRegistrations
 from django.db import IntegrityError
 from django.db.models import Count,Sum
 from django.db import connection
+from django.utils import timezone
+from .render import Render
 
 from .models import Course,Grades, Student,Courseregistrations,RegistrationPolicy,Studentregistrations
-from .models import *
+from users.models import *
 from django.contrib.auth import login, logout
 from django.views import View
 from django.contrib.auth import *
@@ -218,8 +220,10 @@ def publish_course_registrations(request):
 		with connection.cursor() as cursor:
 			cursor.execute('select final_studentregistrations_cid from FinalStudentRegistrations where exists (select final_studentregistrations_cid from FinalStudentRegistrations where final_studentregistrations_cid ='+str(cid)+')')
 			x = cursor.fetchall()
+			cursor.execute('select course_max_students from Course where course_id ='+str(cid))
+			c_max = cursor.fetchall()
 			if len(x) == 0:
-				cursor.execute("select studentRegistrations.studentRegistrations_id, studentRegistrations.studentRegistrations_cid, studentRegistrations.studentRegistrations_sid, Student.Student_cgpa, Student.Student_current_year from studentRegistrations inner join Student on Student.Student_roll_no = studentRegistrations.studentRegistrations_sid where studentRegistrations_cid = "+str(cid)+" order by Student_current_year DESC, Student_cgpa DESC limit 4")
+				cursor.execute("select studentRegistrations.studentRegistrations_id, studentRegistrations.studentRegistrations_cid, studentRegistrations.studentRegistrations_sid, Student.Student_cgpa, Student.Student_current_year,Student.student_first_name,Student.student_middle_name,Student.student_last_name from studentRegistrations inner join Student on Student.Student_roll_no = studentRegistrations.studentRegistrations_sid where studentRegistrations_cid = "+str(cid)+" order by Student_current_year DESC, Student_cgpa DESC limit "+str(c_max[0][0]))
 				row = cursor.fetchall()
 				print('row/n')
 				print(len(row))
@@ -230,38 +234,52 @@ def publish_course_registrations(request):
 					final = FinalStudentRegistrations()
 					s=Student.objects.get(student_roll_no=row[i][2])
 					c=Course.objects.get(course_id=row[i][1])
+					#middle=Student.objects.get(student_middle_name=row[i][6])
+					#f=Student.objects.get(student_first_name=row[i][5])
+					#last=Student.objects.get(student_last_name=row[i][7])
 					final.final_studentregistrations_sid = s
 					final.final_studentregistrations_cid = c
 					final.final_studentregistrations_last_updated = datetime.datetime.now()
+					#final.final_student_first_name = f
+					#final.final_student_last_name = last
+					#final.final_student_middle_name = middle
 					final.save()
-					print(s)
-					print(c)
+					print("student objects",s)
+					print("course objects",c)
 					l.append(s)
-					m.append(c)
-				g={'student':l}
-				return render(request, 'users/publish_course_registrations.html',g)
+					#m.append(c)
+				g={'cid':l,'id':cid}
+				return Render.render( 'users/publish_reg_pdf.html',g)
 			else :
 				cursor.execute("select final_studentregistrations_sid from FinalStudentRegistrations where final_studentregistrations_cid ="+str(cid))
 				row = cursor.fetchall()
 				l = []
 				for i in range(len(row)):
 					s=Student.objects.get(student_roll_no=row[i][0])
-					print(s)
+					#m=Student.objects.get(student_middle_name=row[i][2])
+					#f=Student.objects.get(student_first_name=row[i][1])
+					#l=Student.objects.get(student_last_name=row[i][3])
+					print("student objects",s)
 					l.append(s)
-				g={'student':l}
+					
+				g={'cid':l, 'id': cid}
 
-				return render(request, 'users/publish_course_registrations.html',g)
+				return Render.render( 'users/publish_reg_pdf.html',g)
 	else:
 		return render(request, 'users/publish_course_registrations.html')
 
 
 def ClassRoaster(request):
-	if request.method == 'POST':
-		register = list(Register.objects.all())
-		reg = []
-		for i in register:
-			reg.append(str(i).split(' - '))
-	return render(request,'users/faculty.html')
+    if request.method == 'POST':
+        sub=request.POST.get('course')
+        cou=Course.objects.get(course_name=sub)
+        register = list(Studentregistrations.objects.filter(studentregistrations_cid=cou))
+        reg=[]
+        print(register)
+        for i in register:
+           reg.append(i.studentregistrations_sid)
+        j={'li':reg,'id':sub}
+    return Render.render('users/classroaster.html',j)
 
 def view_registration(request):
 	roll_no='S20160020125'

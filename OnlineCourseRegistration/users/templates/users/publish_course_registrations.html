@@ -112,20 +112,19 @@
 <table class="table table-striped">
         <thead class="thead-dark">
           <tr>
-            <th>Student</th>
-            <th>Subject</th>
+              <th>roll number</th>
+            <th>course id</th>
           </tr>
         </thead>
         <tbody>
-                {% for i in student %}
+                {% for key in cid %}
             <tr>
-              <td>{{i}}</td>
-                   
-                <td>6
+                <td>{{key}}</td>
+              <td>{{id}}</td>
+              
+              {% endfor %}
 
-                </td>
-                {% endfor %}
-                </tr>       </tbody>
+                </tr>                    </tbody>
       </table>
  
   <!-- MODALS -->

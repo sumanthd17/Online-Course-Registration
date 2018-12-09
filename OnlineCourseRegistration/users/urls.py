@@ -34,5 +34,6 @@ urlpatterns = [
 	#path('studenthome.html/',TemplateView.as_view(template_name='users/studentehome.html'),name="studenthome"),
 	path('studenthome.html/',StudentCourseListView.as_view(),name='MyCourseList'),
 	path('courselist.html/',RegCourseListView.as_view(),name='regcourselist'),
-
+	path('publish_reg_pdf/', views.publish_course_registrations),
+	path('ClassRoaster/',views.ClassRoaster,name='ClassRoaster')
 ]
