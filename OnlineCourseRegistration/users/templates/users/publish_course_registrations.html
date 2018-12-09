@@ -36,7 +36,7 @@
             <a href="categories.html" class="nav-link">Subjects</a>
           </li>
           <li class="nav-item px-2">
-              <a href="{% url 'faculty'%}" class="nav-link">Faculty</a>
+              <a href="{% url 'users:faculty' %}" class="nav-link">Faculty</a>
             </li>
         </ul>
 
@@ -97,7 +97,7 @@
         </div>
         <div class="col-md-3">
             <a href="#" class="btn btn-success btn-block" data-toggle="modal" data-target="#publishCourseRegistrationsModal">
-              <i class="fas fa-plus"></i> Publish Course Reg
+              <i class="fas fa-plus"></i> Class Roster
             </a>
         </div>
         <!-- <div class="col-md-3">
@@ -117,11 +117,11 @@
           </tr>
         </thead>
         <tbody>
-                {% for i in x %}
+                {% for i in student %}
             <tr>
               <td>{{i}}</td>
                    
-                <td>{{sub}}
+                <td>6
 
                 </td>
                 {% endfor %}

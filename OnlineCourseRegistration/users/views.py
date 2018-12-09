@@ -464,6 +464,8 @@ class CourseListView(View):
 			#print(vals[0])
 			#for x in vals:
 			#	queryvals.append({"courseregistrations_id":x[0],"course_id":x[1],"course_name":x[2],"course_credits":x[3],"faculty_id":x[4],"faculty_name":x[5]})
+
+			#queryvals =Courseregistrations.objects.filter(courseregistrations_isactive=True).select_related('courseregistrations_cid').select_related('courseregistrations_fid').values('courseregistrations_id','courseregistrations_cid__course_id','courseregistrations_cid__course_name','courseregistrations_cid__course_credits','courseregistrations_fid__faculty_name','courseregistrations_fid__faculty_id')
 			#print(queryvals)
 			myname=request.user
 			print(myname)
