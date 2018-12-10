@@ -124,7 +124,7 @@ class Student(models.Model):
     student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
     student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=True,null=True)
     last_updated = models.DateTimeField(max_length=45,auto_now=True)
-	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
+    student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
     student_cgpa = models.FloatField(db_column='Student_cgpa',default=0.0)  # Field name made lowercase.
 
     class Meta:

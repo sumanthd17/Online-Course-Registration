@@ -4,13 +4,10 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib import messages
-<<<<<<< HEAD
 from django.db import IntegrityError, connection
 from django.db.models import Count
 from django.views.generic import View
 from .models import Course,Grades, Student,Courseregistrations, FinalStudentRegistrations
-=======
->>>>>>> upstream/master
 from django.db import IntegrityError
 from django.db.models import Count,Sum
 from django.db import connection
@@ -318,7 +315,6 @@ def audit_course(request):
 
 def publish_course_registrations(request):
 	if request.method == 'POST':
-<<<<<<< HEAD
 		cid=request.POST.get('course')
 		with connection.cursor() as cursor:
 			cursor.execute('select final_studentregistrations_cid from FinalStudentRegistrations where exists (select final_studentregistrations_cid from FinalStudentRegistrations where final_studentregistrations_cid ='+str(cid)+')')
@@ -370,76 +366,6 @@ def publish_course_registrations(request):
 				return Render.render( 'users/publish_reg_pdf.html',g)
 	else:
 		return render(request, 'users/publish_course_registrations.html')
-=======
-		subject = request.POST.get('course')
-		print('subject')
-		print(subject)
-		course = list(Course.objects.all())
-		c = []
-		#print('course')
-		#print(course)
-		for i in course:
-			c.append(str(i).split(' - '))
-		for i in c:
-			if subject in i:
-				max = i[-1]
-				break
-		#print('max')
-		#print(max)
-		student_list = []
-		student = list(Student.objects.all())
-		#print('student')
-		#print(student)
-		for i in student:
-			student_list.append(str(i).split(' - '))
-		student_list_sel = []
-		#print('student_list')
-		#print(student_list)
-		"""for i in student_list:
-			if subject in i:
-				student_list_sel.append(i)
-		"""
-		register = list(Register.objects.all())
-		reg = []
-		for i in register:
-			reg.append(str(i).split(' - '))
-		for i in reg:
-			if subject in i:
-				student_list_sel.append(i)
-		#print('student_list_sel')
-		#print(student_list_sel)
-		enroll_dict = {}
-		#print('reg')
-		#print(reg)
-		for i in student_list_sel:
-			for j in student_list:
-				if i[0] == j[1]:
-					enroll_dict[i[0]] = j[-1]
-		#print('enroll_dict')
-		#print(enroll_dict)
-		enroll_sorted = sorted(enroll_dict.items(), key=lambda kv:kv[1], reverse=True)
-		#print('enroll_sorted')
-		#print(enroll_sorted)
-		enroll_list = []
-		#print('len')
-		#print(len(enroll_list))
-		for i in range(len(enroll_sorted)):
-			enroll_list.append(enroll_sorted[i][0])
-		print(enroll_list)
->>>>>>> upstream/master
-
-		for i in range(len(enroll_list)):
-			final = final_Register()
-			final.student_id = enroll_list[i]
-			final.course=subject
-			final.save()
-		li=[]
-		for i in list(final_Register.objects.filter(course=subject)):
-			k=str(i).split(' - ')
-			li.append(k)
-		final={'x':enroll_list , 'sub':subject}
-		print(final)
-	return render(request, 'users/publish_course_registrations.html',final)
 
 def ClassRoaster(request):
     if request.method == 'POST':
