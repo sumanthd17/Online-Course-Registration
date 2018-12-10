@@ -125,6 +125,7 @@ class Student(models.Model):
 	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
 	last_updated = models.DateTimeField(max_length=45,auto_now=True)
 	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
+    #student_cgpa = models.ForeignKey(db_column='Student_cgpa', default=0.0)
     
 	class Meta:
 		managed = True
