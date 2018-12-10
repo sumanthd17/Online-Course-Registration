@@ -39,5 +39,6 @@ urlpatterns = [
 	path('studenthome.html/',StudentCourseListView.as_view(),name='MyCourseList'),
 	path('courselist.html/',RegCourseListView.as_view(),name='regcourselist'),
 	path('publish_reg_pdf/', views.publish_course_registrations),
-	path('ClassRoaster/',views.ClassRoaster,name='ClassRoaster')
+	path('ClassRoaster/',views.ClassRoaster,name='ClassRoaster'),
+	path('deleteReg/',views.deleteReg,name='deleteReg'),
 ]

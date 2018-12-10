@@ -49,7 +49,7 @@ window.history.back();
 <body>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">Online Course Registeration</a>
+      <a href="{% url 'users:index' %}" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">Online Course Registeration</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -163,9 +163,15 @@ window.history.back();
                 {% endfor %}
               </tbody>
             </table>
+            {% if enable %}
             <div class="btn-toolbar float-right mb-1">
   <button type="submit" class="btn btn-primary btn-md mr-3"  id="delcourse" name="delCourseBtn" value="{{ user.user}}">Drop Course</button> 
             </div>
+            {% else %}
+             <div class="btn-toolbar float-right mb-1">
+  <button type="submit" class="btn btn-primary btn-md mr-3"  id="delcourse" name="delCourseBtn" value="{{ user.user}}" disabled>Drop Course</button> 
+            </div>
+            {% endif %}
             </form>
           </div>
         </div>
