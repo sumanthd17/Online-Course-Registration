@@ -51,6 +51,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -80,6 +81,8 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
+SESSION_EXPIRE_SECONDS = 3600 #I HR
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
@@ -96,15 +99,9 @@ WSGI_APPLICATION = 'OnlineCourseRegistration.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-<<<<<<< HEAD
-        'NAME': 'final',
+        'NAME': 'new_1',
         'USER': 'root',
         'PASSWORD': 'Giri@1999t',
-=======
-        'NAME': 'latest',
-        'USER': 'sumanth',
-        'PASSWORD': 'Sumanth@17',
->>>>>>> upstream/master
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }

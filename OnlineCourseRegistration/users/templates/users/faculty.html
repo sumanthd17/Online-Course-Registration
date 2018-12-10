@@ -22,7 +22,7 @@
 <body>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-      <a href="index.html" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA09</a>
+      <a href="{% url 'users:index' %}" class="navbar-brand"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/49/IIIT_Sri_City_Logo.png/220px-IIIT_Sri_City_Logo.png" style="width: 32px; height: 32px; margin-right: 8px;">ProjectA09</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -30,12 +30,6 @@
         <ul class="navbar-nav">
           <li class="nav-item px-2">
             <a href="{% url 'users:index' %}" class="nav-link active">Dashboard</a>
-          </li>
-          <li class="nav-item px-2">
-            <a href="{% url 'users:MyCourseList' %}" class="nav-link">Students</a>
-          </li>
-          <li class="nav-item px-2">
-            <a href="categories.html" class="nav-link">Subjects</a>
           </li>
           <li class="nav-item px-2">
             <a href="{% url 'users:faculty'%}" class="nav-link">Faculty</a>
@@ -84,7 +78,7 @@
       <div class="row">
         <div class="col-md-3">
           <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addClassRoaster">
-            <i class="fas fa-plus"></i> Class Roster
+             Class Roster
           </a>
         </div>
       </div>
