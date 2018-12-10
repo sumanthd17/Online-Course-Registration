@@ -13,10 +13,10 @@ from datetime import datetime
 
 # Create your models here.
 
-ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),('guest','GUEST'),)
+ROLE_CHOICES = (('admin','ADMIN'),('student', 'STUDENT'),('faculty','FACULTY'),)
 
 class CustomUser(AbstractUser):
-	role = models.CharField(max_length=45,db_column='Role',choices=ROLE_CHOICES,blank=False)
+	role = models.CharField(max_length=45,db_column='role',choices=ROLE_CHOICES,blank=False)
 	def __str__(self):
 		return self.email
 
@@ -107,29 +107,32 @@ class Grades(models.Model):
 		unique_together = (('studentid', 'courseid'),)
 
 class Student(models.Model):
-	student_roll_no = models.CharField(db_column='Student_roll_no', max_length=30,primary_key=True)
-	student_first_name = models.CharField(db_column='Student_First_Name', max_length=100,null=False)
-	student_middle_name = models.CharField(db_column='Student_Middle_Name', max_length=100,blank=True)
-	student_last_name = models.CharField(db_column='Student_Last_Name', max_length=100,null=False)
-	student_dob = models.DateField(db_column='Student_dob', blank=True, null=True)
-	student_gender = models.CharField(db_column='Student_Gender', max_length=6,null=False)
-	student_mobile = models.CharField(db_column='Student_mobile', max_length=15)
-	student_email = models.CharField(db_column='Student_email', max_length=45)
-	student_blood_group = models.CharField(db_column='Student_BloodGroup',max_length=4,null=False)
-	student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False)
-	student_reg_year = models.CharField(db_column='Student_Registered_Year', max_length=10,null=False)
-	student_cur_year = models.CharField(db_column='Student_Current_Year',max_length=10,null=False)
-	student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=10,null=False)
-	student_degree = models.CharField(db_column='Student_degree', max_length=15,null=False)
-	student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
-	student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=False,null=False)
-	last_updated = models.DateTimeField(max_length=45,auto_now=True)
+    student_roll_no = models.CharField(db_column='Student_roll_no', max_length=30,primary_key=True)
+    student_first_name = models.CharField(db_column='Student_First_Name', max_length=100,null=False)
+    student_middle_name = models.CharField(db_column='Student_Middle_Name', max_length=100,blank=True)
+    student_last_name = models.CharField(db_column='Student_Last_Name', max_length=100,null=False)
+    student_dob = models.DateField(db_column='Student_dob', blank=True, null=True)
+    student_gender = models.CharField(db_column='Student_Gender', max_length=6,null=False)
+    student_mobile = models.CharField(db_column='Student_mobile', max_length=15)
+    student_email = models.CharField(db_column='Student_email', max_length=45)
+    student_blood_group = models.CharField(db_column='Student_BloodGroup',max_length=4,null=False)
+    student_mother_tongue = models.CharField(db_column='Student_MotherTongue',max_length=45,null=False)
+    student_reg_year = models.CharField(db_column='Student_Registered_Year', max_length=10,null=False)
+    student_cur_year = models.CharField(db_column='Student_Current_Year',max_length=10,null=False)
+    student_curr_sem = models.CharField(db_column='Student_curr_sem', max_length=10,null=False)
+    student_degree = models.CharField(db_column='Student_degree', max_length=15,null=False)
+    student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
+    student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=True,null=True)
+    last_updated = models.DateTimeField(max_length=45,auto_now=True)
 	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
-    #student_cgpa = models.ForeignKey(db_column='Student_cgpa', default=0.0)
-    
-	class Meta:
-		managed = True
-		db_table = 'Student'
+    student_cgpa = models.FloatField(db_column='Student_cgpa',default=0.0)  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'Student'
+	
+    def __str__(self):
+        return u'%s' % (self.student_roll_no)
 
 class StudentEducPref(models.Model):
     student_educ_studid = models.ForeignKey(Student, models.DO_NOTHING, db_column='Student_Educ_Studid')  # Field name made lowercase.
@@ -215,6 +218,9 @@ class FinalStudentRegistrations(models.Model):
     final_studentregistrations_cid = models.ForeignKey(Course, models.DO_NOTHING, db_column='final_studentRegistrations_cid') 
     final_studentregistrations_sid = models.ForeignKey(Student, models.DO_NOTHING, db_column='final_studentRegistrations_sid')
     final_studentregistrations_last_updated = models.DateTimeField(db_column='final_studentregistrations_last_updated', auto_now=True) 
+    #final_student_first_name = models.CharField(db_column='final_student_first_name',max_length=100,null=True)
+    #final_student_middle_name = models.CharField(db_column='final_student_middle_name',max_length=100,null=True)
+    #final_student_last_name = models.CharField(db_column='final_student_last_name',max_length=100,null=True)
     class Meta:
         managed = True
         db_table = 'FinalStudentRegistrations'
