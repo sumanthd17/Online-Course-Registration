@@ -38,6 +38,9 @@ class Course(models.Model):
         managed = True
         db_table = 'Course'
         unique_together = (('course_id', 'course_name'),)
+    
+    def __str__(self):
+        return self.course_name
 
 class SpecialPermissions(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -54,6 +57,8 @@ class BufferSpecialPermissionsTable(models.Model):
 
     def __str__(self):
         return self.req
+
+
 
 class Grade(models.Model):
     student_id = models.CharField(max_length=20, null=True)
@@ -124,7 +129,7 @@ class Student(models.Model):
     student_degree_duration = models.CharField(db_column='Student_Degree_Duration',max_length=15,null=False)
     student_academic_status = models.CharField(db_column='Student_Academic_Status',max_length=20,blank=True,null=True)
     last_updated = models.DateTimeField(max_length=45,auto_now=True)
-	student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
+    student_Id = models.ForeignKey('CustomUser', models.DO_NOTHING, db_column='Student_Id')  # Field name made lowercase.
     student_cgpa = models.FloatField(db_column='Student_cgpa',default=0.0)  # Field name made lowercase.
 
     class Meta:
@@ -134,6 +139,13 @@ class Student(models.Model):
     def __str__(self):
         return u'%s' % (self.student_roll_no)
 
+class AuditCourse(models.Model):
+    audit_cid = models.ForeignKey(Course, models.DO_NOTHING)
+    audit_sid = models.ForeignKey(Student, models.DO_NOTHING)
+
+    class Meta:
+        managed = True
+        db_table = 'AuditCourse'
 class StudentEducPref(models.Model):
     student_educ_studid = models.ForeignKey(Student, models.DO_NOTHING, db_column='Student_Educ_Studid')  # Field name made lowercase.
     student_educ_courseid = models.ForeignKey(Course, models.DO_NOTHING, db_column='Student_Educ_courseid')  # Field name made lowercase.

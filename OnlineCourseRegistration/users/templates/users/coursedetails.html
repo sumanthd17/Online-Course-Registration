@@ -95,17 +95,18 @@ window.history.back();
   </header>
 
   <!-- SEARCH -->
-  <section id="search" class="py-4 mb-6 bg-light">
+ 
+  <section id="student" class="py-4 mb-6 bg-light">
     <div class="container">
       <div class="row">
         <div class="col-md-4">
-          Name : Rusheel Koushik
+          Name : {{name}}
           <BR>
-          Roll Number : 201601074
+          Roll Number : {{student_roll_no}}
           <BR>
-          Year : 3
+          Year : {{student_cur_year}}
           <BR>
-          Semester : 1 
+          Semester : {{student_cur_sem}}
           <BR>         
         </div>
       </div>
@@ -128,16 +129,28 @@ window.history.back();
                   <th>Course Id</th>
                   <th>Course Name</th>
                   <th>Course Credits</th>
-                  <th>Faculty</th>                  
+                  <th>Faculty</th> 
+                  {% if enable %}
+                  <th>Prerequisite Course Id</th>
+                  <th>Prerequisite Course Min Grade</th>
+                  <th>Comments</th>    
+                  {% endif %}            
                 </tr>
               </thead>
               <tbody>
                {% for set in queryvals %}  
                <tr>
-               <td>{{set.course_id}}</td>
-               <td>{{set.course_name}}</td>
-               <td>{{set.course_credits}}</td>
-               <td>{{set.faculty_name}}</td>
+               <td>{{set.courseregistrations_cid__course_id}}</td>
+               <td>{{set.courseregistrations_cid__course_name}}</td>
+               <td>{{set.courseregistrations_cid__course_credits}}</td>
+               <td>{{set.courseregistrations_fid__faculty_name}}</td>
+               {% if enable %}
+               {% for s in getprereqs %}
+               <td>{{s.prereq_courseid}}
+                <td>{{s.prereq_min_grade}}
+                 <td>{{s.prereq_descr}}
+                 {% endfor %}
+                   {% endif %}
                </tr>
                {% endfor %}
               </tbody>
