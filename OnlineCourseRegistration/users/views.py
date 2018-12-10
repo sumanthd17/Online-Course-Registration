@@ -331,6 +331,7 @@ def special_req_res_dec(request, request_id):
 def deleteReg(request):
 	with connection.cursor() as cursor:
 		cursor.execute('delete from FinalStudentRegistrations')
+		print('hello')
 	return HttpResponseRedirect('/users')
 
 def publish_course_registrations(request):
